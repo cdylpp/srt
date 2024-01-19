@@ -1,6 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QPushButton, QLabel, QStackedWidget, QMessageBox, \
-    QLineEdit, QComboBox, QDialog
-
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QPushButton, QLabel, QStackedWidget, QMessageBox, QLineEdit, QComboBox, QDialog
 
 class HomeScreen(QMainWindow):
     def __init__(self, user_type, full_name, db_manager):
@@ -19,22 +17,21 @@ class HomeScreen(QMainWindow):
         welcome_label = QLabel(f'Welcome, {full_name}!')
         layout.addWidget(welcome_label)
 
-        # Create a stacked widget to hold different views
-        self.stacked_widget = QStackedWidget()
+        self.stacked_widget = QStackedWidget() #stacked widget to hold different views
         layout.addWidget(self.stacked_widget)
 
-        # Create views for different options
+        #views for different users
         self.create_admin_view()
         self.create_teacher_view()
         self.create_student_view()
 
-        # Set default view based on user type
+        #view based on user type
         if user_type == 'Admin':
-            self.stacked_widget.setCurrentIndex(0)  # Show admin view
+            self.stacked_widget.setCurrentIndex(0)  #admin view
         elif user_type == 'Teacher':
-            self.stacked_widget.setCurrentIndex(1)  # Show teacher view
+            self.stacked_widget.setCurrentIndex(1)
         elif user_type in ['Student', 'Parent']:
-            self.stacked_widget.setCurrentIndex(2)  # Show student view
+            self.stacked_widget.setCurrentIndex(2)
 
         logout_button = QPushButton('Logout')
         layout.addWidget(logout_button)
@@ -59,11 +56,11 @@ class HomeScreen(QMainWindow):
             self.show_student_options()
 
         elif option == 'Teacher':
-            # Implement the functionality for teacher options
+
             pass
 
         elif option == 'Admin Options':
-            # Implement the functionality for admin options
+
             pass
 
     def show_admin_profile(self):
@@ -86,7 +83,6 @@ class HomeScreen(QMainWindow):
         for option in student_options:
             teacher_layout.addWidget(QPushButton(option, clicked=lambda ch, option=option: self.handle_teacher_option(option)))
 
-        # Additional Teacher Options (Grades, Coursework, Progress, Standardized Test Scores, Attendance, Participation)
         teacher_options = ['Grades', 'Coursework', 'Progress', 'Standardized Test Scores', 'Participation']
         for option in teacher_options:
             teacher_layout.addWidget(QPushButton(option, clicked=lambda ch, option=option: self.handle_teacher_option(option)))
@@ -99,7 +95,6 @@ class HomeScreen(QMainWindow):
         student_view = QWidget()
         student_layout = QVBoxLayout(student_view)
 
-        # Student Options (Profile, Academics)
         student_options = ['Profile', 'Academics']
         for option in student_options:
             student_layout.addWidget(QPushButton(option, clicked=lambda ch, option=option: self.handle_student_option(option)))
@@ -107,29 +102,29 @@ class HomeScreen(QMainWindow):
         self.stacked_widget.addWidget(student_view)
 
     def logout(self):
-        self.close()  # Close the main window to return to the login screen
+        self.close()  #Close main window, return to login screen
 
     def handle_teacher_option(self, option):
         if option == 'Grades':
-            # Implement the functionality for 'Grades' here
+
             pass
         elif option == 'Coursework':
-            # Implement the functionality for 'Coursework' here
+
             pass
         elif option == 'Progress':
-            # Implement the functionality for 'Progress' here
+
             pass
         elif option == 'Standardized Test Scores':
-            # Implement the functionality for 'Standardized Test Scores' here
+
             pass
         elif option == 'Attendance':
-            # Implement the functionality for 'Attendance' here
+
             pass
         elif option == 'Participation':
-            # Implement the functionality for 'Participation' here
+
             pass
         else:
-            # Handle other teacher options
+
             pass
 
     def handle_attendance_option(self):
@@ -157,7 +152,6 @@ class AdminProfileWidget(QDialog):
 
         layout = QVBoxLayout()
 
-        # Add necessary fields (example fields, modify as needed)
         layout.addWidget(QLabel('First Name:'))
         self.first_name_input = QLineEdit()
         layout.addWidget(self.first_name_input)
@@ -166,7 +160,10 @@ class AdminProfileWidget(QDialog):
         self.last_name_input = QLineEdit()
         layout.addWidget(self.last_name_input)
 
-        # Add other fields (date of birth, email, username, contact method, cell phone, etc.)
+        layout.addWidget(QLabel('Preferred Contact Method:'))
+        self.last_name_input = QLineEdit()
+        layout.addWidget(self.last_name_input)
+
 
         submit_button = QPushButton('Save Changes', clicked=self.save_admin_profile)
         layout.addWidget(submit_button)
@@ -174,7 +171,7 @@ class AdminProfileWidget(QDialog):
         self.setLayout(layout)
 
     def save_admin_profile(self):
-        # Handle logic for saving admin profile changes
+
         pass
 
 
@@ -198,11 +195,11 @@ class StudentOptionsWidget(QDialog):
             enroll_student_widget.exec()
 
         elif option == 'View Student':
-            # Implement the functionality for viewing student information
+
             pass
 
         elif option == 'Disenroll Student':
-            # Implement the functionality for disenrolling a student
+
             pass
 
 
@@ -214,7 +211,6 @@ class EnrollStudentWidget(QDialog):
 
         layout = QVBoxLayout()
 
-        # Add necessary fields (example fields, modify as needed)
         layout.addWidget(QLabel('First Name:'))
         self.first_name_input = QLineEdit()
         layout.addWidget(self.first_name_input)
@@ -249,7 +245,7 @@ class EnrollStudentWidget(QDialog):
         self.setLayout(layout)
 
     def enroll_student(self):
-        # Handle logic for enrolling a new student
+
         pass
 
 
@@ -263,7 +259,6 @@ class AttendanceWindow(QDialog):
 
         layout = QVBoxLayout()
 
-        # Add necessary fields (example fields, modify as needed)
         layout.addWidget(QLabel('Student ID:'))
         self.student_id_input = QLineEdit()
         layout.addWidget(self.student_id_input)
@@ -286,7 +281,7 @@ class AttendanceWindow(QDialog):
         self.setLayout(layout)
 
     def submit_attendance(self):
-        # Placeholder method for handling the submission
+
         student_id = self.student_id_input.text()
         date = self.date_input.text()
         status = self.status_input.text()
@@ -298,7 +293,6 @@ class AttendanceWindow(QDialog):
         try:
             cursor = self.db_manager.db_connection.cursor()
 
-            # Example SQL query, adjust according to your database schema
             query = "INSERT INTO attendance (student_id, date, status) VALUES (%s, %s, %s)"
             cursor.execute(query, (student_id, date, status))
             self.db_manager.db_connection.commit()

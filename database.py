@@ -1,6 +1,5 @@
 import mysql.connector
 
-
 class DatabaseManager:
     def __init__(self, host, user, password, database):
         self.db_connection = mysql.connector.connect(
