@@ -1,0 +1,7 @@
+#Libraries
+
+PyQt6
+Pandas
+mysql-connector-python
+matplotlib
+scikit-learn
