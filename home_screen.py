@@ -305,3 +305,5 @@ class AttendanceWindow(QDialog):
         finally:
             if cursor:
                 cursor.close()
+
+
