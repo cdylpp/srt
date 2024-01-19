@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
 from database import DatabaseManager, UserManager
+from home_screen import HomeScreen
 
 class UserManagementApp(QWidget):
     def __init__(self):
@@ -17,7 +18,9 @@ class UserManagementApp(QWidget):
         self.student_button = QPushButton('Student')
         self.parent_button = QPushButton('Parent')
 
+        self.resize(300, 350)
         layout = QVBoxLayout()
+
         layout.addWidget(self.admin_button)
         layout.addWidget(self.teacher_button)
         layout.addWidget(self.student_button)
@@ -34,8 +37,7 @@ class UserManagementApp(QWidget):
 
     def show_login_window(self, user_type):
         print(f"Clicked {user_type} button...")
-        login_window = StudentLoginWindow(self.db_manager) if user_type == 'Student' else LoginWindow(self.db_manager,
-                                                                                                      user_type)
+        login_window = StudentLoginWindow(self.db_manager) if user_type == 'Student' else LoginWindow(self.db_manager, user_type)
 
         result = login_window.exec()
 
@@ -60,6 +62,13 @@ class UserManagementApp(QWidget):
                 full_name = f"Unknown {user_type}"
 
             QMessageBox.information(None, 'Login Successful', f'Welcome {user_type} {full_name}!')
+
+            self.show_home_screen(user_type, full_name)
+
+    def show_home_screen(self, user_type, full_name):
+        home_screen = HomeScreen(user_type, full_name)
+        home_screen.show()
+
 
 class ForgotPassWindow(QDialog):
     def __init__(self, db_manager):
