@@ -1,0 +1,6 @@
+# requirements.txt
+
+# Libraries:
+pandas
+scikit-learn
+matplotlib
