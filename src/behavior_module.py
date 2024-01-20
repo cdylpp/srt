@@ -48,8 +48,6 @@ def prep_data(df, target, test_size=0.2, random_state=13):
     return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
 
-
-
 def test_predictor_class():
     X_train, X_test, y_train, y_test = prep_data(df, 'retention_score')
     predictor = Predictor(LinearRegression())

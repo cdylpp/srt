@@ -8,6 +8,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 
+
 def visualize_metric(student_data_file, metric, k='correlation'):
     # Load student data from CSV file
     student_df = pd.read_csv(student_data_file)
