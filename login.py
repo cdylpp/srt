@@ -68,7 +68,7 @@ class UserManagementApp(QWidget):
             self.show_home_screen(user_type, full_name)
 
     def show_home_screen(self, user_type, full_name):
-        home_screen = HomeScreen(user_type, full_name)
+        home_screen = HomeScreen(user_type, full_name, self.db_manager)
         home_screen.show()
 
 
