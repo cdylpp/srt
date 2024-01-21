@@ -12,8 +12,8 @@ def generate_retention_score(student_data_file):
     student_df = pd.read_csv(student_data_file)
 
     # Separate features and target
-    X = student_df.drop(['RetentionScore'], axis=1)
-    y = student_df['RetentionScore']
+    X = student_df.drop(['Retention_Score'], axis=1)
+    y = student_df['Retention_Score']
 
     # Split the data for training and testing
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=13)
@@ -59,10 +59,11 @@ def generate_retention_score(student_data_file):
     student_df['retention_prediction'] = retention_predictions
 
     # Plotting actual vs predicted retention scores
-    plt.scatter(student_df['RetentionScore'], student_df['retention_prediction'])
+    plt.scatter(student_df['Retention_Score'], student_df['retention_prediction'])
     plt.xlabel('Actual Retention Score')
     plt.ylabel('Predicted Retention Score')
     plt.title('Actual vs Predicted Retention Score')
+    plt.tight_layout()
     plt.show()
 
     return student_df
