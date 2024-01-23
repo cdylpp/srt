@@ -21,7 +21,7 @@ class UserManagementApp(QWidget):
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.login_button = QPushButton('Login')
-        self.forgot_button = QPushButton('Forgot Password')
+        
 
         layout = QVBoxLayout()
         layout.addWidget(self.username_label)
@@ -29,12 +29,12 @@ class UserManagementApp(QWidget):
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
         layout.addWidget(self.login_button)
-        layout.addWidget(self.forgot_button)
+        
 
         self.setLayout(layout)
 
         self.login_button.clicked.connect(self.login)
-        self.forgot_button.clicked.connect(self.show_forgot_pass_window)
+        
 
         self.show()
 
@@ -51,46 +51,6 @@ class UserManagementApp(QWidget):
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
-
-
-class ForgotPassWindow(QDialog):
-    def __init__(self, db_manager):
-        super().__init__()
-        self.db_manager = db_manager
-        self.setWindowTitle('Reset Password')
-
-        self.email_label = QLabel('Email:')
-        self.email_input = QLineEdit()
-        self.reset_button = QPushButton('Reset Password')
-        self.cancel_button = QPushButton('Cancel')
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.email_label)
-        layout.addWidget(self.email_input)
-        layout.addWidget(self.reset_button)
-        layout.addWidget(self.cancel_button)
-
-        self.setLayout(layout)
-
-        self.reset_button.clicked.connect(self.reset_password)
-        self.cancel_button.clicked.connect(self.close)
-
-    def reset_password(self):
-        email = self.email_input.text()
-
-        if '@' in email:
-            cursor = self.db_manager.db_connection.cursor()
-            query = "SELECT email FROM credentials WHERE email = %s"
-            cursor.execute(query, (email,))
-            result = cursor.fetchone()
-            cursor.close()
-
-            if result:
-                QMessageBox.information(None, 'Password Reset', 'Email sent!')
-            else:
-                QMessageBox.warning(self, 'Password Reset Failed', 'Email not found. Please contact your admin.')
-        else:
-            QMessageBox.warning(self, 'Invalid Email', 'Please enter a valid email address.')
 
 if __name__ == '__main__':
     app = QApplication([])
