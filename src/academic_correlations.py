@@ -9,6 +9,15 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 
 
+def import_data(file):
+    try:
+        df = pd.read_csv(file, sep=';')
+        
+    except Exception as e:
+        print(e)
+        
+    return df 
+
 def visualize_metric(student_data_file, metric, k='correlation'):
     # Load student data from CSV file
     student_df = pd.read_csv(student_data_file)
@@ -65,8 +74,16 @@ def visualize_metric(student_data_file, metric, k='correlation'):
         # Exclude non-numeric columns for correlation calculation
         numeric_student_df = student_df.select_dtypes(include=['int64', 'float64'])
         correlation_matrix = numeric_student_df.corr()
+
+        # Plotting with custom x-axis and y-axis labels
         sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+        
+        # Customize x-axis and y-axis labels with spaces between words
+        plt.xticks(range(len(correlation_matrix.columns)), [col.replace('_', ' ').title() for col in correlation_matrix.columns], rotation=45)
+        plt.yticks(range(len(correlation_matrix.columns)), [col.replace('_', ' ').title() for col in correlation_matrix.columns], rotation=0)
+
         plt.title(f'Correlation Map for {metric}')
+        plt.tight_layout()
         plt.show()
     else:
         print(f'Unsupported keyword: {k}')
@@ -75,5 +92,5 @@ def visualize_metric(student_data_file, metric, k='correlation'):
 
 # Example usage:
 csv_file_path = 'src/student_data.csv'
-metric_to_visualize = 'RetentionScore'
+metric_to_visualize = 'Retention_Score'
 visualize_metric(csv_file_path, metric_to_visualize)
