@@ -43,7 +43,7 @@ class UserManager:
         cursor = self.db_manager.db_connection.cursor()
 
         #to check login
-        query = "SELECT * FROM credentials WHERE username = %s AND password = %s"
+        query = "SELECT * FROM credentials WHERE BINARY username = %s AND BINARY password = %s"
         cursor.execute(query, (username, password))
 
         user = cursor.fetchone()
