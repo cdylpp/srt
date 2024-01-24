@@ -72,6 +72,10 @@ class UserManagementApp(QWidget):
     #     home_screen = HomeScreen(user_type, full_name, self.db_manager)
     #     home_screen.show()
 
+    def show_forgot_pass_window(self):
+        forgot_pass_window = ForgotPassWindow(self.db_manager)
+        forgot_pass_window.exec()
+
 
 class ForgotPassWindow(QDialog):
     def __init__(self, db_manager):
