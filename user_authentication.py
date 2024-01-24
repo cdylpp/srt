@@ -12,25 +12,29 @@ class UserManagementApp(QWidget):
         print("Initializing UI...")
         self.setWindowTitle('SRT Login')
 
-        self.admin_button = QPushButton('Admin')
-        self.teacher_button = QPushButton('Teacher')
-        self.student_button = QPushButton('Student')
-        self.parent_button = QPushButton('Parent')
+        self.username_label = QLabel('Username:')
+        self.username_input = QLineEdit()
+
+        self.password_label = QLabel('Password:')
+        self.password_input = QLineEdit()
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.login_button = QPushButton('Login')
+        self.forgot_button = QPushButton('Forgot Password')
 
         self.resize(300, 350)
         layout = QVBoxLayout()
-
-        layout.addWidget(self.admin_button)
-        layout.addWidget(self.teacher_button)
-        layout.addWidget(self.student_button)
-        layout.addWidget(self.parent_button)
+        layout.addWidget(self.username_label)
+        layout.addWidget(self.username_input)
+        layout.addWidget(self.password_label)
+        layout.addWidget(self.password_input)
+        layout.addWidget(self.login_button)
+        layout.addWidget(self.forgot_button)
 
         self.setLayout(layout)
 
-        self.admin_button.clicked.connect(lambda: self.show_login_window('Admin'))
-        self.teacher_button.clicked.connect(lambda: self.show_login_window('Teacher'))
-        self.student_button.clicked.connect(lambda: self.show_login_window('Student'))
-        self.parent_button.clicked.connect(lambda: self.show_login_window('Parent'))
+        self.login_button.clicked.connect(self.login)
+        self.forgot_button.clicked.connect(self.show_forgot_pass_window)
 
         self.show()
 
@@ -107,70 +111,6 @@ class ForgotPassWindow(QDialog):
                 QMessageBox.warning(self, 'Password Reset Failed', 'Email not found. Please contact your admin.')
         else:
             QMessageBox.warning(self, 'Invalid Email', 'Please enter a valid email address.')
-
-class LoginWindow(QWidget):
-    def __init__(self, db, user_type):
-        print(f"Initializing {user_type} LoginWindow...")
-        super().__init__()
-        self.user_type = user_type
-        self.db = CSVManager(db).db
-        self.user_manager = CSVManager(db)
-        self.initUI()
-    
-    def initUI(self):
-        self.setWindowTitle(f'{self.user_type} Login')
-        self.username_label = QLabel('Username:')
-        self.username_input = QLineEdit()
-
-        self.password_label = QLabel('Password:')
-        self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
-
-        self.login_button = QPushButton('Login')
-        self.forgot_button = QPushButton('Forgot Password')
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.username_label)
-        layout.addWidget(self.username_input)
-        layout.addWidget(self.password_label)
-        layout.addWidget(self.password_input)
-        layout.addWidget(self.login_button)
-        layout.addWidget(self.forgot_button)
-
-        self.setLayout(layout)
-
-        self.login_button.clicked.connect(self.login)
-        self.forgot_button.clicked.connect(self.show_forgot_pass_window)
-
-        # For Testing 
-        self.show()
-
-    def login(self):
-        username = self.username_input.text()
-        password = self.password_input.text()
-
-        if self.user_manager.login(username, password):
-            credientals = self.user_manager.getCredientals(username)
-            self.accept(credientals)
-        else:
-            QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
-
-    def show_forgot_pass_window(self):
-        forgot_pass_window = ForgotPassWindow(self.db_manager)
-        forgot_pass_window.exec()
-
-    def accept(self, credentials):
-        QMessageBox.information(None, 'Login Successful', f'Welcome {credentials['first_name']}!')
-
-
-class StudentLoginWindow(LoginWindow):
-    def __init__(self, db_manager):
-        print("Initializing Student LoginWindow...")
-        super().__init__(db_manager, 'Student')
-        self.setWindowTitle('Student Login')
-        self.username_label.setText('Student ID:')
-
-        self.forgot_button = QPushButton('Forgot Password')
 
 if __name__ == '__main__':
     print("Starting application...")
