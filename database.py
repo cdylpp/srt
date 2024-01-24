@@ -1,22 +1,6 @@
-"""_summary_
-DatabaseManager provides the methods
-    -connect()
-    -login()
-    -close_connection()
-    -getCredentials() -> dict
-    
-Raises:
-    KeyError: _description_
-    KeyError: _description_
-
-Returns:
-    _type_: _description_
-"""
-
 import mysql.connector
 import csv
 from PyQt6.QtWidgets import QMessageBox
-
 
 # Config for AWS database, don't change
 DB_CONFIG = {
@@ -59,7 +43,18 @@ class DatabaseManager:
         self.type = type
         self.db = self.connect(**kwargs)
     
-    def fetch(self,field,target):
+    def fetch(self,field: str,target: str) -> dict[str, str]:
+        """
+        Fetches the `target` from the `field` column from the database.
+        
+        Args:
+            field (str): valid attribute within the database (e.g., id, password...)
+            target (str): value to look for in the database 
+
+        Returns:
+            dict[str, str]: if `target` is found it returns the whole row as a dict. Else None
+        """
+        
         if self.type == 'csv':
             # handle csv case
             return
@@ -140,49 +135,6 @@ class DatabaseManager:
             data = cursor.fetchone()
             cursor.close()
             return generate_credential_dict(data)
-
-
-class UserManager:
-    def __init__(self, db_manager):
-        self.db_manager = db_manager
-
-    def email_exists(self, email):
-        cursor = self.db_manager.db_connection.cursor()
-
-        query = "SELECT * FROM credentials WHERE email = %s"
-        cursor.execute(query, (email,))
-
-        user = cursor.fetchone()
-
-        cursor.close()
-
-        return user is not None
-
-    def username_exists(self, username):
-        cursor = self.db_manager.db_connection.cursor()
-        query = "SELECT * FROM credentials WHERE username = %s"
-        cursor.execute(query, (username,))
-        user = cursor.fetchone()
-        cursor.close()
-        return user is not None
-
-    def login(self, username, password):
-        cursor = self.db_manager.db_connection.cursor()
-
-        #to check login
-        query = "SELECT * FROM credentials WHERE BINARY username = %s AND BINARY password = %s"
-        cursor.execute(query, (username, password))
-
-        user = cursor.fetchone()
-
-        cursor.close()
-
-        if user:
-            QMessageBox.information(None, 'Login Successful', f'Welcome, {username}')
-            return True
-        else:
-            QMessageBox.warning(None, 'Login Failed', 'Invalid username, password.')
-            return False
 
 
 
