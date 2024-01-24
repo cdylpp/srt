@@ -58,7 +58,24 @@ class DatabaseManager:
     def __init__(self,type,**kwargs):
         self.type = type
         self.db = self.connect(**kwargs)
-
+    
+    def fetch(self,field,target):
+        if self.type == 'csv':
+            # handle csv case
+            return
+        
+        elif self.type == 'mysql':
+            # handle mysql case
+            cursor = self.db.cursor()
+            query = "SELECT * FROM admin_credentials WHERE %s = %s"
+            cursor.execute(query, (field, target))
+            result = cursor.fetchone()
+            cursor.close
+            if result:
+                return generate_credential_dict(result)
+            else:
+                return None
+    
     def connect(self, **kwargs):
         if self.type == "mysql":
             return mysql.connector.connect(**kwargs)

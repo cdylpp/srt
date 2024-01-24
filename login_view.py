@@ -2,7 +2,6 @@ import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
 from database import DatabaseManager, DB_CONFIG
 from utils import Validator
-#from home_screen import HomeScreen
 
 class LoginWindow(QWidget):
     def __init__(self, db_type, **kwargs):
@@ -83,14 +82,8 @@ class ForgotPassWindow(QDialog):
 
     def reset_password(self):
         email = self.email_input.text()
-
         if Validator().validate('email', email):
-            cursor = self.db_manager.db_connection.cursor()
-            query = "SELECT email FROM admin_credentials WHERE email = %s"
-            cursor.execute(query, (email,))
-            result = cursor.fetchone()
-            cursor.close()
-
+            result = self.db_manager.fetch(field='email', target=email)
             if result:
                 QMessageBox.information(None, 'Password Reset', 'Email sent!')
             else:
