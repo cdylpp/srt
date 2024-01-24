@@ -1,11 +1,11 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
-from database import DatabaseManager, UserManager, CSVManager
+from database import DatabaseManager
 #from home_screen import HomeScreen
 
 class LoginWindow(QWidget):
-    def __init__(self):
+    def __init__(self, db_type, **kwargs):
         super().__init__()
-        self.db_manager = DatabaseManager("localhost", "root", "009243286", "user_management")
+        self.db_manager = DatabaseManager(db_type,**kwargs)
         self.init_ui()
 
     def init_ui(self):
@@ -38,39 +38,17 @@ class LoginWindow(QWidget):
 
         self.show()
 
-    def show_login_window(self, user_type):
-        print(f"Clicked {user_type} button...")
-        login_window = StudentLoginWindow(self.db_manager) if user_type == 'Student' else LoginWindow(self.db_manager, user_type)
+    def login(self):
+        username = self.username_input.text()
+        password = self.password_input.text()
 
-        result = login_window.exec()
-
-        print("Dialog Result:", result)
-
-        if result == QDialog.DialogCode.Accepted:
-            username = login_window.username_input.text()
-            cursor = self.db_manager.db_connection.cursor()
-
-            if user_type == 'Student':
-                query = f"SELECT first_name, last_name FROM credentials WHERE id = %s"
-            else:
-                query = f"SELECT first_name, last_name FROM credentials WHERE username = %s AND role = %s"
-
-            cursor.execute(query, (username,)) if user_type == 'Student' else cursor.execute(query, (username, user_type))
-            result = cursor.fetchone()
-            cursor.close()
-
-            if result:
-                full_name = f"{result[0]} {result[1]}"
-            else:
-                full_name = f"Unknown {user_type}"
-
-            QMessageBox.information(None, 'Login Successful', f'Welcome {user_type} {full_name}!')
-
-            #self.show_home_screen(user_type, full_name)
-
-    # def show_home_screen(self, user_type, full_name):
-    #     home_screen = HomeScreen(user_type, full_name, self.db_manager)
-    #     home_screen.show()
+        if self.db_manager.login(username, password):
+            credentials = self.db_manager.getCredentials(username)
+            QMessageBox.information(self, 'Login Successful', f'Welcome, {credentials["first_name"]}!')
+            self.close()
+        else:
+            QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
+            raise ValueError("Invalid password")
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
@@ -119,7 +97,7 @@ class ForgotPassWindow(QDialog):
 if __name__ == '__main__':
     print("Starting application...")
     app = QApplication([])
-    login = LoginWindow('Credentials.csv', 'Admin')
+    login = LoginWindow('csv', file='Credentials.csv')
     app.exec()
 
 

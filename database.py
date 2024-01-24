@@ -12,34 +12,12 @@ def csv_to_dict(file_path):
         for row in csvreader:
             rows.append(dict(row))
     return rows
-
-class CSVManager:
-    def __init__(self, file_name):
-        self.file_name = file_name
-        self.db = csv_to_dict(file_name)
-    
-    def login(self, username, password):
-        """returns true if login found"""
-        for user in self.db:
-            if user['username'] == username:
-                if user['password'] == password:
-                    return True
-                else:
-                    raise ValueError("Invalid password")
-        
-        raise KeyError(f"{username} not in {self.file_name}")
-    
-    def getCredientals(self, username):
-        for user in self.db:
-            if user['username'] == username:
-                return user
-        raise KeyError(f"{username} not in {self.file_name}")
     
 
 class DatabaseManager:
     def __init__(self,type,**kwargs):
         self.type = type
-        self.db_connection = self.connect(type,kwargs)
+        self.db = self.connect(**kwargs)
 
     def connect(self, **kwargs):
         if self.type == "mysql":
@@ -51,6 +29,48 @@ class DatabaseManager:
         if self.type == 'mysql':
             if self.db_connection.is_connected():
                 self.db_connection.close()
+    
+    def login(self, username, password):
+        """
+        Login to Database with `username` and `password`
+        
+        Raises ValueError for invalid password.
+        Raises KeyError if username is not found.
+        """
+        # csv login method
+        if self.type == "csv":
+            for user in self.db:
+                if user['username'] == username:
+                    if user['password'] == password:
+                        return True
+                    else:
+                        return False
+
+            raise KeyError(f"{username} not in {self.file_name}")
+                
+        
+        # mysql login method 
+        elif self.type == "mysql":
+            cursor = self.db.cursor()
+            #to check login
+            query = "SELECT * FROM credentials WHERE BINARY username = %s AND BINARY password = %s"
+            cursor.execute(query, (username, password))
+
+            user = cursor.fetchone()
+
+            cursor.close()
+
+            if user:
+                return True
+            else:
+                return False
+    
+    def getCredentials(self, username):
+        """return credientials dict for `username`"""
+        for user in self.db:
+            if user['username'] == username:
+                return user
+        raise KeyError(f"{username} not in {self.file_name}")             
 
 class UserManager:
     def __init__(self, db_manager):
