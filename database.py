@@ -1,5 +1,43 @@
 import mysql.connector
+import csv
 from PyQt6.QtWidgets import QMessageBox
+
+class CSVManager:
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.db = self.csv_to_dict(file_name)
+
+    def csv_to_dict(self, file_path):
+        """Returns a CSV file as a list key value pairs"""
+        rows = []
+        with open(file_path, 'r', newline='') as csvfile:
+            csvreader = csv.DictReader(csvfile)
+
+            for row in csvreader:
+                rows.append(dict(row))
+        return rows
+    
+    def login(self, username, password):
+        """returns true if login found"""
+        for user in self.db:
+            if user['username'] == username:
+                if user['password'] == password:
+                    return True
+                else:
+                    raise ValueError("Invalid password")
+        
+        raise KeyError(f"{username} not in {self.file_name}")
+    
+    def getCredientals(self, username):
+        for user in self.db:
+            if user['username'] == username:
+                return user
+        raise KeyError(f"{username} not in {self.file_name}")
+    
+
+
+    
+
 
 class DatabaseManager:
     def __init__(self, host, user, password, database):

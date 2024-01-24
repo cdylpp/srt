@@ -1,12 +1,11 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
-from database import DatabaseManager, UserManager
-from home_screen import HomeScreen
+from database import DatabaseManager, UserManager, CSVManager
+#from home_screen import HomeScreen
 
 class UserManagementApp(QWidget):
     def __init__(self):
         super().__init__()
-
-        self.db_manager = DatabaseManager("localhost", "root", "NU2024", "user_management")
+        self.db_manager = DatabaseManager("localhost", "root", "009243286", "user_management")
         self.init_ui()
 
     def init_ui(self):
@@ -63,11 +62,11 @@ class UserManagementApp(QWidget):
 
             QMessageBox.information(None, 'Login Successful', f'Welcome {user_type} {full_name}!')
 
-            self.show_home_screen(user_type, full_name)
+            #self.show_home_screen(user_type, full_name)
 
-    def show_home_screen(self, user_type, full_name):
-        home_screen = HomeScreen(user_type, full_name, self.db_manager)
-        home_screen.show()
+    # def show_home_screen(self, user_type, full_name):
+    #     home_screen = HomeScreen(user_type, full_name, self.db_manager)
+    #     home_screen.show()
 
 
 class ForgotPassWindow(QDialog):
@@ -109,15 +108,17 @@ class ForgotPassWindow(QDialog):
         else:
             QMessageBox.warning(self, 'Invalid Email', 'Please enter a valid email address.')
 
-class LoginWindow(QDialog):
-    def __init__(self, db_manager, user_type):
+class LoginWindow(QWidget):
+    def __init__(self, db, user_type):
         print(f"Initializing {user_type} LoginWindow...")
         super().__init__()
-        self.setWindowTitle(f'{user_type} Login')
-        self.user_manager = UserManager(db_manager)
         self.user_type = user_type
-        self.db_manager = db_manager
-
+        self.db = CSVManager(db).db
+        self.user_manager = CSVManager(db)
+        self.initUI()
+    
+    def initUI(self):
+        self.setWindowTitle(f'{self.user_type} Login')
         self.username_label = QLabel('Username:')
         self.username_input = QLineEdit()
 
@@ -141,18 +142,26 @@ class LoginWindow(QDialog):
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
 
+        # For Testing 
+        self.show()
+
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
 
-        if self.user_manager.login(username, password, self.user_type):
-            self.accept()
+        if self.user_manager.login(username, password):
+            credientals = self.user_manager.getCredientals(username)
+            self.accept(credientals)
         else:
             QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
+
+    def accept(self, credentials):
+        QMessageBox.information(None, 'Login Successful', f'Welcome {credentials['first_name']}!')
+
 
 class StudentLoginWindow(LoginWindow):
     def __init__(self, db_manager):
@@ -166,6 +175,6 @@ class StudentLoginWindow(LoginWindow):
 if __name__ == '__main__':
     print("Starting application...")
     app = QApplication([])
-    user_management_app = UserManagementApp()
+    login = LoginWindow('Credentials.csv', 'Admin')
     app.exec()
 
