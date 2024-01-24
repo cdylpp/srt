@@ -37,6 +37,7 @@ class LoginWindow(QWidget):
 
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
+        
 
         self.show()
 
@@ -48,9 +49,10 @@ class LoginWindow(QWidget):
             credentials = self.db_manager.getCredentials(username)
             QMessageBox.information(self, 'Login Successful', f'Welcome, {credentials["first_name"]}!')
             self.close()
+            return True
         else:
             QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
-            raise ValueError("Invalid password")
+            return False
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
@@ -104,6 +106,8 @@ if __name__ == '__main__':
     # change parameters to 'mysql', host='host', root='root', password='password', database='db'
     # for mysql database connection
     login = LoginWindow('csv', file='Credentials.csv')
+    
+    
     sys.exit(app.exec())
 
 
