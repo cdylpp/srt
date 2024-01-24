@@ -2,6 +2,12 @@ import mysql.connector
 import csv
 from PyQt6.QtWidgets import QMessageBox
 
+DB_CONFIG = {
+    'host': "srt-database-1.cve60ywu8ysv.us-west-1.rds.amazonaws.com",
+    'user': 'srtAdmin',
+    'password': 'Bubmi1-xynvez-kijpuv',
+    'database': 'srtdatabase'
+}
 
 def csv_to_dict(file_path):
     """Returns a CSV file as a list of key value pairs"""
@@ -12,6 +18,11 @@ def csv_to_dict(file_path):
         for row in csvreader:
             rows.append(dict(row))
     return rows
+
+def generate_credential_dict(data_tuple):
+    field_names = ['id', 'username', 'password', 'role', 'first_name', 'last_name', 'email']
+    data_dict = {field: value for field, value in zip(field_names, data_tuple)}
+    return data_dict
     
 
 class DatabaseManager:
@@ -21,7 +32,7 @@ class DatabaseManager:
 
     def connect(self, **kwargs):
         if self.type == "mysql":
-            return mysql.connector.connect(kwargs)
+            return mysql.connector.connect(**kwargs)
         if self.type == "csv":
             return csv_to_dict(kwargs['file'])
 
@@ -53,7 +64,7 @@ class DatabaseManager:
         elif self.type == "mysql":
             cursor = self.db.cursor()
             #to check login
-            query = "SELECT * FROM credentials WHERE BINARY username = %s AND BINARY password = %s"
+            query = "SELECT * FROM admin_credentials WHERE BINARY username = %s AND BINARY password = %s"
             cursor.execute(query, (username, password))
 
             user = cursor.fetchone()
@@ -66,11 +77,24 @@ class DatabaseManager:
                 return False
     
     def getCredentials(self, username):
-        """return credientials dict for `username`"""
-        for user in self.db:
-            if user['username'] == username:
-                return user
-        raise KeyError(f"{username} not in {self.file_name}")             
+        """returns credientials for `username`"""
+
+        # returns the entire dict for username in csv file
+        if self.type == "csv":
+            for user in self.db:
+                if user['username'] == username:
+                    return user
+            raise KeyError(f"{username} not in {self.file_name}")
+
+        # returns row with username == `username` as a dict object
+        elif self.type == "mysql":
+            cursor = self.db.cursor()
+            query = "SELECT * FROM admin_credentials WHERE username = %s"
+            cursor.execute(query, (username,))
+            data = cursor.fetchone()
+            cursor.close()
+            return generate_credential_dict(data)
+
 
 class UserManager:
     def __init__(self, db_manager):

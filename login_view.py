@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
-from database import DatabaseManager
+from database import DatabaseManager, DB_CONFIG
 from utils import Validator
 #from home_screen import HomeScreen
 
@@ -86,7 +86,7 @@ class ForgotPassWindow(QDialog):
 
         if Validator().validate('email', email):
             cursor = self.db_manager.db_connection.cursor()
-            query = "SELECT email FROM credentials WHERE email = %s"
+            query = "SELECT email FROM admin_credentials WHERE email = %s"
             cursor.execute(query, (email,))
             result = cursor.fetchone()
             cursor.close()
@@ -100,12 +100,19 @@ class ForgotPassWindow(QDialog):
             self.email_input.clear()
 
 if __name__ == '__main__':
+
+
     print("Starting application...")
     app = QApplication(sys.argv)
     
     # change parameters to 'mysql', host='host', root='root', password='password', database='db'
     # for mysql database connection
-    login = LoginWindow('csv', file='Credentials.csv')
+    login = LoginWindow('mysql',
+        host=DB_CONFIG['host'],
+        user=DB_CONFIG['user'],
+        password=DB_CONFIG['password'],
+        database=DB_CONFIG['database']
+    )
     
     
     sys.exit(app.exec())
