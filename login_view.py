@@ -105,14 +105,18 @@ if __name__ == '__main__':
     print("Starting application...")
     app = QApplication(sys.argv)
     
-    # change parameters to 'mysql', host='host', root='root', password='password', database='db'
-    # for mysql database connection
+    # Use for `mysql` database
+    # AWS RDS Mysql
     login = LoginWindow('mysql',
         host=DB_CONFIG['host'],
         user=DB_CONFIG['user'],
         password=DB_CONFIG['password'],
         database=DB_CONFIG['database']
     )
+    
+    
+    # Use for `csv` database
+    # login = LoginWindow('csv', file='Credentials.csv')
     
     
     sys.exit(app.exec())
