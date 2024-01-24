@@ -2,20 +2,21 @@ import mysql.connector
 import csv
 from PyQt6.QtWidgets import QMessageBox
 
+
+def csv_to_dict(file_path):
+    """Returns a CSV file as a list of key value pairs"""
+    rows = []
+    with open(file_path, 'r', newline='') as csvfile:
+        csvreader = csv.DictReader(csvfile)
+
+        for row in csvreader:
+            rows.append(dict(row))
+    return rows
+
 class CSVManager:
     def __init__(self, file_name):
         self.file_name = file_name
-        self.db = self.csv_to_dict(file_name)
-
-    def csv_to_dict(self, file_path):
-        """Returns a CSV file as a list key value pairs"""
-        rows = []
-        with open(file_path, 'r', newline='') as csvfile:
-            csvreader = csv.DictReader(csvfile)
-
-            for row in csvreader:
-                rows.append(dict(row))
-        return rows
+        self.db = csv_to_dict(file_name)
     
     def login(self, username, password):
         """returns true if login found"""
@@ -35,23 +36,21 @@ class CSVManager:
         raise KeyError(f"{username} not in {self.file_name}")
     
 
-
-    
-
-
 class DatabaseManager:
-    def __init__(self, host, user, password, database):
+    def __init__(self,type,**kwargs):
+        self.type = type
+        self.db_connection = self.connect(type,kwargs)
 
-        self.db_connection = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database
-        )
+    def connect(self, **kwargs):
+        if self.type == "mysql":
+            return mysql.connector.connect(kwargs)
+        if self.type == "csv":
+            return csv_to_dict(kwargs['file'])
 
     def close_connection(self):
-        if self.db_connection.is_connected():
-            self.db_connection.close()
+        if self.type == 'mysql':
+            if self.db_connection.is_connected():
+                self.db_connection.close()
 
 class UserManager:
     def __init__(self, db_manager):
