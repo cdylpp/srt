@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
 from database import DatabaseManager, UserManager, CSVManager
 #from home_screen import HomeScreen
 
-class UserManagementApp(QWidget):
+class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.db_manager = DatabaseManager("localhost", "root", "009243286", "user_management")
