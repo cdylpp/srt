@@ -72,6 +72,20 @@ class DatabaseManager:
                 return None
     
     def connect(self, **kwargs):
+        """
+        Makes a connection to the database.
+        
+        Args:
+            **file (str): path to csv file to connect too (for type=`csv`)
+            **host (str): host url for database to connect to.
+            **user (str): username for the database.
+            **password (str): password for the `mysql` database.
+            **database (str): name of the database for `mysql` database.
+
+        Returns:
+            PooledMySQLConnection | MySQLAbstractConnection: see `mysql.connector.connect`
+            List[dict[str, str]]: List of dicts with fields as keys and attributes as values.
+        """
         if self.type == "mysql":
             return mysql.connector.connect(**kwargs)
         if self.type == "csv":

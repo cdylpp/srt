@@ -36,8 +36,6 @@ class LoginWindow(QWidget):
 
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
-        
-
         self.show()
 
     def login(self):
@@ -93,10 +91,8 @@ class ForgotPassWindow(QDialog):
             self.email_input.clear()
 
 if __name__ == '__main__':
-
-
     print("Starting application...")
-    app = QApplication(sys.argv)
+    app = QApplication([])
     
     # Use for `mysql` database
     # AWS RDS Mysql
@@ -107,10 +103,8 @@ if __name__ == '__main__':
         database=DB_CONFIG['database']
     )
     
-    
     # Use for `csv` database
     # login = LoginWindow('csv', file='Credentials.csv')
-    
     
     sys.exit(app.exec())
 
