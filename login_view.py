@@ -1,3 +1,4 @@
+import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
 from database import DatabaseManager
 #from home_screen import HomeScreen
@@ -96,8 +97,11 @@ class ForgotPassWindow(QDialog):
 
 if __name__ == '__main__':
     print("Starting application...")
-    app = QApplication([])
+    app = QApplication(sys.argv)
+    
+    # change parameters to 'mysql', host='host', root='root', password='password', database='db'
+    # for mysql database connection
     login = LoginWindow('csv', file='Credentials.csv')
-    app.exec()
+    sys.exit(app.exec())
 
 
