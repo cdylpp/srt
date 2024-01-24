@@ -1,7 +1,24 @@
+"""_summary_
+DatabaseManager provides the methods
+    -connect()
+    -login()
+    -close_connection()
+    -getCredentials() -> dict
+    
+Raises:
+    KeyError: _description_
+    KeyError: _description_
+
+Returns:
+    _type_: _description_
+"""
+
 import mysql.connector
 import csv
 from PyQt6.QtWidgets import QMessageBox
 
+
+# Config for AWS database, don't change
 DB_CONFIG = {
     'host': "srt-database-1.cve60ywu8ysv.us-west-1.rds.amazonaws.com",
     'user': 'srtAdmin',
@@ -9,8 +26,9 @@ DB_CONFIG = {
     'database': 'srtdatabase'
 }
 
+
 def csv_to_dict(file_path):
-    """Returns a CSV file as a list of key value pairs"""
+    """Takes a file_path and returns a list of dicts whose key is `username`"""
     rows = []
     with open(file_path, 'r', newline='') as csvfile:
         csvreader = csv.DictReader(csvfile)
@@ -20,6 +38,17 @@ def csv_to_dict(file_path):
     return rows
 
 def generate_credential_dict(data_tuple):
+    """
+    Returns a dict object with `data_tuple` as the values for the keys
+    Example:
+        generate_credential_dict(('1', 'joesmith', 'joe1', 'admin', 'Joe', 'Smith', 'joe.smith@mail.com'))
+        >>> {'id': '1', 'username': 'joesmith', 'password': 'joe1', 'role': 'admin', 'first_name': 'Joe', 'last_name': 'Smith', 'email': 'joe.smith@mail.com'}
+    Args:
+        data_tuple (Tuple): a tuple of data fields from the credentials database
+
+    Returns:
+        dict[str, str]: with headers (e.g. 'id', 'username'...) as keys.
+    """
     field_names = ['id', 'username', 'password', 'role', 'first_name', 'last_name', 'email']
     data_dict = {field: value for field, value in zip(field_names, data_tuple)}
     return data_dict
