@@ -2,16 +2,6 @@ import csv
 from sqlalchemy import create_engine, text
 from PyQt6.QtWidgets import QMessageBox
 
-# Config for AWS database, don't change
-DB_CONFIG = {
-    'host': "srt-database-1.cve60ywu8ysv.us-west-1.rds.amazonaws.com",
-    'user': 'srtAdmin',
-    'password': 'Bubmi1-xynvez-kijpuv',
-    'database': 'srtdatabase'
-}
-
-DB_URL = 'mysql://srtAdmin:Bubmi1-xynvez-kijpuv@srt-database-1.cve60ywu8ysv.us-west-1.rds.amazonaws.com/srtdatabase'
-
 
 def csv_to_dict(file_path):
     """Takes a file_path and returns a list of dicts whose key is `username`"""
