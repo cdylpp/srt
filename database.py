@@ -23,21 +23,6 @@ def csv_to_dict(file_path):
             rows.append(dict(row))
     return rows
 
-def generate_credential_dict(data_tuple):
-    """
-    Returns a dict object with `data_tuple` as the values for the keys
-    Example:
-        generate_credential_dict(('1', 'joesmith', 'joe1', 'admin', 'Joe', 'Smith', 'joe.smith@mail.com'))
-        >>> {'id': '1', 'username': 'joesmith', 'password': 'joe1', 'role': 'admin', 'first_name': 'Joe', 'last_name': 'Smith', 'email': 'joe.smith@mail.com'}
-    Args:
-        data_tuple (Tuple): a tuple of data fields from the credentials database
-
-    Returns:
-        dict[str, str]: with headers (e.g. 'id', 'username'...) as keys.
-    """
-    field_names = ['id', 'username', 'password', 'role', 'first_name', 'last_name', 'email']
-    data_dict = {field: value for field, value in zip(field_names, data_tuple)}
-    return data_dict
     
 
 class DatabaseManager:
@@ -59,7 +44,6 @@ class DatabaseManager:
                     )   
             return result.one_or_none()
 
-    
     def connect(self, **kwargs):
         """
         Makes a connection to the database.
