@@ -45,6 +45,8 @@ class LoginWindow(QWidget):
         if self.db_manager.login(username, password):
             credentials = self.db_manager.getCredentials(username)
             QMessageBox.information(self, 'Login Successful', f'Welcome, {credentials["first_name"]}!')
+            
+            # Takes user to the MainWindow
             self.close()
             return True
         else:
@@ -83,7 +85,10 @@ class ForgotPassWindow(QDialog):
         if Validator().validate('email', email):
             result = self.db_manager.fetch(field='email', target=email)
             if result:
+                #TODO:
+                # Find the email in the db
                 QMessageBox.information(None, 'Password Reset', 'Email sent!')
+                # implement send email logic
             else:
                 QMessageBox.warning(self, 'Password Reset Failed', 'Email not found. Please contact your admin.')
         else:

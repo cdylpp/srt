@@ -62,14 +62,12 @@ class DatabaseManager:
         elif self.type == 'mysql':
             # handle mysql case
             cursor = self.db.cursor()
-            query = "SELECT * FROM admin_credentials WHERE %s = %s"
-            cursor.execute(query, (field, target))
+            query = "SELECT * FROM admin_credentials WHERE email = %s"
+            cursor.execute(query, (target,))
             result = cursor.fetchone()
             cursor.close
-            if result:
-                return generate_credential_dict(result)
-            else:
-                return None
+            return generate_credential_dict(result)
+
     
     def connect(self, **kwargs):
         """
