@@ -1,5 +1,5 @@
-import mysql.connector
 import csv
+from sqlalchemy import create_engine, text
 from PyQt6.QtWidgets import QMessageBox
 
 # Config for AWS database, don't change
@@ -9,6 +9,8 @@ DB_CONFIG = {
     'password': 'Bubmi1-xynvez-kijpuv',
     'database': 'srtdatabase'
 }
+
+DB_URL = 'mysql://srtAdmin:Bubmi1-xynvez-kijpuv@srt-database-1.cve60ywu8ysv.us-west-1.rds.amazonaws.com/srtdatabase'
 
 
 def csv_to_dict(file_path):
@@ -41,32 +43,21 @@ def generate_credential_dict(data_tuple):
 class DatabaseManager:
     def __init__(self,type,**kwargs):
         self.type = type
-        self.db = self.connect(**kwargs)
+        self.db_engine = self.connect(**kwargs)
     
-    def fetch(self,field: str,target: str) -> dict[str, str]:
-        """
-        Fetches the `target` from the `field` column from the database.
-        
-        Args:
-            field (str): valid attribute within the database (e.g., id, password...)
-            target (str): value to look for in the database 
-
-        Returns:
-            dict[str, str]: if `target` is found it returns the whole row as a dict. Else None
-        """
-        
+    def get_email(self,email: str) -> dict[str, str]:
         if self.type == 'csv':
             # handle csv case
             return
         
         elif self.type == 'mysql':
             # handle mysql case
-            cursor = self.db.cursor()
-            query = "SELECT * FROM admin_credentials WHERE email = %s"
-            cursor.execute(query, (target,))
-            result = cursor.fetchone()
-            cursor.close
-            return generate_credential_dict(result)
+            with self.db_engine.connect() as conn:
+                result = conn.execute(
+                    text("SELECT * FROM admin_credentials WHERE email =:email"),
+                    {'email': email}
+                    )   
+            return result.one_or_none()
 
     
     def connect(self, **kwargs):
@@ -75,17 +66,15 @@ class DatabaseManager:
         
         Args:
             **file (str): path to csv file to connect too (for type=`csv`)
-            **host (str): host url for database to connect to.
-            **user (str): username for the database.
-            **password (str): password for the `mysql` database.
-            **database (str): name of the database for `mysql` database.
+            **db_url (str): database url 
 
         Returns:
             PooledMySQLConnection | MySQLAbstractConnection: see `mysql.connector.connect`
             List[dict[str, str]]: List of dicts with fields as keys and attributes as values.
         """
         if self.type == "mysql":
-            return mysql.connector.connect(**kwargs)
+            return create_engine(kwargs['db_url'], echo=True)
+        
         if self.type == "csv":
             return csv_to_dict(kwargs['file'])
 
@@ -115,21 +104,15 @@ class DatabaseManager:
         
         # mysql login method 
         elif self.type == "mysql":
-            cursor = self.db.cursor()
-            #to check login
-            query = "SELECT * FROM admin_credentials WHERE BINARY username = %s AND BINARY password = %s"
-            cursor.execute(query, (username, password))
+            with self.db_engine.connect() as conn:
+                result = conn.execute(
+                    text("SELECT * FROM admin_credentials WHERE username =:username AND password =:password"),
+                    {'username': username, 'password': password}
+                )
 
-            user = cursor.fetchone()
-
-            cursor.close()
-
-            if user:
-                return True
-            else:
-                return False
+                return True if result else False
     
-    def getCredentials(self, username):
+    def get_name(self,username):
         """returns credientials for `username`"""
 
         # returns the entire dict for username in csv file
@@ -141,12 +124,13 @@ class DatabaseManager:
 
         # returns row with username == `username` as a dict object
         elif self.type == "mysql":
-            cursor = self.db.cursor()
-            query = "SELECT * FROM admin_credentials WHERE username = %s"
-            cursor.execute(query, (username,))
-            data = cursor.fetchone()
-            cursor.close()
-            return generate_credential_dict(data)
+            with self.db_engine.connect() as conn:
+                result = conn.execute(
+                    text("SELECT first_name, last_name FROM admin_credentials WHERE username =:username"),
+                    {'username': username}
+                    )
+                return result.first()
+
 
 
 # James' Push

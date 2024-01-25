@@ -14,6 +14,8 @@ class Validator:
     
     def clean(self, s):
         return s.strip().lower()
+    
+
 
 # Test for validate()
 # email = "example@email.com"
