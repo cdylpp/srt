@@ -13,3 +13,4 @@ QT-PyQt-PySide-Custom-Widgets
 pipwin
 pipwin install cairocffi
 iconify
+python-dotenv

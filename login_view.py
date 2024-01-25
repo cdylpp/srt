@@ -1,12 +1,18 @@
 import sys
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
+from PyQt6.QtCore import pyqtSignal
 from database import DatabaseManager
+from user import UserManager
 from utils import Validator
 
 class LoginWindow(QWidget):
+
+    login_success = pyqtSignal(bool)
+
     def __init__(self, db_type, **kwargs):
         super().__init__()
-        self.db_manager = DatabaseManager(db_type,**kwargs)
+        self.db_manager = DatabaseManager(db_type, **kwargs)
+        self.user_manager = UserManager()
         self.init_ui()
 
     def init_ui(self):
@@ -36,20 +42,20 @@ class LoginWindow(QWidget):
 
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
-        self.show()
 
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
 
         if self.db_manager.login(username, password):
-            first,last = self.db_manager.get_name(username)
-            QMessageBox.information(self, 'Login Successful', f'Welcome, {first} {last}!')
-            
-            # Takes user to the MainWindow
-            self.close()
-            return True
+            # Successful Login
+            user = self.db_manager.get_user(username)
+            QMessageBox.information(self, 'Login Successful', f'Welcome, {user['first_name']} {user['last_name']}!')
+            self.user_manager.set_user(user)
+            self.login_success.emit(True)
+
         else:
+            # Unsuccessful
             QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
             return False
 
