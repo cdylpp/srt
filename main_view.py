@@ -56,58 +56,72 @@ class Ui_MainWindow(object):
 "")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+
         self.leftMenuContainer = QWidget(self.centralwidget)
         self.leftMenuContainer.setObjectName(u"leftMenuContainer")
+
         self.verticalLayout = QVBoxLayout(self.leftMenuContainer)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+
         self.leftMenuSubContainer = QWidget(self.leftMenuContainer)
         self.leftMenuSubContainer.setObjectName(u"leftMenuSubContainer")
+
         self.verticalLayout_2 = QVBoxLayout(self.leftMenuSubContainer)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(5, 5, 0, 0)
+
         self.frame = QFrame(self.leftMenuSubContainer)
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
+
         self.horizontalLayout_2 = QHBoxLayout(self.frame)
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+
         self.menuBtn = QPushButton(self.frame)
         self.menuBtn.setObjectName(u"menuBtn")
+
         icon = QIcon()
         icon.addFile(u"resources/Icons/align-justify.svg", QSize(), QIcon.Normal, QIcon.Off)
+
         self.menuBtn.setIcon(icon)
         self.menuBtn.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_2.addWidget(self.menuBtn)
 
-
         self.verticalLayout_2.addWidget(self.frame, 0, Qt.AlignTop)
 
         self.frame_2 = QFrame(self.leftMenuSubContainer)
         self.frame_2.setObjectName(u"frame_2")
+
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
+
         self.frame_2.setSizePolicy(sizePolicy)
         self.frame_2.setFrameShape(QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Raised)
+
         self.verticalLayout_3 = QVBoxLayout(self.frame_2)
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 10, 0, 10)
+
         self.homeBtn = QPushButton(self.frame_2)
         self.homeBtn.setObjectName(u"homeBtn")
         self.homeBtn.setStyleSheet(u"background-color: #1f232a;")
+
         icon1 = QIcon()
         icon1.addFile(u"resources/Icons/home.svg", QSize(), QIcon.Normal, QIcon.Off)
         self.homeBtn.setIcon(icon1)
@@ -656,4 +670,9 @@ class Ui_MainWindow(object):
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"Notification Message", None))
         self.pushButton_8.setText("")
     # retranslateUi
+
+
+
+
+
 
