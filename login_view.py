@@ -1,12 +1,18 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
-from database import DatabaseManager, DB_CONFIG
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
+from PyQt6.QtCore import pyqtSignal
+from database import DatabaseManager
+from user import UserManager
 from utils import Validator
 
 class LoginWindow(QWidget):
+
+    login_success = pyqtSignal(bool)
+
     def __init__(self, db_type, **kwargs):
         super().__init__()
-        self.db_manager = DatabaseManager(db_type,**kwargs)
+        self.db_manager = DatabaseManager(db_type, **kwargs)
+        self.user_manager = UserManager()
         self.init_ui()
 
     def init_ui(self):
@@ -36,20 +42,20 @@ class LoginWindow(QWidget):
 
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
-        self.show()
 
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
 
         if self.db_manager.login(username, password):
-            credentials = self.db_manager.getCredentials(username)
-            QMessageBox.information(self, 'Login Successful', f'Welcome, {credentials["first_name"]}!')
-            
-            # Takes user to the MainWindow
-            self.close()
-            return True
+            # Successful Login
+            user = self.db_manager.get_user(username)
+            QMessageBox.information(self, 'Login Successful', f'Welcome, {user['first_name']} {user['last_name']}!')
+            self.user_manager.set_user(user)
+            self.login_success.emit(True)
+
         else:
+            # Unsuccessful
             QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
             return False
 
@@ -82,11 +88,9 @@ class ForgotPassWindow(QDialog):
 
     def reset_password(self):
         email = self.email_input.text()
+
         if Validator().validate('email', email):
-            result = self.db_manager.fetch(field='email', target=email)
-            if result:
-                #TODO:
-                # Find the email in the db
+            if self.db_manager.get_email(email):
                 QMessageBox.information(None, 'Password Reset', 'Email sent!')
                 # implement send email logic
             else:
@@ -95,22 +99,6 @@ class ForgotPassWindow(QDialog):
             QMessageBox.warning(self, 'Invalid Email', 'Please enter a valid email address.')
             self.email_input.clear()
 
-if __name__ == '__main__':
-    print("Starting application...")
-    app = QApplication([])
-    
-    # Use for `mysql` database
-    # AWS RDS Mysql
-    login = LoginWindow('mysql',
-        host=DB_CONFIG['host'],
-        user=DB_CONFIG['user'],
-        password=DB_CONFIG['password'],
-        database=DB_CONFIG['database']
-    )
-    
-    # Use for `csv` database
-    # login = LoginWindow('csv', file='Credentials.csv')
-    
-    sys.exit(app.exec())
+
 
 
