@@ -43,7 +43,7 @@ class DatabaseManager:
         self.type = type
         self.db = self.connect(**kwargs)
     
-    def fetch(self,field: str,target: str) -> dict[str, str]:
+    def fetch(self, field: str, target: str) -> dict[str, str]:
         """
         Fetches the `target` from the `field` column from the database.
         
@@ -62,8 +62,8 @@ class DatabaseManager:
         elif self.type == 'mysql':
             # handle mysql case
             cursor = self.db.cursor()
-            query = "SELECT * FROM admin_credentials WHERE email = %s"
-            cursor.execute(query, (target,))
+            query = "SELECT * FROM admin_credentials WHERE %s = %s"
+            cursor.execute(query, (field, target,))
             result = cursor.fetchone()
             cursor.close
             return generate_credential_dict(result)
