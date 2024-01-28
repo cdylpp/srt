@@ -1,34 +1,71 @@
 # User Class
 # TODO: Finish User Model
+import shelve
+
 class User:
     def __init__(self, info: dict[str, str]):
-        self.__id = info['id']
-        self.__username = info['username']
-        self.__email = info['email']
-        self.__first_name = info['first_name']
-        self.__last_name = info['last_name']
-        self.__role = info['role']
+        self._id = info['id']
+        self._username = info['username']
+        self._email = info['email']
+        self._first_name = info['first_name']
+        self._last_name = info['last_name']
+        self._role = info['role']
     
-    def __repr__(self):
-        return f'User(id: {self.__id}, username: {self.__username})'
+    def __repr__(self) -> str:
+        return f'User(id: {self._id}, username: {self._username})'
     
-    def get_email(self):
-        return self.__email
+    def get_username(self) -> str:
+        return self._username
     
-    def get_name(self):
-        return f'{self.__first_name} {self.__last_name}'
+    def get_email(self) -> str:
+        return self._email
+    
+    def get_name(self) -> str:
+        return f'{self._first_name} {self._last_name}'
     
     def get_role(self):
-        return self.__role
+        return self._role
     
     
 
 class UserManager:
     def __init__(self):
-        self.user = None
+        self._user = None
+        self._login_attempts = 0
 
-    def set_user(self, user_data: dict[str, str]):
-        self.user = User(user_data)
+    def set_user(self, user_data: dict[str, str]) -> None:
+        self._user = User(user_data)
+
+    def __repr__(self) -> str:
+        return f"UserManager(user: {self._user})"
+    
+    def get_user(self) -> User:
+        return self._user
+
+    def failed_attempt(self) -> None:
+        self._login_attempts += 1
+        return
+    
+    def get_login_attempts(self) -> int:
+        return self._login_attempts
+
+    def save_user(self) -> None:
+        # Save the username if the check box is checked.
+        with shelve.open('profile') as profile:
+            profile['prev_user'] = self._user.get_username()
+        return
+    
+    def clear_user(self) -> None:
+        with shelve.open('profile') as profile:
+            profile['prev_user'] = ""
+        return
+    
+    def get_prev_user(self) -> str:
+        with shelve.open('profile') as profile:
+            if 'prev_user' in profile:
+                return profile['prev_user']
+            else:
+                return ""
 
     def email_exists(self, email):
         cursor = self.db_manager.db_connection.cursor()
@@ -51,22 +88,6 @@ class UserManager:
         return user is not None
     
     def login(self, username, password):
-        cursor = self.db_manager.db_connection.cursor()
-
-        # Execute SELECT query to check login admin
-        query = "SELECT * FROM admin WHERE username = %s AND password = %s"
-        cursor.execute(query, (username, password))
-
-        user = cursor.fetchone()
-
-        if user:
-            # Reset login attempts on successful login
-            self.reset_login_attempts(username)
-            QMessageBox.information(None, 'Login Successful', f'Welcome, {username}')
-            return True
-        else:
-            # Increment login attempts and set indefinite lockout
-            self.handle_login_attempts(username)
             return False
 
     def handle_login_attempts(self, username):
