@@ -6,14 +6,44 @@
 #
 #
 
-import sys
+import sys, os
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
-from srt_app import MySrtApp
+from srt_app import MainWindow
+from login_view import LoginDialog
 
-app = QApplication(sys.argv)
+class SrtApp(QApplication):
+    def __init__(self):
+        super().__init__()
+        # Login
+        self.login_action()
 
-window = MySrtApp()
+        self.main_window = MainWindow()
+        self.main_window.show()
 
-window.show()
-app.exec()
+
+    # Handles Login Action
+    def login_action(self):
+        """
+        Handles the login_view for user authentication.
+
+        Returns:
+            A User is returned.
+        """
+        # Generate Login Window
+        login = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
+        # Run Login Loop
+        login.exec()
+        login.login_reject.connect(login.exec)
+        # Exit: Fail / Success
+        # Get User from UserManager, send to the MainWindow.
+        if not login.accept:
+            sys.exit()
+            
+        return 
+        
+
+srtApp = SrtApp()
+
+
+srtApp.exec()
 
