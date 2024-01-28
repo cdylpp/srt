@@ -69,7 +69,7 @@ class DatabaseManager:
             if self.db_connection.is_connected():
                 self.db_connection.close()
     
-    def login(self, username, password):
+    def is_valid(self, username, password):
         """
         Login to Database with `username` and `password`
         
@@ -87,7 +87,6 @@ class DatabaseManager:
 
             raise KeyError(f"{username} not in {self.file_name}")
                 
-        
         # mysql login method 
         elif self.type == "mysql":
         
