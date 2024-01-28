@@ -87,34 +87,11 @@ class UserManager:
         cursor.close()
         return user is not None
     
-    def login(self, username, password):
+    def login(self, username, password) -> None:
             return False
 
-    def handle_login_attempts(self, username):
-        cursor = self.db_manager.db_connection.cursor()
-
-        # Retrieve current login attempts count and lockout status
-        query = "SELECT login_attempts, locked_out_until FROM admin_credentials WHERE username = %s"
-        cursor.execute(query, (username,))
-        user_info = cursor.fetchone()
-
-        if user_info:
-            login_attempts, locked_out_until = user_info
-
-            # Increment login attempts
-            login_attempts += 1
-
-            # Set indefinite lockout
-            locked_out_until = datetime.max
-
-            # Update login attempts and lockout status in the database
-            update_query = "UPDATE admin_credentials SET login_attempts = %s, locked_out_until = %s WHERE username = %s"
-            cursor.execute(update_query, (login_attempts, locked_out_until, username))
-
-            # Display lockout message
-            QMessageBox.warning(None, 'Account Locked', 'Too many unsuccessful login attempts.')
-
-        cursor.close()
+    def handle_login_attempts(self, username) -> None:
+        return
         
     def reset_login_attempts(self, username):
         cursor = self.db_manager.db_connection.cursor()
