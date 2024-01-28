@@ -53,6 +53,7 @@ class LoginWindow(QWidget):
             QMessageBox.information(self, 'Login Successful', f'Welcome, {user['first_name']} {user['last_name']}!')
             self.user_manager.set_user(user)
             self.login_success.emit(True)
+            self.close()
 
         else:
             # Unsuccessful
