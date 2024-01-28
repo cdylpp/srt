@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog, QCheckBox
 from PyQt6.QtCore import pyqtSignal
 from database import DatabaseManager
 from user import UserManager
@@ -26,6 +26,8 @@ class LoginWindow(QWidget):
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
+        self.rememberme_checkBox = QCheckBox('Remember Me')
+
         self.login_button = QPushButton('Login')
         self.forgot_button = QPushButton('Forgot Password')
 
@@ -35,17 +37,20 @@ class LoginWindow(QWidget):
         layout.addWidget(self.username_input)
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
+        layout.addWidget(self.rememberme_checkBox)
         layout.addWidget(self.login_button)
         layout.addWidget(self.forgot_button)
 
         self.setLayout(layout)
 
+        self.rememberme_checkBox.stateChanged.connect(self.checkBoxStatus)
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
 
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
+        rememberme = self.rememberme_checkBox.isChecked()
 
         if self.db_manager.login(username, password):
             # Successful Login
@@ -57,8 +62,17 @@ class LoginWindow(QWidget):
 
         else:
             # Unsuccessful
-            QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
+            QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
             return False
+
+        """ remember box logic """
+    def checkBoxStatus(self):
+        if self.rememberme_checkBox.isChecked():
+            self.rememberme_checkBox.setText("Login info saved!")
+
+        else:
+            self.rememberme_checkBox.setText("Remember me")
+
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)

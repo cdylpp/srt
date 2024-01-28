@@ -1,6 +1,6 @@
 #Libraries
 
-#PyQt6
+PyQt6
 Pandas
 mysql-connector-python
 matplotlib
