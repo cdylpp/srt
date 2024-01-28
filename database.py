@@ -19,31 +19,6 @@ class DatabaseManager:
     def __init__(self,type,**kwargs):
         self.type = type
         self.db_engine = self.connect(**kwargs)
-    
-    def fetch(self,field: str,target: str) -> dict[str, str]:
-        """
-        Fetches the `target` from the `field` column from the database.
-        
-        Args:
-            field (str): valid attribute within the database (e.g., id, password...)
-            target (str): value to look for in the database 
-
-        Returns:
-            dict[str, str]: if `target` is found it returns the whole row as a dict. Else None
-        """
-        
-        if self.type == 'csv':
-            # handle csv case
-            return
-        
-        elif self.type == 'mysql':
-            # handle mysql case
-            cursor = self.db.cursor()
-            query = "SELECT * FROM admin_credentials WHERE email = %s"
-            cursor.execute(query, (target,))
-            result = cursor.fetchone()
-            cursor.close
-            return generate_credential_dict(result)
 
     
     def connect(self, **kwargs):
