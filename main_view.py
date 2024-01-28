@@ -53,7 +53,7 @@ class Ui_MainWindow(object):
 "#headerContainer{\n"
 "	background-color: #2c313c;\n"
 "}\n"
-"")
+"")     
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
 
@@ -646,9 +646,8 @@ class Ui_MainWindow(object):
 
         self.stackedWidget.setCurrentIndex(2)
         self.stackedWidget_2.setCurrentIndex(1)
-
-
         QMetaObject.connectSlotsByName(MainWindow)
+        
     # setupUi
 
     def retranslateUi(self, MainWindow):

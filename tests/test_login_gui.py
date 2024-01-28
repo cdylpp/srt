@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication
 print("Starting application...")
 app = QApplication([])
 
+
 home = MainWindow()
 home.show()
 

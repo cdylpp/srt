@@ -1,30 +1,35 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog, QCheckBox
 from PyQt6.QtCore import pyqtSignal
 from database import DatabaseManager
-from user import UserManager
+from tests.user import User, UserManager
 from utils import Validator
+from dotenv import dotenv_values
 
-class LoginWindow(QWidget):
+class LoginDialog(QDialog):
 
-    login_success = pyqtSignal(bool)
+    login_accept = pyqtSignal(bool)
+    login_reject = pyqtSignal(bool)
 
     def __init__(self, db_type, **kwargs):
         super().__init__()
         self.db_manager = DatabaseManager(db_type, **kwargs)
         self.user_manager = UserManager()
         self.init_ui()
+        self.accept = False
 
     def init_ui(self):
         print("Initializing UI...")
         self.setWindowTitle('SRT Login')
 
         self.username_label = QLabel('Username:')
-        self.username_input = QLineEdit()
+        self.username_input = QLineEdit(self.user_manager.get_prev_user())
 
         self.password_label = QLabel('Password:')
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.rememberme_checkBox = QCheckBox('Remember Me')
 
         self.login_button = QPushButton('Login')
         self.forgot_button = QPushButton('Forgot Password')
@@ -35,6 +40,7 @@ class LoginWindow(QWidget):
         layout.addWidget(self.username_input)
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
+        layout.addWidget(self.rememberme_checkBox)
         layout.addWidget(self.login_button)
         layout.addWidget(self.forgot_button)
 
@@ -47,21 +53,45 @@ class LoginWindow(QWidget):
         username = self.username_input.text()
         password = self.password_input.text()
 
-        if self.db_manager.login(username, password):
+        if self.db_manager.is_valid(username, password):
             # Successful Login
-            user = self.db_manager.get_user(username)
-            QMessageBox.information(self, 'Login Successful', f'Welcome, {user['first_name']} {user['last_name']}!')
-            self.user_manager.set_user(user)
-            self.login_success.emit(True)
+            self.user_manager.set_user(self.db_manager.get_user(username))
+            user = self.user_manager.get_user()
+            QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+
+            if self.rememberme_checkBox.isChecked():
+                self.user_manager.save_user()
+                self.rememberme_checkBox.setText("Login info saved!")
+            else:
+                self.user_manager.clear_user()
+            
+            # Signal login successful
+            self.login_accept.emit(True)
+            self.accept = True
+            self.close()
 
         else:
             # Unsuccessful
-            QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
+            QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
+
+            self.user_manager.failed_attempt()
+            if self.user_manager.get_login_attempts() > 2:
+                # Youre done! No more!
+                raise PermissionError("Failed Attempt Three Times, Locked From Account.")
+
+            self.login_reject.emit(True)
             return False
+
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
+
+    def set_user_text(self):
+        env_vals = dotenv_values('.env')
+        saved_user = env_vals.get('PREV_USER')
+        return str(saved_user)
+
 
 
 class ForgotPassWindow(QDialog):
