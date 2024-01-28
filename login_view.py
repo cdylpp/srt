@@ -61,7 +61,7 @@ class LoginWindow(QWidget):
 
         else:
             # Unsuccessful
-            QMessageBox.warning(self, 'Login Failed', 'Invalid username, password.')
+            QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
             return False
 
         """ remember box logic """
