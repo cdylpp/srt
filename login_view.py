@@ -2,17 +2,18 @@ import sys
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog, QCheckBox
 from PyQt6.QtCore import pyqtSignal
 from database import DatabaseManager
-from user import UserManager
+from tests.user import User
 from utils import Validator
 
-class LoginWindow(QWidget):
+class LoginDialog(QDialog):
 
-    login_success = pyqtSignal(bool)
+    login_accept = pyqtSignal(bool)
+    login_reject = pyqtSignal(bool)
 
     def __init__(self, db_type, **kwargs):
         super().__init__()
         self.db_manager = DatabaseManager(db_type, **kwargs)
-        self.user_manager = UserManager()
+        self.user_signal = None
         self.init_ui()
 
     def init_ui(self):
@@ -54,15 +55,17 @@ class LoginWindow(QWidget):
 
         if self.db_manager.login(username, password):
             # Successful Login
-            user = self.db_manager.get_user(username)
-            QMessageBox.information(self, 'Login Successful', f'Welcome, {user['first_name']} {user['last_name']}!')
-            self.user_manager.set_user(user)
-            self.login_success.emit(True)
+            user = User(self.db_manager.get_user(username))
+            QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+            self.login_accept.emit(True)
             self.close()
 
         else:
             # Unsuccessful
+            # TODO: Failed Login
+            self.login_reject.emit(True)
             QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
+            self.close()
             return False
 
         """ remember box logic """
@@ -77,6 +80,7 @@ class LoginWindow(QWidget):
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
+
 
 
 class ForgotPassWindow(QDialog):

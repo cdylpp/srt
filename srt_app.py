@@ -1,10 +1,22 @@
+
+import os
+import sys
 from main_ui_2 import Ui_MainWindow
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PySide6.QtGui import QIcon
+from tests.user import User, UserManager
+from login_view import LoginDialog
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class MySrtApp(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
+        
+        # Login
+        self.login_action()
+
         self.setupUi(self)
         self.setWindowTitle("StaySmart: Student Retention Tool")
 
@@ -36,6 +48,24 @@ class MySrtApp(QMainWindow, Ui_MainWindow):
         self.settingsButton.clicked.connect(self.switch_to_settings_page)
         self.settingsButtonWithText.clicked.connect(self.switch_to_settings_page)
 
+    # handles login event
+    def login_action(self):
+        """
+        Handles the login_view for user authentication.
+
+        Returns:
+            A User is returned.
+        """
+        # Generate Login Window
+        login = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
+        login.exec()
+        
+        # Exit Login Loop with bool for success or fail.
+        # Get the UserManager with the User
+        
+        return
+
+        
     # Define each page and its index within the stacked widget    
     def switch_to_home_page(self):
         self.stackedWidget.setCurrentIndex(0)  

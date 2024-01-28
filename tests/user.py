@@ -1,4 +1,5 @@
-
+# User Class
+# TODO: Finish User Model
 class User:
     def __init__(self, info: dict[str, str]):
         self.__id = info['id']

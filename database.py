@@ -90,13 +90,23 @@ class DatabaseManager:
         
         # mysql login method 
         elif self.type == "mysql":
-            with self.db_engine.connect() as conn:
-                result = conn.execute(
-                    text("SELECT * FROM admin_credentials WHERE username =:username AND password =:password"),
-                    {'username': username, 'password': password}
-                )
+        
+            try:
+                with self.db_engine.connect() as conn:
+                    result = conn.execute(
+                        text("SELECT * FROM admin_credentials WHERE username =:username AND password =:password"),
+                        {'username': username, 'password': password}
+                    )
 
-                return True if result else False
+                    if result.fetchone():
+                        return True
+                    else:
+                        # Failed Login
+                        return False
+
+            except Exception as e:
+                print(f"Error: {e}")
+
     
     def get_user(self,username):
         """returns credientials for `username`"""
