@@ -2,8 +2,9 @@ import sys
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog, QCheckBox
 from PyQt6.QtCore import pyqtSignal
 from database import DatabaseManager
-from tests.user import User
+from tests.user import User, UserManager
 from utils import Validator
+from dotenv import dotenv_values
 
 class LoginDialog(QDialog):
 
@@ -13,15 +14,16 @@ class LoginDialog(QDialog):
     def __init__(self, db_type, **kwargs):
         super().__init__()
         self.db_manager = DatabaseManager(db_type, **kwargs)
-        self.user_signal = None
+        self.user_manager = UserManager()
         self.init_ui()
+        self.accept = False
 
     def init_ui(self):
         print("Initializing UI...")
         self.setWindowTitle('SRT Login')
 
         self.username_label = QLabel('Username:')
-        self.username_input = QLineEdit()
+        self.username_input = QLineEdit(self.user_manager.get_prev_user())
 
         self.password_label = QLabel('Password:')
         self.password_input = QLineEdit()
@@ -44,42 +46,51 @@ class LoginDialog(QDialog):
 
         self.setLayout(layout)
 
-        self.rememberme_checkBox.stateChanged.connect(self.checkBoxStatus)
         self.login_button.clicked.connect(self.login)
         self.forgot_button.clicked.connect(self.show_forgot_pass_window)
 
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
-        rememberme = self.rememberme_checkBox.isChecked()
 
-        if self.db_manager.login(username, password):
+        if self.db_manager.is_valid(username, password):
             # Successful Login
-            user = User(self.db_manager.get_user(username))
+            self.user_manager.set_user(self.db_manager.get_user(username))
+            user = self.user_manager.get_user()
             QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+
+            if self.rememberme_checkBox.isChecked():
+                self.user_manager.save_user()
+                self.rememberme_checkBox.setText("Login info saved!")
+            else:
+                self.user_manager.clear_user()
+            
+            # Signal login successful
             self.login_accept.emit(True)
+            self.accept = True
             self.close()
 
         else:
             # Unsuccessful
-            # TODO: Failed Login
-            self.login_reject.emit(True)
             QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
-            self.close()
+
+            self.user_manager.failed_attempt()
+            if self.user_manager.get_login_attempts() > 2:
+                # Youre done! No more!
+                raise PermissionError("Failed Attempt Three Times, Locked From Account.")
+
+            self.login_reject.emit(True)
             return False
-
-        """ remember box logic """
-    def checkBoxStatus(self):
-        if self.rememberme_checkBox.isChecked():
-            self.rememberme_checkBox.setText("Login info saved!")
-
-        else:
-            self.rememberme_checkBox.setText("Remember me")
 
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
+
+    def set_user_text(self):
+        env_vals = dotenv_values('.env')
+        saved_user = env_vals.get('PREV_USER')
+        return str(saved_user)
 
 
 
