@@ -2,22 +2,21 @@
 import os
 import sys
 
-from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QMainWindow
-from PySide6.QtGui import QIcon
-from PySide6.QtCore import QFile
+from PySide6 import QtGui, QtCore, QtWidgets
 from resources import resources2
+from tests.basic_table import TableModel, DataWindow, DF
 
 from ui.main_ui_2 import Ui_MainWindow
 
-class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self, user=None):
         super().__init__()
+        self.user = user
         self.setupUi(self)
         self.setWindowTitle("StaySmart: Student Retention Tool")
 
         # Set the icon for the window
-        main_window_icon = QIcon()
+        main_window_icon = QtGui.QIcon()
         main_window_icon.addFile("resources/images/Stay Smart Logo 1.png")
         self.setWindowIcon(main_window_icon)
 
@@ -51,7 +50,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(0)  
 
     def switch_to_data_analysis_page(self):
-        self.stackedWidget.setCurrentIndex(1) 
+        self.stackedWidget.setCurrentIndex(1)
+        self.show_table()
 
     def switch_to_report_page(self):
         self.stackedWidget.setCurrentIndex(2) 
@@ -61,3 +61,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def switch_to_settings_page(self):
         self.stackedWidget.setCurrentIndex(4)
+    
+    def show_table(self):
+        data_table = DataWindow(df=DF)
+        layout = QtWidgets.QHBoxLayout().addWidget(data_table)
+        self.dataAnalysisPage.setLayout(layout)
+        self.dataAnalysisPage.show()
+        return
+

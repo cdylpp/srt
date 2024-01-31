@@ -19,7 +19,7 @@ class LoginDialog(QDialog):
         self.accept = False
 
     def init_ui(self):
-        print("Initializing UI...")
+        print("Init Login View")
         self.setWindowTitle('SRT Login')
 
         self.username_label = QLabel('Username:')
