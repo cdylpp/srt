@@ -51,7 +51,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def switch_to_data_analysis_page(self):
         self.stackedWidget.setCurrentIndex(1)
-        self.show_table()
 
     def switch_to_report_page(self):
         self.stackedWidget.setCurrentIndex(2) 
@@ -61,11 +60,5 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def switch_to_settings_page(self):
         self.stackedWidget.setCurrentIndex(4)
-    
-    def show_table(self):
-        data_table = DataWindow(df=DF)
-        layout = QtWidgets.QHBoxLayout().addWidget(data_table)
-        self.dataAnalysisPage.setLayout(layout)
-        self.dataAnalysisPage.show()
-        return
+
 
