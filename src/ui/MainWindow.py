@@ -2,11 +2,15 @@
 import os
 import sys
 
+from PyQt6.QtWidgets import QMessageBox
 from PySide6 import QtGui, QtCore, QtWidgets
 from resources import resources2
 from tests.basic_table import TableModel, DataWindow, DF
 
 from ui.main_ui_2 import Ui_MainWindow
+
+from src.ui.login_view import LoginDialog
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, user=None):
@@ -43,9 +47,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.settingsButton.clicked.connect(self.switch_to_settings_page)
         self.settingsButtonWithText.clicked.connect(self.switch_to_settings_page)
 
+        # If sign out button is clicked, sign out
+        self.signOutButtonWithText.clicked.connect(self.signOut)
 
-        
-    # Define each page and its index within the stacked widget    
+    # Define each page and its index within the stacked widget
     def switch_to_home_page(self):
         self.stackedWidget.setCurrentIndex(0)  
 
@@ -60,5 +65,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def switch_to_settings_page(self):
         self.stackedWidget.setCurrentIndex(4)
+
+    def signOut(self):
+        # Ask for confirmation
+        reply = QMessageBox.question(self, 'Confirmation', 'Are you sure you want to sign out?',
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+        if reply == QMessageBox.StandardButton.Yes:
+            # Close the current window
+            self.close()
+
+            # Open a new instance of LoginDialog
+            login_dialog = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
+            login_dialog.exec()
 
 
