@@ -1,10 +1,10 @@
-
 import os
 import sys
 
 from PyQt6.QtWidgets import QMessageBox
 from PySide6 import QtGui, QtCore, QtWidgets
 from resources import resources2
+
 
 from ui.main_ui_2 import Ui_MainWindow
 from ui.login_view import LoginDialog
