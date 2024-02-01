@@ -3,11 +3,11 @@ import sys
 
 from PyQt6.QtWidgets import QMessageBox
 from PySide6 import QtGui, QtCore, QtWidgets
-from resources import resources2
+from resources import main_gui_icons #resources2
 
 
-from ui.main_ui_2 import Ui_MainWindow
-from ui.login_view import LoginDialog
+from ui.main_gui_blue import Ui_MainWindow #from ui.main_ui_2 import Ui_MainWindow
+from ui.login_window import Ui_Form  #from ui.login_view import LoginDialog
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -74,8 +74,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.close()
 
             # Open a new instance of LoginDialog
-            login_dialog = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
-            login_dialog.exec()
+            login_window = LoginDialog('mysql', db_url=os.getenv("DB_URL")) #login_dialog = LoginDialog
+            login_window.exec() #login_dialog.exec()
         # TODO: The login needs to take the user back to the Main App after signing in.
         # This might have to be implemented in the SrtApp which is the QApplication class.
 
