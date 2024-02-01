@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QMimeData
 from tests.basic_table import DataWindow
 from pandas import read_csv
@@ -16,14 +16,8 @@ class HomePage(QtWidgets.QMainWindow):
         layout = QtWidgets.QVBoxLayout(central_widget)
 
         # Add a QTabWidget
-        tab_widget = QtWidgets.QTabWidget()
-        layout.addWidget(tab_widget)
-
-        # Create tabs for QTabWidget
-        tab1 = QtWidgets.QWidget()
-        tab2 = QtWidgets.QWidget()
-        tab_widget.addTab(tab1, "Tab 1")
-        tab_widget.addTab(tab2, "Tab 2")
+        self.tab_widget = QtWidgets.QTabWidget()
+        layout.addWidget(self.tab_widget)
 
         # Create the label
         label = QtWidgets.QLabel("Drop files here")
@@ -38,11 +32,11 @@ class HomePage(QtWidgets.QMainWindow):
         self.addToolBar(toolbar)
 
         # Create actions for the toolbar
-        close_action = QtWidgets.QAction("Close", self)
+        close_action = QtGui.QAction("Close", self)
         close_action.triggered.connect(self.close_tab)
         toolbar.addAction(close_action)
 
-        save_action = QtWidgets.QAction("Save", self)
+        save_action = QtGui.QAction("Save", self)
         save_action.triggered.connect(self.save_data)
         toolbar.addAction(save_action)
 
@@ -70,14 +64,47 @@ class HomePage(QtWidgets.QMainWindow):
             self.handle_dropped_files(file_paths)
 
     def handle_dropped_files(self, file_paths):
-        # Implement your logic to handle the dropped files
-        # For example, display the file paths in the QLabel
+        # Create dataframe array to hold file paths
         dataframes = []
+        
         for path in file_paths:
+            # Create df object from file paths
             df = read_csv(path)
             dataframes.append(df)
         
         data_table = DataWindow(df=dataframes[0])
-        self.centralWidget().layout().addWidget(data_table)
+        self.add_tab(data_table)
         data_table.show()
         return
+    
+    def add_tab(self, widget):
+        # Create a new QWidget for the tab
+        w = QtWidgets.QWidget()
+
+        # Customize the content of the tab
+        label = QtWidgets.QLabel(f"Data Table View")
+        layout = QtWidgets.QVBoxLayout(w)
+        layout.addWidget(label)
+        layout.addWidget(widget)
+
+        # Add the new tab to the QTabWidget
+        self.tab_widget.addTab(w, f"Data")
+
+    def close_tab(self):
+        # Logic to close the current tab
+        current_tab_index = self.tab_widget.currentIndex()
+        self.tab_widget.removeTab(current_tab_index)
+    
+    def save_data(self):
+        # Logic to save data from the current tab
+        current_tab_index = self.centralWidget().layout().itemAt(0).currentIndex()
+        current_tab_name = self.centralWidget().layout().itemAt(0).tabText(current_tab_index)
+        
+        # Example: Show a file dialog for saving
+        file_dialog = QtWidgets.QFileDialog(self)
+        file_dialog.setWindowTitle(f"Save Data from {current_tab_name}")
+        file_path, _ = file_dialog.getSaveFileName(self, "Save File", "", "CSV Files (*.csv)")
+
+        if file_path:
+            # Implement saving logic here
+            print(f"Save data from {current_tab_name} to: {file_path}")

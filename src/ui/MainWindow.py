@@ -5,11 +5,9 @@ import sys
 from PyQt6.QtWidgets import QMessageBox
 from PySide6 import QtGui, QtCore, QtWidgets
 from resources import resources2
-from tests.basic_table import TableModel, DataWindow, DF
 
 from ui.main_ui_2 import Ui_MainWindow
-
-from src.ui.login_view import LoginDialog
+from ui.login_view import LoginDialog
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -68,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def signOut(self):
         # Ask for confirmation
-        reply = QMessageBox.question(self, 'Confirmation', 'Are you sure you want to sign out?',
+        reply = QMessageBox.question(None, 'Confirmation', 'Are you sure you want to sign out?',
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
         if reply == QMessageBox.StandardButton.Yes:
@@ -78,5 +76,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # Open a new instance of LoginDialog
             login_dialog = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
             login_dialog.exec()
+        # TODO: The login needs to take the user back to the Main App after signing in.
+        # This might have to be implemented in the SrtApp which is the QApplication class.
 
 
