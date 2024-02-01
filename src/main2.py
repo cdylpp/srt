@@ -8,12 +8,18 @@
 
 import sys, os
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
-from srt_app import MainWindow
-from login_view import LoginDialog
+from ui.MainWindow import MainWindow
+from ui.login_view import LoginDialog
+from dotenv import load_dotenv
+
+load_dotenv()
+
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, project_root)
 
 class SrtApp(QApplication):
     def __init__(self):
-        super().__init__()
+        super(SrtApp,self).__init__()
         # Login
         self.login_action()
 
@@ -42,8 +48,9 @@ class SrtApp(QApplication):
         return 
         
 
-srtApp = SrtApp()
+if __name__ == "__main__":
+    srtApp = SrtApp()
 
 
-srtApp.exec()
+    srtApp.exec()
 

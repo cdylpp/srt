@@ -1,6 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog, QCheckBox
-from PyQt6.QtCore import pyqtSignal
+from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox, QDialog, QCheckBox
+from PySide6.QtCore import Signal
 from database import DatabaseManager
 from tests.user import User, UserManager
 from utils import Validator
@@ -8,8 +8,8 @@ from dotenv import dotenv_values
 
 class LoginDialog(QDialog):
 
-    login_accept = pyqtSignal(bool)
-    login_reject = pyqtSignal(bool)
+    login_accept = Signal(bool)
+    login_reject = Signal(bool)
 
     def __init__(self, db_type, **kwargs):
         super().__init__()
@@ -19,7 +19,7 @@ class LoginDialog(QDialog):
         self.accept = False
 
     def init_ui(self):
-        print("Initializing UI...")
+        print("Init Login View")
         self.setWindowTitle('SRT Login')
 
         self.username_label = QLabel('Username:')

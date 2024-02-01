@@ -126,7 +126,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/database.svg</normaloff>:/Icons/database.svg</iconset>
+             <normaloff>:resources/Icons/database.svg</normaloff>:resources/Icons/database.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -149,7 +149,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/clipboard.svg</normaloff>:/Icons/clipboard.svg</iconset>
+             <normaloff>:resources/Icons/clipboard.svg</normaloff>:resources/Icons/clipboard.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -172,7 +172,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/message-square.svg</normaloff>:/Icons/message-square.svg</iconset>
+             <normaloff>:resources/Icons/message-square.svg</normaloff>:resources/Icons/message-square.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -195,7 +195,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/settings.svg</normaloff>:/Icons/settings.svg</iconset>
+             <normaloff>:resources/Icons/settings.svg</normaloff>:resources/Icons/settings.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -231,7 +231,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/log-out.svg</normaloff>:/Icons/log-out.svg</iconset>
+             <normaloff>:resources/Icons/log-out.svg</normaloff>:resources/Icons/log-out.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -288,7 +288,7 @@ border: none;
             </property>
             <property name="icon">
              <iconset resource="resources/resources2.qrc">
-              <normaloff>:/Icons/menu.svg</normaloff>:/Icons/menu.svg</iconset>
+              <normaloff>:resources/Icons/menu.svg</normaloff>:resources/Icons/menu.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -339,7 +339,7 @@ border: none;
               </property>
               <property name="icon">
                <iconset resource="resources/resources2.qrc">
-                <normaloff>:/Icons/search.svg</normaloff>:/Icons/search.svg</iconset>
+                <normaloff>:resources/Icons/search.svg</normaloff>:resources/Icons/search.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -377,7 +377,7 @@ border: none;
             </property>
             <property name="icon">
              <iconset resource="resources/resources2.qrc">
-              <normaloff>:/Icons/user.svg</normaloff>:/Icons/user.svg</iconset>
+              <normaloff>:resources/Icons/user.svg</normaloff>:resources/Icons/user.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -554,7 +554,7 @@ QPushButton:checked{
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="resources/resources2.qrc">:/images/Stay Smart Logo 1.png</pixmap>
+            <pixmap resource="resources/resources2.qrc">:resources/images/Stay Smart Logo 1.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -624,7 +624,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/database.svg</normaloff>:/Icons/database.svg</iconset>
+             <normaloff>:resources/Icons/database.svg</normaloff>:resources/Icons/database.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -652,7 +652,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/clipboard.svg</normaloff>:/Icons/clipboard.svg</iconset>
+             <normaloff>:resources/Icons/clipboard.svg</normaloff>:resources/Icons/clipboard.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -680,7 +680,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/message-square.svg</normaloff>:/Icons/message-square.svg</iconset>
+             <normaloff>:resources/Icons/message-square.svg</normaloff>:resources/Icons/message-square.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -708,7 +708,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/settings.svg</normaloff>:/Icons/settings.svg</iconset>
+             <normaloff>:resources/Icons/settings.svg</normaloff>:resources/Icons/settings.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -749,7 +749,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/log-out.svg</normaloff>:/Icons/log-out.svg</iconset>
+             <normaloff>:resources/Icons/log-out.svg</normaloff>:resources/Icons/log-out.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
