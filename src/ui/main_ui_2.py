@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
     QLineEdit, QMainWindow, QPushButton, QSizePolicy,
     QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
 
-from tests.HomePage import HomePage
+from tests.basic_table import DataView
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
         self.homeButton = QPushButton(self.iconsWidget)
         self.homeButton.setObjectName(u"homeButton")
         icon = QIcon()
-        icon.addFile(u":/Icons/home.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u"resources/Icons/home.svg", QSize(), QIcon.Normal, QIcon.Off)
         self.homeButton.setIcon(icon)
         self.homeButton.setIconSize(QSize(24, 24))
         self.homeButton.setCheckable(True)
@@ -216,7 +216,6 @@ class Ui_MainWindow(object):
         self.stackedWidget.setObjectName(u"stackedWidget")
         self.stackedWidget.setStyleSheet(u"background-color: rgb(44, 49, 60);\n"
 "color: white;")
-        
         self.homePage = QWidget()
         self.homePage.setObjectName(u"homePage")
         self.placeholderTextForHomePage = QLabel(self.homePage)
@@ -228,14 +227,13 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.homePage)
 
         # Place Holder for Custom Widget
-        self.dataAnalysisPage = HomePage()
+        self.dataAnalysisPage = QWidget()
         self.dataAnalysisPage.setObjectName(u"dataAnalysisPage")
         # self.placeholderTextForDataAnalysisPage = QLabel(self.dataAnalysisPage)
         # self.placeholderTextForDataAnalysisPage.setObjectName(u"placeholderTextForDataAnalysisPage")
         # self.placeholderTextForDataAnalysisPage.setGeometry(QRect(170, 210, 251, 81))
         # self.placeholderTextForDataAnalysisPage.setFont(font)
         self.stackedWidget.addWidget(self.dataAnalysisPage)
-
         self.reportsPage = QWidget()
         self.reportsPage.setObjectName(u"reportsPage")
         self.placeholderTextForReportsPage = QLabel(self.reportsPage)
@@ -243,7 +241,6 @@ class Ui_MainWindow(object):
         self.placeholderTextForReportsPage.setGeometry(QRect(200, 200, 171, 81))
         self.placeholderTextForReportsPage.setFont(font)
         self.stackedWidget.addWidget(self.reportsPage)
-
         self.settingsPage = QWidget()
         self.settingsPage.setObjectName(u"settingsPage")
         self.placeholderTextForSettingsPage = QLabel(self.settingsPage)
@@ -251,7 +248,6 @@ class Ui_MainWindow(object):
         self.placeholderTextForSettingsPage.setGeometry(QRect(190, 200, 171, 81))
         self.placeholderTextForSettingsPage.setFont(font)
         self.stackedWidget.addWidget(self.settingsPage)
-
         self.notificationsPage = QWidget()
         self.notificationsPage.setObjectName(u"notificationsPage")
         self.placeholderTextForNotificationsPage = QLabel(self.notificationsPage)
