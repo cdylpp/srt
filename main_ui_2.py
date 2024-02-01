@@ -16,10 +16,12 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
-    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-    QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
+                               QLineEdit, QMainWindow, QPushButton, QSizePolicy,
+                               QSpacerItem, QStackedWidget, QVBoxLayout, QWidget, QMessageBox)
 
 import resources.resources2_rc as resources2_rc
+import os
+from login_view import LoginDialog
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -373,6 +375,7 @@ class Ui_MainWindow(object):
         self.signOutButtonWithText.setFont(font2)
         self.signOutButtonWithText.setIcon(icon5)
         self.signOutButtonWithText.setIconSize(QSize(24, 24))
+        self.signOutButtonWithText.clicked.connect(self.signOut)
 
         self.verticalLayout_2.addWidget(self.signOutButtonWithText)
 
@@ -401,6 +404,18 @@ class Ui_MainWindow(object):
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
+    def signOut(self):
+            # Ask for confirmation
+            reply = QMessageBox.question(self, 'Confirmation', 'Are you sure you want to sign out?',
+                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+            if reply == QMessageBox.StandardButton.Yes:
+                    # Close the current window
+                    self.close()
+
+                    # Open a new instance of LoginDialog
+                    login_dialog = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
+                    login_dialog.exec()
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.staySmartLogo.setText("")
