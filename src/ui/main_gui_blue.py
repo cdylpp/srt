@@ -412,7 +412,7 @@ class Ui_MainWindow(object):
         self.notificationsButtonWithText.setText(_translate("MainWindow", "Notifications"))
         self.settingsButtonWithText.setText(_translate("MainWindow", "Settings"))
         self.signOutButtonWithText.setText(_translate("MainWindow", "Sign Out"))
-import main_gui_icons_rc
+
 
 
 if __name__ == "__main__":

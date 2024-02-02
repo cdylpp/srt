@@ -10,6 +10,12 @@ from ui.main_gui_blue import Ui_MainWindow #from ui.main_ui_2 import Ui_MainWind
 from ui.login_window import Ui_Form  #from ui.login_view import LoginDialog
 
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+resources_dir = os.path.join(current_dir, '..', 'resources')
+sys.path.append(resources_dir)
+
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, user=None):
         super().__init__()
@@ -19,7 +25,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Set the icon for the window
         main_window_icon = QtGui.QIcon()
-        main_window_icon.addFile("resources/images/Stay Smart Logo 1.png")
+        main_window_icon.addFile("resources/Logo/Stay Smart Logo 1.png")  #resources/images/Stay Smart Logo 1.png
         self.setWindowIcon(main_window_icon)
 
         # Prevent the extended icon menus from trying to both start up in the beginning
@@ -74,7 +80,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.close()
 
             # Open a new instance of LoginDialog
-            login_window = LoginDialog('mysql', db_url=os.getenv("DB_URL")) #login_dialog = LoginDialog
+            login_window = Ui_MainWindow('mysql', db_url=os.getenv("DB_URL")) #login_dialog = LoginDialog
             login_window.exec() #login_dialog.exec()
         # TODO: The login needs to take the user back to the Main App after signing in.
         # This might have to be implemented in the SrtApp which is the QApplication class.

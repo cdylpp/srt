@@ -17,13 +17,14 @@ sys.path.append(resources_dir)
 
 import login_icons_rc
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(931, 692)
+        Form.setMinimumSize(QtCore.QSize(800, 600))
         self.widget = QtWidgets.QWidget(Form)
-        self.widget.setGeometry(QtCore.QRect(60, 50, 811, 551))
+        self.widget.setGeometry(QtCore.QRect(60, 50, 811, 600))
+        self.widget.setMinimumSize(QtCore.QSize(800, 600))
         self.widget.setObjectName("widget")
         self.login_background = QtWidgets.QLabel(self.widget)
         self.login_background.setGeometry(QtCore.QRect(410, 60, 311, 421))
