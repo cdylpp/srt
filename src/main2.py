@@ -8,8 +8,8 @@
 
 import sys, os
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
-from ui.MainWindow import MainWindow
-from ui.login_view import LoginDialog
+from ui.MainWindow import MainWindow  #from ui.MainWindow import MainWindow
+from ui.login_window import Ui_Form #from ui.login_view import LoginDialog
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,7 +36,7 @@ class SrtApp(QApplication):
             A User is returned.
         """
         # Generate Login Window
-        login = LoginDialog('mysql', db_url=os.getenv("DB_URL"))
+        login = Ui_Form('mysql', db_url=os.getenv("DB_URL"))  #LoginDialog
         # Run Login Loop
         login.exec()
         login.login_reject.connect(login.exec)

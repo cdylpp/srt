@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
     QLineEdit, QMainWindow, QPushButton, QSizePolicy,
     QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
 
-from tests.HomePage import HomePage
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
