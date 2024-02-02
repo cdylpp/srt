@@ -1,4 +1,5 @@
-# Version 2.0
+# Version 2.1
+# Using the New LoginWindow that wraps Ui_Form for login 
 # Top Level Main Application File
 # Runs QApplication in event-loop.
 # Shows QMainWindow MySrtApp()
@@ -9,7 +10,8 @@
 import sys, os
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
 from ui.MainWindow import MainWindow  #from ui.MainWindow import MainWindow
-from ui.login_window import Ui_Form #from ui.login_view import LoginDialog
+from ui.login_view import LoginDialog #from ui.login_view import LoginDialog
+from ui.LoginWindow import LoginWindow
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,7 +38,8 @@ class SrtApp(QApplication):
             A User is returned.
         """
         # Generate Login Window
-        login = Ui_Form('mysql', db_url=os.getenv("DB_URL"))  #LoginDialog
+        login = LoginWindow('mysql', db_url=os.getenv("DB_URL"))  # Old one was LoginDialog
+        
         # Run Login Loop
         login.exec()
         login.login_reject.connect(login.exec)

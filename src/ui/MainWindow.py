@@ -3,11 +3,11 @@ import sys
 
 from PyQt6.QtWidgets import QMessageBox
 from PySide6 import QtGui, QtCore, QtWidgets
-from resources import main_gui_icons #resources2
+from resources import resources2
 
-
-from ui.main_gui_blue import Ui_MainWindow #from ui.main_ui_2 import Ui_MainWindow
-from ui.login_window import Ui_Form  #from ui.login_view import LoginDialog
+from ui.main_ui_2 import Ui_MainWindow
+# from ui.main_gui_blue import Ui_MainWindow # from ui.main_ui_2 import Ui_MainWindow
+# from ui.login_window import Ui_Form  #from ui.login_view import LoginDialog
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
