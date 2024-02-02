@@ -83,11 +83,11 @@ class LoginWindow(QtWidgets.QDialog):
         else:
             self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Normal)
 
-
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
 
+    """what is this? part of remembeme?"""
     def set_user_text(self):
         env_vals = dotenv_values('.env')
         saved_user = env_vals.get('PREV_USER')
