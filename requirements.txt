@@ -3,6 +3,7 @@
 PyQt6
 Pandas
 mysql-connector-python
+mysql
 matplotlib
 scikit-learn
 Seaborn
@@ -11,7 +12,7 @@ PyQt5
 PySide6
 QT-PyQt-PySide-Custom-Widgets
 pipwin
-pipwin install cairocffi
+cairocffi
 iconify
 python-dotenv
 pyqtgraph-0.13.4.dev0
