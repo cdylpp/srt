@@ -596,7 +596,7 @@ QPushButton:checked{
            </property>
            <property name="icon">
             <iconset resource="resources/resources2.qrc">
-             <normaloff>:/Icons/home.svg</normaloff>:/Icons/home.svg</iconset>
+             <normaloff>:resources/Icons/home.svg</normaloff>:resources/Icons/home.svg</iconset>
            </property>
            <property name="iconSize">
             <size>

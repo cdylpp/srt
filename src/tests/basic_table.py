@@ -5,32 +5,6 @@ from PySide6.QtCore import Qt, QAbstractTableModel
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QApplication, QTableView, QTableWidgetItem, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton)
 
-DF = read_csv(r'../srt/datasets/Credentials.csv')
-
-class DataView(QMainWindow):
-    def __init__(self, parent=None) -> None:
-        super().__init__(parent)
-        self.setWindowTitle("Data View")
-        self.main_layout = QVBoxLayout(self)
-        self.button_layout = QHBoxLayout(self)
-        self.generate_button = QPushButton("Get Data")
-        self.reset_button = QPushButton("Reset Table")
-        self.button_layout.addWidget(self.generate_button)
-        self.button_layout.addWidget(self.reset_button)
-
-        self.data_table = DataWindow(df=DF)
-
-        self.main_layout.addLayout(self.button_layout)
-        self.main_layout.addWidget(self.data_table)
-
-        central_widget = QWidget()
-        central_widget.setLayout(self.main_layout)
-        self.setCentralWidget(central_widget)
-
-        self.generate_button.clicked.connect(self.data_table.show)
-        self.reset_button.clicked.connect(self.data_table.hide)
-
-
 class TableModel(QAbstractTableModel):
     def __init__(self, data):
         super().__init__()
@@ -64,6 +38,5 @@ class DataWindow(QMainWindow):
         self.model = TableModel(self.df)
         self.table.setModel(self.model)
         self.setCentralWidget(self.table)
-        self.setGeometry(600, 100, 400, 200)
     
 

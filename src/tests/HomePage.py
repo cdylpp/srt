@@ -2,6 +2,7 @@ from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QMimeData
 from tests.basic_table import DataWindow
 from pandas import read_csv
+import os
 
 class HomePage(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -26,19 +27,32 @@ class HomePage(QtWidgets.QMainWindow):
         # Set properties for drop events
         self.setAcceptDrops(True)
 
-
         # Create a QToolBar
         toolbar = QtWidgets.QToolBar("File Operations", self)
         self.addToolBar(toolbar)
 
         # Create actions for the toolbar
-        close_action = QtGui.QAction("Close", self)
-        close_action.triggered.connect(self.close_tab)
-        toolbar.addAction(close_action)
+        import_action = QtGui.QAction("Import", self)
+        import_action.setStatusTip("Import data set")
+        import_action.triggered.connect(self.import_dataset_dialog)
+        toolbar.addAction(import_action)
 
         save_action = QtGui.QAction("Save", self)
+        save_action.setStatusTip("Save current tab")
         save_action.triggered.connect(self.save_data)
         toolbar.addAction(save_action)
+
+        close_action = QtGui.QAction("Close", self)
+        close_action.setStatusTip("Close current tab")
+        close_action.triggered.connect(self.close_tab)
+        toolbar.addAction(close_action)
+        toolbar.addSeparator()
+
+        create_plot = QtGui.QAction("Plot", self)
+        create_plot.setStatusTip("Create a simple Plot")
+        create_plot.triggered.connect(self.generate_plot_dialog)
+        toolbar.addAction(create_plot)
+        
 
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
@@ -56,14 +70,30 @@ class HomePage(QtWidgets.QMainWindow):
         # If no CSV file is found, reject the drop event
         event.ignore()
 
+    def generate_plot_dialog(self):
+        # Dialog to generate plot using the existing dataset
+        return
+    
+    def import_dataset_dialog(self):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.ReadOnly  # Optional: Set additional options as needed
+
+        # Show the file dialog for selecting CSV files
+        file_dialog = QtWidgets.QFileDialog()
+        file_dialog.setFileMode(QtWidgets.QFileDialog.ExistingFiles)
+        file_dialog.setNameFilter("CSV Files (*.csv)")
+        file_paths, _ = file_dialog.getOpenFileNames(self, "Import CSV Dataset", "", "CSV Files (*.csv);;All Files (*)", options=options)
+
+        self.handle_files(file_paths)
+        return
 
     def dropEvent(self, event):
         mime_data = event.mimeData()
         if mime_data.hasUrls():
             file_paths = [url.toLocalFile() for url in mime_data.urls()]
-            self.handle_dropped_files(file_paths)
+            self.handle_files(file_paths)
 
-    def handle_dropped_files(self, file_paths):
+    def handle_files(self, file_paths):
         # Create dataframe array to hold file paths
         dataframes = []
         
@@ -71,24 +101,24 @@ class HomePage(QtWidgets.QMainWindow):
             # Create df object from file paths
             df = read_csv(path)
             dataframes.append(df)
+            data_table = DataWindow(df=df)
+            self.add_tab(data_table, path)
+            data_table.show()
         
-        data_table = DataWindow(df=dataframes[0])
-        self.add_tab(data_table)
-        data_table.show()
         return
     
-    def add_tab(self, widget):
+    def add_tab(self, widget, file_path):
         # Create a new QWidget for the tab
         w = QtWidgets.QWidget()
 
         # Customize the content of the tab
-        label = QtWidgets.QLabel(f"Data Table View")
+        label = QtWidgets.QLabel(file_path)
         layout = QtWidgets.QVBoxLayout(w)
         layout.addWidget(label)
         layout.addWidget(widget)
 
         # Add the new tab to the QTabWidget
-        self.tab_widget.addTab(w, f"Data")
+        self.tab_widget.addTab(w, os.path.basename(file_path))
 
     def close_tab(self):
         # Logic to close the current tab
@@ -97,8 +127,8 @@ class HomePage(QtWidgets.QMainWindow):
     
     def save_data(self):
         # Logic to save data from the current tab
-        current_tab_index = self.centralWidget().layout().itemAt(0).currentIndex()
-        current_tab_name = self.centralWidget().layout().itemAt(0).tabText(current_tab_index)
+        current_tab_index = self.tab_widget.currentIndex()
+        current_tab_name = self.tab_widget.tabText(current_tab_index)
         
         # Example: Show a file dialog for saving
         file_dialog = QtWidgets.QFileDialog(self)
@@ -106,5 +136,7 @@ class HomePage(QtWidgets.QMainWindow):
         file_path, _ = file_dialog.getSaveFileName(self, "Save File", "", "CSV Files (*.csv)")
 
         if file_path:
-            # Implement saving logic here
+            # Get the Dataframe
+            # Convert the Dataframe to csv
+            # Move the csv to the file_path
             print(f"Save data from {current_tab_name} to: {file_path}")

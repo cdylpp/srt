@@ -14,3 +14,4 @@ pipwin
 pipwin install cairocffi
 iconify
 python-dotenv
+pyqtgraph-0.13.4.dev0
