@@ -30,7 +30,9 @@ class LoginWindow(QtWidgets.QDialog):
         # connect buttons
         self.ui.login_button.clicked.connect(self.login)
         self.ui.forgot_button.clicked.connect(self.show_forgot_pass_window)
-        
+        self.ui.visibility_button.clicked.connect(self.show_hide_password) #visibility button .widget
+        self.ui.remembeme_checkBox.clicked.connect(self.handle_remember_me) #rememberme button
+
         # show the ui_form
         self.show()
     
@@ -45,11 +47,7 @@ class LoginWindow(QtWidgets.QDialog):
             user = self.user_manager.get_user()
             QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
 
-            if self.ui.remembeme_checkBox.isChecked():
-                self.user_manager.save_user()
-                self.ui.remembeme_checkBox.setText("Login info saved!")
-            else:
-                self.user_manager.clear_user()
+            """Removed remembeme_checkBox from def login, when button is pressed it logs you in, separating the def, life 70"""
             
             # Signal login successful
             self.login_accept.emit(True)
@@ -67,7 +65,25 @@ class LoginWindow(QtWidgets.QDialog):
 
             self.login_reject.emit(True)
             return False
-        
+
+    """def for remembeme_checkBox"""
+    def handle_remember_me(self):
+        if self.ui.remembeme_checkBox.isChecked():
+            #self.user_manager.save_user() """once we decide whether we actually want info saved"""
+            self.ui.remembeme_checkBox.setText("Login info saved!")
+        else:
+            #self.user_manager.clear_user()
+            self.ui.remembeme_checkBox.setText("Remember Me")
+
+
+    """def password visibility"""
+    def show_hide_password(self):
+        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.Normal:
+            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
+        else:
+            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Normal)
+
+
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
