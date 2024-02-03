@@ -68,7 +68,7 @@ class DatabaseManager:
             try:
                 with self.db_engine.connect() as conn:
                     result = conn.execute(
-                        text("SELECT * FROM admin_credentials WHERE username =:username AND password =:password"),
+                        text("SELECT * FROM admin_credentials WHERE username =:username AND BINARY password =:password"),
                         {'username': username, 'password': password}
                     )
 
@@ -82,14 +82,15 @@ class DatabaseManager:
                 print(f"Error: {e}")
 
     
-    def get_user(self,username):
+    def get_user(self,username, password): #Added var password
         """returns credientials for `username`"""
 
         # returns the entire dict for username in csv file
         if self.type == "csv":
             for user in self.db:
-                if user['username'] == username:
+                if user['username'] == username and user['password'] == password:
                     return user
+
             raise KeyError(f"{username} not in {self.file_name}")
 
         # returns row with username == `username` as a dict object

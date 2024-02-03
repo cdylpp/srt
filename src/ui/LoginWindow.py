@@ -41,9 +41,9 @@ class LoginWindow(QtWidgets.QDialog):
         username = self.ui.lineEdit.text()
         password = self.ui.password_input.text()
 
-        if self.db_manager.is_valid(username, password):
+        if self.db_manager.is_valid(username, password): #Passed password
             # Successful Login
-            self.user_manager.set_user(self.db_manager.get_user(username))
+            self.user_manager.set_user(self.db_manager.get_user(username, password)) #added password
             user = self.user_manager.get_user()
             QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
 
