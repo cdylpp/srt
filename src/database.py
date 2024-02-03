@@ -1,5 +1,7 @@
 import csv
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
+
 from PyQt6.QtWidgets import QMessageBox
 
 
@@ -102,7 +104,18 @@ class DatabaseManager:
                     )
                 return result.mappings().first()
 
-
-
+    def get_email(self, email):
+        if self.type == "mysql":
+            try:
+                with self.db_engine.connect() as conn:
+                    result = conn.execute(
+                        text("SELECT email FROM admin_credentials WHERE email = :email"),
+                        {'email': email}
+                    )
+                    user_email = result.scalar()  # Directly get the 'email' column value
+                    return user_email
+            except SQLAlchemyError as e:
+                print(f"Error: {e}")
+                return None
 
 
