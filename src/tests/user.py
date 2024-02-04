@@ -1,9 +1,13 @@
 # User Class
 # TODO: Finish User Model
-import shelve
+import json
+import os
+
+
 
 class User:
     def __init__(self, info: dict[str, str]):
+        self._info = info
         self._id = info['id']
         self._username = info['username']
         self._email = info['email']
@@ -25,6 +29,9 @@ class User:
     
     def get_role(self):
         return self._role
+    
+    def get_user_data(self):
+        return self._info
     
     
 
@@ -48,33 +55,17 @@ class UserManager:
     
     def get_login_attempts(self) -> int:
         return self._login_attempts
-
-    def save_user(self) -> None:
-        # Save the username if the check box is checked.
-        with shelve.open('profile') as profile:
-            profile['prev_user'] = self._user.get_username()
-        return
     
     def clear_user(self) -> None:
-        with shelve.open('profile') as profile:
-            profile['prev_user'] = ""
+        self._profile_data['prev_user'] = ""
+        self.update_json()
         return
-    
-    def get_prev_user(self) -> str:
-        with shelve.open('profile') as profile:
-            if 'prev_user' in profile:
-                return profile['prev_user']
-            else:
-                return ""
 
     def email_exists(self, email):
         cursor = self.db_manager.db_connection.cursor()
-
         query = "SELECT * FROM admin WHERE email = %s"
         cursor.execute(query, (email,))
-
         user = cursor.fetchone()
-
         cursor.close()
 
         return user is not None
@@ -86,9 +77,6 @@ class UserManager:
         user = cursor.fetchone()
         cursor.close()
         return user is not None
-    
-    def login(self, username, password) -> None:
-            return False
 
     def handle_login_attempts(self, username) -> None:
         return
@@ -101,3 +89,4 @@ class UserManager:
         cursor.execute(query, (username,))
 
         cursor.close()
+        return

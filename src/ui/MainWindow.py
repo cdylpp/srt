@@ -3,11 +3,12 @@ import sys
 
 from PyQt6.QtWidgets import QMessageBox
 from PySide6 import QtGui, QtCore, QtWidgets
+from PySide6.QtGui import QCloseEvent
 from resources import resources2
 
 from ui.main_ui_2 import Ui_MainWindow
 # from ui.main_gui_blue import Ui_MainWindow # from ui.main_ui_2 import Ui_MainWindow
-# from ui.login_window import Ui_Form  #from ui.login_view import LoginDialog
+from ui.LoginWindow import LoginWindow 
 from tests.user import UserManager
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,11 +16,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 resources_dir = os.path.join(current_dir, '..', 'resources')
 sys.path.append(resources_dir)
 
-
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, user_manager=None):
+    main_window_closed = QtCore.Signal()
+
+    def __init__(self, user_manager=None, app_data=None):
         super().__init__()
         self.user_manager = user_manager
+        self.app_data = app_data
         self.user = self.user_manager.get_user()
         self.setupUi(self)
         self.setWindowTitle(f"StaySmart: Student Retention Tool - {self.user.get_name()}")
@@ -53,7 +56,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.settingsButtonWithText.clicked.connect(self.switch_to_settings_page)
 
         # If sign out button is clicked, sign out
-        self.signOutButtonWithText.clicked.connect(self.signOut)
+        self.signOutButton.clicked.connect(self.on_sign_out)
+        self.signOutButtonWithText.clicked.connect(self.on_sign_out)
 
     # Define each page and its index within the stacked widget
     def switch_to_home_page(self):
@@ -71,7 +75,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def switch_to_settings_page(self):
         self.stackedWidget.setCurrentIndex(4)
 
-    def signOut(self):
+    def on_sign_out(self):
         # Ask for confirmation
         reply = QMessageBox.question(None, 'Confirmation', 'Are you sure you want to sign out?',
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -81,9 +85,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.close()
 
             # Open a new instance of LoginDialog
-            login_window = Ui_MainWindow('mysql', db_url=os.getenv("DB_URL")) #login_dialog = LoginDialog
+            login_window = LoginWindow('mysql', db_url=os.getenv("DB_URL"), app_data=self.app_data) #login_dialog = LoginDialog
             login_window.exec() #login_dialog.exec()
         # TODO: The login needs to take the user back to the Main App after signing in.
         # This might have to be implemented in the SrtApp which is the QApplication class.
+    
+    # Method to handle closed window
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.main_window_closed.emit()
+        event.accept()
+        return
 
 

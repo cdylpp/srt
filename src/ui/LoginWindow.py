@@ -8,11 +8,13 @@ from dotenv import dotenv_values
 class LoginWindow(QtWidgets.QDialog):
     login_accepted = QtCore.Signal(UserManager)
     login_reject = QtCore.Signal()
+    login_window_closed = QtCore.Signal()
     
     def __init__(self, db_type, **kwargs) -> None:
         super().__init__()
         self.db_manager = DatabaseManager(db_type, **kwargs)
         self.user_manager = UserManager()
+        self.app_data = kwargs['app_data']
         
         self.init_ui()
 
@@ -21,16 +23,20 @@ class LoginWindow(QtWidgets.QDialog):
         # logging info
         print("Init Login View")
         self.setWindowTitle("SRT Login")
+
+        
         
         # Wrap ui in Form widget
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+
+        self.ui.lineEdit.setText(self.app_data.get_prev_user())
         
         # connect buttons
         self.ui.login_button.clicked.connect(self.on_login_clicked)
         self.ui.forgot_button.clicked.connect(self.show_forgot_pass_window)
         self.ui.visibility_button.clicked.connect(self.show_hide_password) #visibility button .widget
-        self.ui.remembeme_checkBox.clicked.connect(self.handle_remember_me) #rememberme button
+        self.ui.remembeme_checkBox.clicked.connect(self.on_remember_me) #rememberme button
 
         # show the ui_form
         self.show()
@@ -48,7 +54,7 @@ class LoginWindow(QtWidgets.QDialog):
 
             QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
 
-            # TODO: Add remeber me function
+            self.handle_remember_me(True)
             
             # Signal User Manager to the MainWindow
             self.login_accepted.emit(self.user_manager)
@@ -82,16 +88,17 @@ class LoginWindow(QtWidgets.QDialog):
 
 
     # Remember me function
-    def handle_remember_me(self):
+    def on_remember_me(self):
         if self.ui.remembeme_checkBox.isChecked():
-            #self.user_manager.save_user() """once we decide whether we actually want info saved"""
             self.ui.remembeme_checkBox.setText("Login info saved!")
         else:
-            #self.user_manager.clear_user()
             self.ui.remembeme_checkBox.setText("Remember Me")
 
+    def handle_remember_me(self, login_successful: bool):
+        if login_successful:
+            self.app_data.save_user(self.user_manager.get_user().get_username())
+        return
 
-    """def password visibility"""
     def show_hide_password(self):
         if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.Normal:
             self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -101,12 +108,6 @@ class LoginWindow(QtWidgets.QDialog):
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
-
-    """what is this? part of remembeme?"""
-    def set_user_text(self):
-        env_vals = dotenv_values('.env')
-        saved_user = env_vals.get('PREV_USER')
-        return str(saved_user)
     
 class ForgotPassWindow(QtWidgets.QDialog):
     def __init__(self, db_manager):
