@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QMimeData
-from tests.basic_table import DataWindow
+from src.tests.DataTable import DataWindow
 from pandas import read_csv
 import os
 
