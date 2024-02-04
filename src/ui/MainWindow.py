@@ -8,7 +8,7 @@ from resources import resources2
 from ui.main_ui_2 import Ui_MainWindow
 # from ui.main_gui_blue import Ui_MainWindow # from ui.main_ui_2 import Ui_MainWindow
 # from ui.login_window import Ui_Form  #from ui.login_view import LoginDialog
-
+from tests.user import UserManager
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,11 +17,12 @@ sys.path.append(resources_dir)
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, user=None):
+    def __init__(self, user_manager=None):
         super().__init__()
-        self.user = user
+        self.user_manager = user_manager
+        self.user = self.user_manager.get_user()
         self.setupUi(self)
-        self.setWindowTitle("StaySmart: Student Retention Tool")
+        self.setWindowTitle(f"StaySmart: Student Retention Tool - {self.user.get_name()}")
 
         # Set the icon for the window
         main_window_icon = QtGui.QIcon()

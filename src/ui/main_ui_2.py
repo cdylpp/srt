@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
     QLineEdit, QMainWindow, QPushButton, QSizePolicy,
     QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
 
-from tests.HomePage import HomePage
+from tests.DataAnalysisPage import DataAnalysisPage
 
 
 class Ui_MainWindow(object):
@@ -228,8 +228,9 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.homePage)
 
         # Place Holder for Custom Widget
-        self.dataAnalysisPage = HomePage()
+        self.dataAnalysisPage = DataAnalysisPage()
         self.dataAnalysisPage.setObjectName(u"dataAnalysisPage")
+
         # self.placeholderTextForDataAnalysisPage = QLabel(self.dataAnalysisPage)
         # self.placeholderTextForDataAnalysisPage.setObjectName(u"placeholderTextForDataAnalysisPage")
         # self.placeholderTextForDataAnalysisPage.setGeometry(QRect(170, 210, 251, 81))

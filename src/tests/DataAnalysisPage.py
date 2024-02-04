@@ -1,12 +1,15 @@
+# DataAnalysisPage is the view that is under the Data Analysis tab
+# This view should control and maintain all interactions within the Data Analysis Tab
+
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt, QMimeData
-from src.tests.DataTable import DataWindow
+from tests.DataTable import DataWindow
 from pandas import read_csv
 import os
 
-class HomePage(QtWidgets.QMainWindow):
+class DataAnalysisPage(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__()
         self.setWindowTitle("Home Page")
 
         # Create a central widget for the QMainWindow

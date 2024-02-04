@@ -6,14 +6,13 @@ from utils import Validator
 from dotenv import dotenv_values
 
 class LoginWindow(QtWidgets.QDialog):
-    login_accept = QtCore.Signal(bool)
-    login_reject = QtCore.Signal(bool)
+    login_accepted = QtCore.Signal(UserManager)
+    login_reject = QtCore.Signal()
     
     def __init__(self, db_type, **kwargs) -> None:
         super().__init__()
         self.db_manager = DatabaseManager(db_type, **kwargs)
         self.user_manager = UserManager()
-        self.accept = False
         
         self.init_ui()
 
@@ -28,45 +27,61 @@ class LoginWindow(QtWidgets.QDialog):
         self.ui.setupUi(self)
         
         # connect buttons
-        self.ui.login_button.clicked.connect(self.login)
+        self.ui.login_button.clicked.connect(self.on_login_clicked)
         self.ui.forgot_button.clicked.connect(self.show_forgot_pass_window)
         self.ui.visibility_button.clicked.connect(self.show_hide_password) #visibility button .widget
         self.ui.remembeme_checkBox.clicked.connect(self.handle_remember_me) #rememberme button
 
         # show the ui_form
         self.show()
-    
-    # Handle the user login
-    def login(self):
-        username = self.ui.lineEdit.text()
-        password = self.ui.password_input.text()
 
-        if self.db_manager.is_valid(username, password): #Passed password
+
+
+    def on_login_clicked(self):
+        username,password = self.get_user_info()
+        if self.valid_login(username, password):
             # Successful Login
-            self.user_manager.set_user(self.db_manager.get_user(username, password)) #added password
+            # Set the user in user manager
+            self.accept()
+            self.user_manager.set_user(self.db_manager.get_user(username, password)) 
             user = self.user_manager.get_user()
+
             QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
 
-            """Removed remembeme_checkBox from def login, when button is pressed it logs you in, separating the def, life 70"""
+            # TODO: Add remeber me function
             
-            # Signal login successful
-            self.login_accept.emit(True)
-            self.accept = True
+            # Signal User Manager to the MainWindow
+            self.login_accepted.emit(self.user_manager)
             self.close()
 
         else:
             # Unsuccessful
-            QtWidgets.QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
+            self.on_rejection()
+    
 
-            self.user_manager.failed_attempt()
-            if self.user_manager.get_login_attempts() > 2:
-                # Youre done! No more!
-                raise PermissionError("Failed Attempt Three Times, Locked From Account.")
+    def get_user_info(self):
+        """
+        get user info from the database
+        """
+        username = self.ui.lineEdit.text()
+        password = self.ui.password_input.text()
+        return username, password
+    
+    def valid_login(self, usr, pwd):
+        return self.db_manager.is_valid(usr, pwd)
+    
+    def on_rejection(self):
+        self.reject()
+        QtWidgets.QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
+        self.user_manager.failed_attempt()
+        if self.user_manager.get_login_attempts() > 2:
+            # Youre done! No more!
+            raise PermissionError("Failed Attempt Three Times, Locked From Account.")
 
-            self.login_reject.emit(True)
-            return False
+        self.login_reject.emit()
 
-    """def for remembeme_checkBox"""
+
+    # Remember me function
     def handle_remember_me(self):
         if self.ui.remembeme_checkBox.isChecked():
             #self.user_manager.save_user() """once we decide whether we actually want info saved"""
