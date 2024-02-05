@@ -18,6 +18,14 @@ class AppDataManager:
 
         return
 
+    def clear_prev_user(self):
+        """
+        Removes previous user 
+        """
+        self._data['prev_user'] = ""
+        self.update_json()
+        return
+
     def get_prev_user(self) -> str:
         """
         Returns the username of the previous user. Set the previous user with `remember me` toggle button

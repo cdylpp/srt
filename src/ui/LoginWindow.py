@@ -54,7 +54,7 @@ class LoginWindow(QtWidgets.QDialog):
 
             QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
 
-            self.handle_remember_me(True)
+            self.handle_remember_me(self.ui.remembeme_checkBox.isChecked())
             
             # Signal User Manager to the MainWindow
             self.login_accepted.emit(self.user_manager)
@@ -94,9 +94,11 @@ class LoginWindow(QtWidgets.QDialog):
         else:
             self.ui.remembeme_checkBox.setText("Remember Me")
 
-    def handle_remember_me(self, login_successful: bool):
+    def handle_remember_me(self, login_successful):
         if login_successful:
             self.app_data.save_user(self.user_manager.get_user().get_username())
+        else:
+            self.app_data.clear_prev_user()
         return
 
     def show_hide_password(self):
