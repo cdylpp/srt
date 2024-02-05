@@ -1,8 +1,20 @@
 import os, sys
 import json
 
-APP_DATA = os.path.abspath('data/app_data.json')
+#APP_DATA = os.path.abspath('data/app_data.json')   """references src\\data\\app_data.json instead of data\\app_data.json"""
 
+"""Project Runs with added lines 8-17 """
+# Get the directory of the current script (AppDataManager.py)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Move up to the parent directory (tests)
+tests_dir = os.path.dirname(script_dir)
+
+# Move up to the grandparent directory (SRTv.2)
+parent_dir = os.path.dirname(tests_dir)
+
+# Construct the absolute path to app_data.json in the data folder
+APP_DATA = os.path.join(parent_dir, 'data', 'app_data.json')
 
 class AppDataManager:
     def __init__(self) -> None:
