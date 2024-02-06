@@ -37,7 +37,11 @@ class SrtApp(QApplication):
 
     def cleanup_before_quit(self):
         print("Quit Clean up.")
-        self.quit()
+        
+    def on_close_main(self):
+        self.cleanup_before_quit()
+        sys.exit()
+        
     
     def load_app_data(self):
         print("Loading app data")
