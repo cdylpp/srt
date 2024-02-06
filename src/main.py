@@ -46,6 +46,11 @@ class SrtApp(QApplication):
     def load_app_data(self):
         print("Loading app data")
         return AppDataManager()
+    
+    def on_close_main(self):
+        self.cleanup_before_quit()
+        sys.exit()
+
 
 
 if __name__ == "__main__":

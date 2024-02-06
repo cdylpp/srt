@@ -5,6 +5,8 @@ from PySide6.QtCore import Qt, QAbstractTableModel
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QApplication, QTableView, QTableWidgetItem, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton)
 
+from utils import format_headers
+
 class TableModel(QAbstractTableModel):
     def __init__(self, data):
         super().__init__()
@@ -24,16 +26,19 @@ class TableModel(QAbstractTableModel):
     def headerData(self, section, orientation, role):
         if role == Qt.ItemDataRole.DisplayRole:
             if orientation == Qt.Orientation.Horizontal:
-                return str(self._data.columns[section])
+                return format_headers(str(self._data.columns[section]))
 
             if orientation == Qt.Orientation.Vertical:
                 return str(self._data.index[section])
 
 class DataWindow(QMainWindow):
-    def __init__(self, df=None):
+    def __init__(self, df=None, **kwargs):
         super().__init__()
         self.table = QTableView()
         self.df = df
+
+        if 'title' in kwargs:
+            self.setWindowTitle(kwargs['title'])
 
         self.model = TableModel(self.df)
         self.table.setModel(self.model)

@@ -217,6 +217,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setObjectName(u"stackedWidget")
         self.stackedWidget.setStyleSheet(u"background-color: rgb(44, 49, 60);\n"
 "color: white;")
+        
         self.homePage = QWidget()
         self.homePage.setObjectName(u"homePage")
         self.placeholderTextForHomePage = QLabel(self.homePage)
