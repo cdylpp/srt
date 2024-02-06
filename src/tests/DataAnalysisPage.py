@@ -13,48 +13,57 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
         self.setWindowTitle("Home Page")
 
         # Create a central widget for the QMainWindow
-        central_widget = QtWidgets.QWidget(self)
-        self.setCentralWidget(central_widget)
+        self.centralWidget = QtWidgets.QWidget()
+        self.setCentralWidget(self.centralWidget)
+
+        
 
         # Create a layout for the central widget
-        layout = QtWidgets.QVBoxLayout(central_widget)
-
-        # Add a QTabWidget
+        self.layout = QtWidgets.QVBoxLayout(self.centralWidget)
         self.tab_widget = QtWidgets.QTabWidget()
-        layout.addWidget(self.tab_widget)
-
-        # Create the label
-        label = QtWidgets.QLabel("Drop files here")
-        layout.addWidget(label)
+        self.layout.addWidget(self.tab_widget)
 
         # Set properties for drop events
         self.setAcceptDrops(True)
 
         # Create a QToolBar
-        toolbar = QtWidgets.QToolBar("File Operations", self)
-        self.addToolBar(toolbar)
+        self.toolbar = QtWidgets.QToolBar("File Operations", self)
+        self.addToolBar(self.toolbar)
 
         # Create actions for the toolbar
-        import_action = QtGui.QAction("Import", self)
-        import_action.setStatusTip("Import data set")
-        import_action.triggered.connect(self.import_dataset_dialog)
-        toolbar.addAction(import_action)
+        self.import_action = QtGui.QAction("Import", self)
+        self.import_action.setStatusTip("Import data set")
+        self.import_action.triggered.connect(self.on_import_action)
+        self.toolbar.addAction(self.import_action)
 
-        save_action = QtGui.QAction("Save", self)
-        save_action.setStatusTip("Save current tab")
-        save_action.triggered.connect(self.save_data)
-        toolbar.addAction(save_action)
+        self.save_action = QtGui.QAction("Save", self)
+        self.save_action.setStatusTip("Save current tab")
+        self.save_action.triggered.connect(self.on_save_action)
+        self.toolbar.addAction(self.save_action)
 
-        close_action = QtGui.QAction("Close", self)
-        close_action.setStatusTip("Close current tab")
-        close_action.triggered.connect(self.close_tab)
-        toolbar.addAction(close_action)
-        toolbar.addSeparator()
+        self.close_action = QtGui.QAction("Close", self)
+        self.close_action.setStatusTip("Close current tab")
+        self.close_action.triggered.connect(self.on_close_tab)
+        self.toolbar.addAction(self.close_action)
 
-        create_plot = QtGui.QAction("Plot", self)
-        create_plot.setStatusTip("Create a simple Plot")
-        create_plot.triggered.connect(self.generate_plot_dialog)
-        toolbar.addAction(create_plot)
+        self.toolbar.addSeparator()
+
+        self.plot_action = QtGui.QAction("Plot", self)
+        self.plot_action.setStatusTip("Create a simple Plot")
+        self.plot_action.triggered.connect(self.on_plot_action)
+        self.toolbar.addAction(self.plot_action)
+
+        self.info_action = QtGui.QAction("Info", self)
+        self.info_action.setStatusTip("Show detailed info")
+        self.info_action.triggered.connect(self.on_info_action)
+        self.toolbar.addAction(self.info_action)
+
+        self.describe_action = QtGui.QAction("Describe", self)
+        self.describe_action.setStatusTip("Show table stats")
+        self.describe_action.triggered.connect(self.on_describe_action)
+        self.toolbar.addAction(self.describe_action)
+
+        self.setStatusBar(QtWidgets.QStatusBar(self))
         
 
     def dragEnterEvent(self, event):
@@ -73,11 +82,11 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
         # If no CSV file is found, reject the drop event
         event.ignore()
 
-    def generate_plot_dialog(self):
+    def on_plot_action(self):
         # Dialog to generate plot using the existing dataset
         return
     
-    def import_dataset_dialog(self):
+    def on_import_action(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.ReadOnly  # Optional: Set additional options as needed
 
@@ -105,7 +114,7 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
             df = read_csv(path)
             dataframes.append(df)
             data_table = DataWindow(df=df)
-            self.add_tab(data_table, path)
+            self.tab_widget.addTab(data_table, os.path.basename(path))
             data_table.show()
         
         return
@@ -123,12 +132,13 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
         # Add the new tab to the QTabWidget
         self.tab_widget.addTab(w, os.path.basename(file_path))
 
-    def close_tab(self):
+
+    def on_close_tab(self):
         # Logic to close the current tab
         current_tab_index = self.tab_widget.currentIndex()
         self.tab_widget.removeTab(current_tab_index)
     
-    def save_data(self):
+    def on_save_action(self):
         # Logic to save data from the current tab
         current_tab_index = self.tab_widget.currentIndex()
         current_tab_name = self.tab_widget.tabText(current_tab_index)
@@ -143,3 +153,29 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
             # Convert the Dataframe to csv
             # Move the csv to the file_path
             print(f"Save data from {current_tab_name} to: {file_path}")
+        
+    def on_info_action(self):
+        current_tab = self.tab_widget.currentWidget()
+        if current_tab:
+            df = current_tab.df
+            print(df.info())
+        else:
+            print("No Tab to get info.")
+        return
+
+    def on_describe_action(self):
+        # TODO: Need a way to close it
+        # if checked, delete the description widget and title
+        # if not checked, then show description for the current widget.
+        current_tab = self.tab_widget.currentWidget()
+        if current_tab:
+            if self.describe_action.isChecked():
+                self.layout.removeWidget()
+            else:
+                df = current_tab.df
+                describe_window = DataWindow(df.describe())
+                self.layout.addWidget(QtWidgets.QLabel("Description"))
+                self.layout.addWidget(describe_window)
+        else:
+            print("No Tab to get describe.")
+        return
