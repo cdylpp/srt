@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         self.homeButton = QPushButton(self.iconsWidget)
         self.homeButton.setObjectName(u"homeButton")
         icon = QIcon()
-        icon.addFile(u"resources/Icons/home.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/Icons/home.svg", QSize(), QIcon.Normal, QIcon.Off)
         self.homeButton.setIcon(icon)
         self.homeButton.setIconSize(QSize(24, 24))
         self.homeButton.setCheckable(True)

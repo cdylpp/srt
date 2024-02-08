@@ -49,7 +49,10 @@ class LoginWindow(QtWidgets.QDialog):
             self.user_manager.set_user(self.db_manager.get_user(username, password)) 
             user = self.user_manager.get_user()
 
-            QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+            msg_box = QtWidgets.QMessageBox()
+            msg_box.setStyleSheet("QLabel { color: white; }")
+            msg_box.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+
 
             self.handle_remember_me(self.ui.remembeme_checkBox.isChecked())
             
