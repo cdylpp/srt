@@ -3,9 +3,9 @@ from ui.login_window import Ui_Form
 from database import DatabaseManager
 from tests.user import User, UserManager
 from utils import Validator
-from dotenv import dotenv_values
 
 class LoginWindow(QtWidgets.QDialog):
+
     login_accepted = QtCore.Signal(UserManager)
     login_reject = QtCore.Signal()
     login_window_closed = QtCore.Signal()
@@ -18,7 +18,6 @@ class LoginWindow(QtWidgets.QDialog):
         
         self.init_ui()
 
-    
     def init_ui(self):
         # logging info
         print("Init Login View")
@@ -41,8 +40,6 @@ class LoginWindow(QtWidgets.QDialog):
         # show the ui_form
         self.show()
 
-
-
     def on_login_clicked(self):
         username,password = self.get_user_info()
         if self.valid_login(username, password):
@@ -64,7 +61,6 @@ class LoginWindow(QtWidgets.QDialog):
             # Unsuccessful
             self.on_rejection()
     
-
     def get_user_info(self):
         """
         get user info from the database
@@ -85,7 +81,6 @@ class LoginWindow(QtWidgets.QDialog):
             raise PermissionError("Failed Attempt Three Times, Locked From Account.")
 
         self.login_reject.emit()
-
 
     # Remember me function
     def on_remember_me(self):

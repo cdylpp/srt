@@ -16,8 +16,6 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
         self.centralWidget = QtWidgets.QWidget()
         self.setCentralWidget(self.centralWidget)
 
-        
-
         # Create a layout for the central widget
         self.layout = QtWidgets.QVBoxLayout(self.centralWidget)
         self.tab_widget = QtWidgets.QTabWidget()
@@ -65,7 +63,6 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
 
         self.setStatusBar(QtWidgets.QStatusBar(self))
         
-
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
 
@@ -131,7 +128,6 @@ class DataAnalysisPage(QtWidgets.QMainWindow):
 
         # Add the new tab to the QTabWidget
         self.tab_widget.addTab(w, os.path.basename(file_path))
-
 
     def on_close_tab(self):
         # Logic to close the current tab
