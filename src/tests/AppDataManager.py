@@ -2,7 +2,7 @@ import os, sys
 import json
 
 
-APP_DATA = os.path.relpath('../data/app_data.json')
+APP_DATA = os.path.relpath('data/app_data.json')
 
 class AppDataManager:
     def __init__(self) -> None:

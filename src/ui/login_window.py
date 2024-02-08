@@ -1,210 +1,257 @@
-# Login View version 2
-# Ui file for creating the LoginView class
+# -*- coding: utf-8 -*-
 
-import sys, os
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFormLayout, QFrame,
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
 from resources import login_icons_rc
 
 class Ui_Form(object):
     def setupUi(self, Form):
-        Form.setObjectName("Form")
-        Form.resize(931, 692)
-        Form.setMinimumSize(QtCore.QSize(800, 600))
-        
-        self.widget = QtWidgets.QWidget(Form)
-        self.widget.setGeometry(QtCore.QRect(60, 50, 811, 600))
-        self.widget.setMinimumSize(QtCore.QSize(800, 600))
-        self.widget.setObjectName("widget")
-        self.login_background = QtWidgets.QLabel(self.widget)
-        self.login_background.setGeometry(QtCore.QRect(410, 60, 311, 421))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.login_background.sizePolicy().hasHeightForWidth())
-        self.login_background.setSizePolicy(sizePolicy)
-        self.login_background.setStyleSheet("background-color: rgb(202, 238, 236);\n"
-"border-radius:10px;\n"
-"")
-        self.login_background.setText("")
-        self.login_background.setObjectName("login_background")
-        
-        self.analytics_background = QtWidgets.QLabel(self.widget)
-        self.analytics_background.setGeometry(QtCore.QRect(80, 40, 331, 461))
-        
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.analytics_background.sizePolicy().hasHeightForWidth())
-        
-        self.analytics_background.setSizePolicy(sizePolicy)
-        self.analytics_background.setStyleSheet("background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(147, 251, 157, 255), stop:1 rgba(9, 199, 251, 255));\n"
-"border-radius:10px;\n"
-" \n"
+        if not Form.objectName():
+            Form.setObjectName(u"StaySmart: Student Retention Tool")
+        Form.resize(800, 600)
+        Form.setMinimumSize(QSize(800, 600))
+        Form.setMaximumSize(QSize(800, 600))
+        Form.setStyleSheet(u"background-color: rgb(52, 53, 65);\n"
 "\n"
+"QLabel {\n"
+"    color: white;\n"
+"}\n"
+"\n"
+"QLineEdit {\n"
+"    background-color: white;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    color: white;\n"
+"}\n"
 "")
-        self.analytics_background.setText("")
-        self.analytics_background.setScaledContents(False)
-        self.analytics_background.setObjectName("analytics_background")
-        
-        self.logo_frame = QtWidgets.QFrame(self.widget)
-        self.logo_frame.setGeometry(QtCore.QRect(410, 90, 311, 51))
-        self.logo_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.logo_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.logo_frame.setObjectName("logo_frame")
-        self.logo = QtWidgets.QLabel(self.logo_frame)
-        self.logo.setGeometry(QtCore.QRect(130, 0, 45, 50))
-        self.logo.setText("")
-        self.logo.setPixmap(QtGui.QPixmap(":/Logo/Logo/Stay Smart Logo 1.png"))
+        self.widget = QWidget(Form)
+        self.widget.setObjectName(u"widget")
+        self.widget.setGeometry(QRect(0, 0, 800, 600))
+        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy)
+        self.widget.setMinimumSize(QSize(800, 600))
+        self.widget.setMaximumSize(QSize(800, 600))
+        self.widget.setLayoutDirection(Qt.LeftToRight)
+        self.widget.setStyleSheet(u"background-color: rgb(52, 53, 65);\n"
+"\n"
+"QLabel {\n"
+"    color: white;\n"
+"}\n"
+"\n"
+"QLineEdit {\n"
+"    background-color: white;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    color: white;\n"
+"}")
+        self.gridLayout_4 = QGridLayout(self.widget)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.widget_2 = QWidget(self.widget)
+        self.widget_2.setObjectName(u"widget_2")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.widget_2.sizePolicy().hasHeightForWidth())
+        self.widget_2.setSizePolicy(sizePolicy1)
+        self.widget_2.setMinimumSize(QSize(300, 400))
+        self.widget_2.setStyleSheet(u"background-color: rgb(0, 0, 0);\n"
+"border-radius: 20px")
+        self.gridLayout = QGridLayout(self.widget_2)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.logo_frame = QFrame(self.widget_2)
+        self.logo_frame.setObjectName(u"logo_frame")
+        sizePolicy1.setHeightForWidth(self.logo_frame.sizePolicy().hasHeightForWidth())
+        self.logo_frame.setSizePolicy(sizePolicy1)
+        self.logo_frame.setMinimumSize(QSize(300, 100))
+        self.logo_frame.setFrameShape(QFrame.StyledPanel)
+        self.logo_frame.setFrameShadow(QFrame.Raised)
+        self.gridLayout_3 = QGridLayout(self.logo_frame)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.logo = QLabel(self.logo_frame)
+        self.logo.setObjectName(u"logo")
+        sizePolicy1.setHeightForWidth(self.logo.sizePolicy().hasHeightForWidth())
+        self.logo.setSizePolicy(sizePolicy1)
+        self.logo.setMinimumSize(QSize(105, 120))
+        self.logo.setMaximumSize(QSize(105, 120))
+        self.logo.setPixmap(QPixmap(u":/Logo/Logo/Stay Smart Logo 1.png"))
         self.logo.setScaledContents(True)
-        self.logo.setAlignment(QtCore.Qt.AlignCenter)
-        self.logo.setObjectName("logo")
-        self.analytics_logo = QtWidgets.QLabel(self.widget)
-        self.analytics_logo.setGeometry(QtCore.QRect(130, 140, 221, 321))
-        self.analytics_logo.setText("")
-        self.analytics_logo.setPixmap(QtGui.QPixmap(":/Logo/Logo/7731130.png"))
-        self.analytics_logo.setScaledContents(True)
-        self.analytics_logo.setAlignment(QtCore.Qt.AlignCenter)
-        self.analytics_logo.setObjectName("analytics_logo")
-        self.layoutWidget = QtWidgets.QWidget(self.widget)
-        self.layoutWidget.setGeometry(QtCore.QRect(450, 200, 231, 221))
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        
-        self.label = QtWidgets.QLabel(self.layoutWidget)
-        self.label.setMaximumSize(QtCore.QSize(20, 20))
-        self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/IconsBlue/IconsBlue/#0088b9/user.svg"))
+        self.logo.setAlignment(Qt.AlignCenter)
+
+        self.gridLayout_3.addWidget(self.logo, 0, 0, 1, 1)
+
+
+        self.gridLayout.addWidget(self.logo_frame, 0, 0, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(35, 0, 35, 20)
+        self.formLayout = QFormLayout()
+        self.formLayout.setObjectName(u"formLayout")
+        self.label = QLabel(self.widget_2)
+        self.label.setObjectName(u"label")
+        self.label.setMaximumSize(QSize(20, 20))
+        self.label.setPixmap(QPixmap(u":/IconsBlue/IconsBlue/#0088b9/user.svg"))
         self.label.setScaledContents(True)
-        self.label.setObjectName("label")
-        
-        self.horizontalLayout.addWidget(self.label)
-        self.lineEdit = QtWidgets.QLineEdit(self.layoutWidget)
-        self.lineEdit.setMinimumSize(QtCore.QSize(125, 29))
-        self.lineEdit.setStyleSheet("background-color:rgba(0, 0, 0, 0);\n"
+
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
+
+        self.lineEdit = QLineEdit(self.widget_2)
+        self.lineEdit.setObjectName(u"lineEdit")
+        sizePolicy1.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
+        self.lineEdit.setSizePolicy(sizePolicy1)
+        self.lineEdit.setMinimumSize(QSize(180, 29))
+        self.lineEdit.setStyleSheet(u"background-color: white;\n"
 "border:2px solid rgba(0, 0, 0, 0);\n"
 "border-bottom-color:rgba(17, 243, 255, 255);\n"
 "color:rgb(0, 0, 0);\n"
 "padding-bottom:7px;")
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout.addWidget(self.lineEdit)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.pass_label = QtWidgets.QLabel(self.layoutWidget)
-        self.pass_label.setMaximumSize(QtCore.QSize(20, 20))
-        self.pass_label.setStyleSheet("color: rgb(12, 67, 112);")
-        self.pass_label.setText("")
-        self.pass_label.setPixmap(QtGui.QPixmap(":/IconsBlue/IconsBlue/#0088b9/key.svg"))
+
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.lineEdit)
+
+
+        self.verticalLayout.addLayout(self.formLayout)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.pass_label = QLabel(self.widget_2)
+        self.pass_label.setObjectName(u"pass_label")
+        self.pass_label.setMaximumSize(QSize(20, 20))
+        self.pass_label.setStyleSheet(u"color: rgb(12, 67, 112);")
+        self.pass_label.setPixmap(QPixmap(u":/IconsBlue/IconsBlue/#0088b9/key.svg"))
         self.pass_label.setScaledContents(True)
-        self.pass_label.setObjectName("pass_label")
+
         self.horizontalLayout_2.addWidget(self.pass_label)
-        self.password_input = QtWidgets.QLineEdit(self.layoutWidget)
-        self.password_input.setMinimumSize(QtCore.QSize(125, 29))
-        self.password_input.setStyleSheet("background-color:rgba(0, 0, 0, 0);\n"
+
+        self.password_input = QLineEdit(self.widget_2)
+        self.password_input.setObjectName(u"password_input")
+        self.password_input.setMinimumSize(QSize(180, 29))
+        self.password_input.setStyleSheet(u"background-color: white;\n"
 "border:2px solid rgba(0, 0, 0, 0);\n"
 "border-bottom-color:rgba(17, 243, 255, 255);\n"
 "color:rgb(0, 0, 0);\n"
 "padding-bottom:7px;")
-        self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.password_input.setObjectName("password_input")
+        self.password_input.setEchoMode(QLineEdit.Password)
+
         self.horizontalLayout_2.addWidget(self.password_input)
+
+        self.visibility_button = QPushButton(self.widget_2)
+        self.visibility_button.setObjectName(u"visibility_button")
+        self.visibility_button.setMaximumSize(QSize(26, 26))
+        self.visibility_button.setStyleSheet(u"bottom-padding:5px;\n"
+"border:2px;")
+        icon = QIcon()
+        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye-off.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye.svg", QSize(), QIcon.Normal, QIcon.On)
+        self.visibility_button.setIcon(icon)
+        self.visibility_button.setCheckable(True)
+
+        self.horizontalLayout_2.addWidget(self.visibility_button)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.remembeme_checkBox = QtWidgets.QCheckBox(self.layoutWidget)
-        self.remembeme_checkBox.setMaximumSize(QtCore.QSize(16777215, 29))
-        self.remembeme_checkBox.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.remembeme_checkBox.setStyleSheet("color: rgb(53, 185, 223);\n"
+
+        self.remembeme_checkBox = QCheckBox(self.widget_2)
+        self.remembeme_checkBox.setObjectName(u"remembeme_checkBox")
+        self.remembeme_checkBox.setMaximumSize(QSize(16777215, 29))
+        self.remembeme_checkBox.setLayoutDirection(Qt.LeftToRight)
+        self.remembeme_checkBox.setStyleSheet(u"color: white;\n"
 "border-radius:10px;\n"
 "padding:5px;\n"
 "")
-        self.remembeme_checkBox.setObjectName("remembeme_checkBox")
-        self.verticalLayout.addWidget(self.remembeme_checkBox)
-        self.login_button = QtWidgets.QPushButton(self.layoutWidget)
-        font = QtGui.QFont()
+
+        self.verticalLayout.addWidget(self.remembeme_checkBox, 0, Qt.AlignHCenter|Qt.AlignVCenter)
+
+        self.login_button = QPushButton(self.widget_2)
+        self.login_button.setObjectName(u"login_button")
+        font = QFont()
         font.setPointSize(19)
         font.setBold(True)
         self.login_button.setFont(font)
-        self.login_button.setStyleSheet("QPushButton#login_button{\n"
-"    color: rgb(0, 136, 185);\n"
-"    border-radius:10px\n"
+        self.login_button.setStyleSheet(u"QPushButton#login_button{\n"
+"	color: white;\n"
+"	border-radius:10px\n"
 "}\n"
 "\n"
 "QPushButton#login_button:pressed{\n"
-"    padding-left:5px;\n"
-"    padding-top:5px;\n"
-"    background-position:calc(100% - 10px)center;\n"
+"	padding-left:5px;\n"
+"	padding-top:5px;\n"
+"	background-position:calc(100% - 10px)center;\n"
 "}\n"
 "\n"
 "QPushButton#login_button:hover{\n"
-"    color: rgb(255, 255, 255);\n"
+"	\n"
+"	color: rgb(223, 223, 223);\n"
 "}\n"
 "\n"
 "")
-        self.login_button.setObjectName("login_button")
-        self.verticalLayout.addWidget(self.login_button)
-        self.forgot_button = QtWidgets.QPushButton(self.layoutWidget)
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        font.setBold(True)
-        self.forgot_button.setFont(font)
-        self.forgot_button.setStyleSheet("QPushButton#forgot_button{\n"
-"    color: rgb(0, 136, 185);\n"
-"    border:0px solid rgba(0, 0, 0, 0);\n"
+
+        self.verticalLayout.addWidget(self.login_button, 0, Qt.AlignHCenter|Qt.AlignVCenter)
+
+        self.forgot_button = QPushButton(self.widget_2)
+        self.forgot_button.setObjectName(u"forgot_button")
+        font1 = QFont()
+        font1.setPointSize(8)
+        font1.setBold(True)
+        self.forgot_button.setFont(font1)
+        self.forgot_button.setStyleSheet(u"QPushButton#forgot_button{\n"
+"	color: white;\n"
+"	border:0px solid rgba(0, 0, 0, 0);\n"
 "}\n"
 "\n"
 "QPushButton#forgot_button:pressed{\n"
-"    padding-left:5px;\n"
-"    padding-top:5px;\n"
-"    background-position:calc(100% - 10px)center;\n"
+"	padding-left:5px;\n"
+"	padding-top:5px;\n"
+"	background-position:calc(100% - 10px)center;\n"
 "}\n"
 "\n"
 "QPushButton#forgot_button:hover{\n"
-"    color: rgb(255, 255, 255);\n"
+"	color: rgb(223, 223, 223);\n"
 "}\n"
 "")
-        self.forgot_button.setObjectName("forgot_button")
-        self.verticalLayout.addWidget(self.forgot_button)
-        self.visibility_button = QtWidgets.QPushButton(self.widget)
-        self.visibility_button.setGeometry(QtCore.QRect(680, 255, 26, 26))
-        self.visibility_button.setMaximumSize(QtCore.QSize(26, 26))
-        self.visibility_button.setStyleSheet("bottom-padding:5px;\n"
-"border:2px;")
-        self.visibility_button.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/IconsBlue/IconsBlue/#0088b9/eye-off.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/IconsBlue/IconsBlue/#0088b9/eye.svg"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        self.visibility_button.setIcon(icon)
-        self.visibility_button.setCheckable(True)
-        self.visibility_button.setObjectName("visibility_button")
-        self.login_background.raise_()
-        self.layoutWidget.raise_()
-        self.logo_frame.raise_()
-        self.analytics_background.raise_()
-        self.visibility_button.raise_()
-        self.analytics_logo.raise_()
+
+        self.verticalLayout.addWidget(self.forgot_button, 0, Qt.AlignHCenter|Qt.AlignVCenter)
+
+
+        self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
+
+
+        self.gridLayout_4.addWidget(self.widget_2, 0, 0, 1, 1)
+
+        self.layoutWidget = QWidget(Form)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.layoutWidget.setGeometry(QRect(0, 0, 2, 2))
+        self.gridLayout_2 = QGridLayout(self.layoutWidget)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
 
         self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+
+        QMetaObject.connectSlotsByName(Form)
+    # setupUi
 
     def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("SRT Login", "SRT Login"))
-        self.lineEdit.setPlaceholderText(_translate("Form", "Username"))
-        self.password_input.setPlaceholderText(_translate("Form", "Password"))
-        self.remembeme_checkBox.setText(_translate("Form", "  Remember Me"))
-        self.login_button.setText(_translate("Form", "Login"))
-        self.forgot_button.setText(_translate("Form", "Forgot Password?"))
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.logo.setText("")
+        self.label.setText("")
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("Form", u"Username", None))
+        self.pass_label.setText("")
+        self.password_input.setPlaceholderText(QCoreApplication.translate("Form", u"Password", None))
+        self.visibility_button.setText("")
+        self.remembeme_checkBox.setText(QCoreApplication.translate("Form", u"  Remember Me", None))
+        self.login_button.setText(QCoreApplication.translate("Form", u"Login", None))
+        self.forgot_button.setText(QCoreApplication.translate("Form", u"Forgot Password?", None))
+    # retranslateUi
 
-
-# if __name__ == "__main__":
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#     Form = QtWidgets.QWidget()
-#     ui = Ui_Form()
-#     ui.setupUi(Form)
-#     Form.show()
-#     sys.exit(app.exec_())
