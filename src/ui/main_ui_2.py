@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.staySmartLogo.setObjectName(u"staySmartLogo")
         self.staySmartLogo.setMinimumSize(QSize(45, 50))
         self.staySmartLogo.setMaximumSize(QSize(40, 50))
-        self.staySmartLogo.setPixmap(QPixmap(u":/images/Stay Smart Logo 1.png"))
+        self.staySmartLogo.setPixmap(QPixmap(u":/Logo/Logo/Stay Smart Logo 1.png"))
         self.staySmartLogo.setScaledContents(True)
 
         self.horizontalLayout_3.addWidget(self.staySmartLogo)

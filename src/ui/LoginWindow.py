@@ -57,8 +57,19 @@ class LoginWindow(QtWidgets.QDialog):
         self.user_manager.set_user(self.db_manager.get_user(username, password))
         user = self.user_manager.get_user()
 
-        QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+        # Create a message box
+        msg_box = QtWidgets.QMessageBox()
+        msg_box.setWindowTitle('Login Successful')
+        msg_box.setText(f'<div align= "center"><font color="white">Welcome, {user.get_name()}!</font></div>')
+        ok_button = msg_box.addButton(QtWidgets.QMessageBox.Ok)
+        ok_button.setText("Ok")
+        ok_button.setStyleSheet("color: white; background-color: black;")
+        msg_box.setDefaultButton(ok_button)
+        msg_box.setStyleSheet("QMessageBox { background-color: rgb(52, 53, 65); }")
+        msg_box.setWindowIcon(QtGui.QIcon(':/Logo/Logo/Stay Smart Logo 1.png'))
+        msg_box.exec()
 
+        
         self.handle_remember_me(self.ui.remembeme_checkBox.isChecked())
 
         # Signal User Manager to the MainWindow

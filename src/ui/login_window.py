@@ -33,6 +33,11 @@ class Ui_Form(object):
 "    color: white;\n"
 "}\n"
 "")
+        
+        # Set window icon
+        icon = QIcon(":/Logo/Logo/Stay Smart Logo 1.png")  # Replace with your icon path
+        Form.setWindowIcon(icon)
+        
         self.widget = QWidget(Form)
         self.widget.setObjectName(u"widget")
         self.widget.setGeometry(QRect(0, 0, 800, 600))
@@ -243,7 +248,7 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"StaySmart: Student Retention Tool", None))
         self.logo.setText("")
         self.label.setText("")
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("Form", u"Username", None))

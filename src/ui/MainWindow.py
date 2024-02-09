@@ -29,7 +29,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Set the icon for the window
         main_window_icon = QtGui.QIcon()
-        main_window_icon.addFile("resources/Logo/Stay Smart Logo 1.png")  #resources/images/Stay Smart Logo 1.png
+        main_window_icon.addFile(":/Logo/Logo/Stay Smart Logo 1.png")  #resources/images/Stay Smart Logo 1.png
         self.setWindowIcon(main_window_icon)
 
         # Prevent the extended icon menus from trying to both start up in the beginning

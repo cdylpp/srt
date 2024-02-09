@@ -33,7 +33,7 @@ class SrtApp(QApplication):
         # Pass User Manager to the MainWindow
         self.main_window = MainWindow(user_manager, app_data=self._app_data)
         self.main_window.main_window_closed.connect(self.on_close_main)
-        self.main_window.show()
+        self.main_window.show() 
 
     def cleanup_before_quit(self):
         print("Quit Clean up.")
