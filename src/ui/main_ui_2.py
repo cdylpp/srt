@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
     QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
 
 from tests.DataAnalysisPage import DataAnalysisPage
+from ui.SettingsPage import SettingsPage
 
 
 class Ui_MainWindow(object):
@@ -238,6 +239,7 @@ class Ui_MainWindow(object):
         # self.placeholderTextForDataAnalysisPage.setFont(font)
 
         self.stackedWidget.addWidget(self.dataAnalysisPage)
+        
         self.reportsPage = QWidget()
         self.reportsPage.setObjectName(u"reportsPage")
         self.placeholderTextForReportsPage = QLabel(self.reportsPage)
@@ -245,13 +247,15 @@ class Ui_MainWindow(object):
         self.placeholderTextForReportsPage.setGeometry(QRect(200, 200, 171, 81))
         self.placeholderTextForReportsPage.setFont(font)
         self.stackedWidget.addWidget(self.reportsPage)
-        self.settingsPage = QWidget()
+        
+        self.settingsPage = SettingsPage()
         self.settingsPage.setObjectName(u"settingsPage")
-        self.placeholderTextForSettingsPage = QLabel(self.settingsPage)
-        self.placeholderTextForSettingsPage.setObjectName(u"placeholderTextForSettingsPage")
-        self.placeholderTextForSettingsPage.setGeometry(QRect(190, 200, 171, 81))
-        self.placeholderTextForSettingsPage.setFont(font)
+        # self.placeholderTextForSettingsPage = QLabel(self.settingsPage)
+        # self.placeholderTextForSettingsPage.setObjectName(u"placeholderTextForSettingsPage")
+        # self.placeholderTextForSettingsPage.setGeometry(QRect(190, 200, 171, 81))
+        # self.placeholderTextForSettingsPage.setFont(font)
         self.stackedWidget.addWidget(self.settingsPage)
+        
         self.notificationsPage = QWidget()
         self.notificationsPage.setObjectName(u"notificationsPage")
         self.placeholderTextForNotificationsPage = QLabel(self.notificationsPage)
@@ -422,7 +426,7 @@ class Ui_MainWindow(object):
         self.placeholderTextForHomePage.setText(QCoreApplication.translate("MainWindow", u"Home Page", None))
         # self.placeholderTextForDataAnalysisPage.setText(QCoreApplication.translate("MainWindow", u"Data Analysis Page", None))
         self.placeholderTextForReportsPage.setText(QCoreApplication.translate("MainWindow", u"Reports Page", None))
-        self.placeholderTextForSettingsPage.setText(QCoreApplication.translate("MainWindow", u"Notifications Page", None))
+        # self.placeholderTextForSettingsPage.setText(QCoreApplication.translate("MainWindow", u"Notifications Page", None))
         self.placeholderTextForNotificationsPage.setText(QCoreApplication.translate("MainWindow", u"Settings Page", None))
         self.staySmartLogoWithText.setText("")
         self.staySmartText.setText(QCoreApplication.translate("MainWindow", u"StaySmart", None))

@@ -2,7 +2,7 @@ import os, sys
 import json
 
 
-APP_DATA = os.path.relpath('data/app_data.json')
+APP_DATA = os.path.relpath('././data/app_data.json')
 
 class AppDataManager:
     def __init__(self) -> None:
@@ -51,3 +51,18 @@ class AppDataManager:
         print("prev_user set to: ", username)
 
         return
+
+    def log_login_attempts(self, username):
+        # Log a failed login attempt for the user
+        if 'login_attempts' not in self._data:
+            self._data['login_attempts'] = {}
+        if username not in self._data['login_attempts']:
+            self._data['login_attempts'][username] = 0
+        self._data['login_attempts'][username] += 1
+        self.update_json()
+
+    def clear_login_attempts(self, username):
+        # Clear login attempts for the user
+        if 'login_attempts' in self._data and username in self._data['login_attempts']:
+            self._data['login_attempts'].pop(username)
+            self.update_json()
