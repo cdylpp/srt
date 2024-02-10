@@ -8,7 +8,8 @@ from resources import resources2
 
 from ui.main_ui_2 import Ui_MainWindow
 # from ui.main_gui_blue import Ui_MainWindow # from ui.main_ui_2 import Ui_MainWindow
-from ui.LoginWindow import LoginWindow 
+from ui.LoginWindow import LoginWindow
+from tests.settings import SettingsPage
 from tests.user import UserManager
 
 current_dir = os.path.dirname(os.path.abspath(__file__))

@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
     QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
 
 from tests.DataAnalysisPage import DataAnalysisPage
-from ui.SettingsPage import SettingsPage
+from tests.settings import SettingsPage
 
 
 class Ui_MainWindow(object):
@@ -232,12 +232,6 @@ class Ui_MainWindow(object):
         # Place Holder for Custom Widget
         self.dataAnalysisPage = DataAnalysisPage()
         self.dataAnalysisPage.setObjectName(u"dataAnalysisPage")
-
-        # self.placeholderTextForDataAnalysisPage = QLabel(self.dataAnalysisPage)
-        # self.placeholderTextForDataAnalysisPage.setObjectName(u"placeholderTextForDataAnalysisPage")
-        # self.placeholderTextForDataAnalysisPage.setGeometry(QRect(170, 210, 251, 81))
-        # self.placeholderTextForDataAnalysisPage.setFont(font)
-
         self.stackedWidget.addWidget(self.dataAnalysisPage)
         
         self.reportsPage = QWidget()
@@ -248,14 +242,6 @@ class Ui_MainWindow(object):
         self.placeholderTextForReportsPage.setFont(font)
         self.stackedWidget.addWidget(self.reportsPage)
         
-        self.settingsPage = SettingsPage()
-        self.settingsPage.setObjectName(u"settingsPage")
-        # self.placeholderTextForSettingsPage = QLabel(self.settingsPage)
-        # self.placeholderTextForSettingsPage.setObjectName(u"placeholderTextForSettingsPage")
-        # self.placeholderTextForSettingsPage.setGeometry(QRect(190, 200, 171, 81))
-        # self.placeholderTextForSettingsPage.setFont(font)
-        self.stackedWidget.addWidget(self.settingsPage)
-        
         self.notificationsPage = QWidget()
         self.notificationsPage.setObjectName(u"notificationsPage")
         self.placeholderTextForNotificationsPage = QLabel(self.notificationsPage)
@@ -263,6 +249,9 @@ class Ui_MainWindow(object):
         self.placeholderTextForNotificationsPage.setGeometry(QRect(160, 200, 251, 81))
         self.placeholderTextForNotificationsPage.setFont(font)
         self.stackedWidget.addWidget(self.notificationsPage)
+
+        self.settingsPage = SettingsPage()
+        self.stackedWidget.addWidget(self.settingsPage)
 
         self.verticalLayout_5.addWidget(self.stackedWidget)
 
@@ -427,7 +416,7 @@ class Ui_MainWindow(object):
         # self.placeholderTextForDataAnalysisPage.setText(QCoreApplication.translate("MainWindow", u"Data Analysis Page", None))
         self.placeholderTextForReportsPage.setText(QCoreApplication.translate("MainWindow", u"Reports Page", None))
         # self.placeholderTextForSettingsPage.setText(QCoreApplication.translate("MainWindow", u"Notifications Page", None))
-        self.placeholderTextForNotificationsPage.setText(QCoreApplication.translate("MainWindow", u"Settings Page", None))
+        #self.placeholderTextForNotificationsPage.setText(QCoreApplication.translate("MainWindow", u"Settings Page", None))
         self.staySmartLogoWithText.setText("")
         self.staySmartText.setText(QCoreApplication.translate("MainWindow", u"StaySmart", None))
         self.homeButtonWithText.setText(QCoreApplication.translate("MainWindow", u"Home", None))
