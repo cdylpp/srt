@@ -1,0 +1,14 @@
+QWidget {
+    background-color: rgb(44, 49, 60);
+    color: rgb(246, 247, 247);
+}
+QPushButton {
+    background-color: rgb(22, 25, 29);
+    color: white;
+    border: 2px solid rgb(60, 60, 60);
+    border-radius: 5px;
+}
+QLabel {
+    color: rgb(246, 247, 247);
+}
+/* Add more widget styles as needed */
