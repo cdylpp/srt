@@ -6,6 +6,7 @@ from LoginWindow import LoginWindow
 from views import MainWindow
 from dotenv import load_dotenv
 import pyqtgraph as pg
+import qdarktheme
 
 load_dotenv()
 
@@ -46,6 +47,7 @@ def on_close_main():
 
 if __name__ == "__main__":
     srtApp = QApplication([])
+    qdarktheme.setup_theme()
     app_data = load_app_data()
     show_login()
 
