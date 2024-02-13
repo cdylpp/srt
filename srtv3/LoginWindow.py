@@ -1,5 +1,4 @@
-from PyQt6 import QtWidgets, QtCore, QtGui
-from PyQt6.QtGui import QCloseEvent
+from PySide6 import QtWidgets, QtCore, QtGui
 from login_window import Ui_Form
 from database import DatabaseManager
 from user import User, UserManager
@@ -7,16 +6,15 @@ from utils import Validator
 
 class LoginWindow(QtWidgets.QDialog):
 
-    login_accepted = QtCore.pyqtSignal(UserManager)
-    login_reject = QtCore.pyqtSignal()
-    login_window_closed = QtCore.pyqtSignal(bool)
+    login_accepted = QtCore.Signal(UserManager)
+    login_reject = QtCore.Signal()
+    login_window_closed = QtCore.Signal()
     
     def __init__(self, db_type, **kwargs) -> None:
         super().__init__()
         self.db_manager = DatabaseManager(db_type, **kwargs)
         self.user_manager = UserManager()
         self.app_data = kwargs['app_data']
-        self.accept = False
         
         self.init_ui()
 
@@ -47,11 +45,14 @@ class LoginWindow(QtWidgets.QDialog):
         if self.valid_login(username, password):
             # Successful Login
             # Set the user in user manager
-            self.accept = True
+            self.accept()
             self.user_manager.set_user(self.db_manager.get_user(username, password)) 
             user = self.user_manager.get_user()
 
-            QtWidgets.QMessageBox.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+            msg_box = QtWidgets.QMessageBox()
+            msg_box.setStyleSheet("QLabel { color: white; }")
+            msg_box.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+
 
             self.handle_remember_me(self.ui.remembeme_checkBox.isChecked())
             
@@ -107,10 +108,6 @@ class LoginWindow(QtWidgets.QDialog):
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
         forgot_pass_window.exec()
-
-    def closeEvent(self, arg_1) -> None:
-        self.login_window_closed.emit(self.accept)
-        return 
     
 class ForgotPassWindow(QtWidgets.QDialog):
     def __init__(self, db_manager):
