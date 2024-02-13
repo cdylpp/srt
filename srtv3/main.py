@@ -6,11 +6,8 @@ from LoginWindow import LoginWindow
 from views import MainWindow
 from dotenv import load_dotenv
 import pyqtgraph as pg
-<<<<<<< HEAD
 import qdarktheme
-=======
 from user import UserManager
->>>>>>> 353d0fab209e9b845bcb42e2eef0855794a67e85
 
 load_dotenv()
 
