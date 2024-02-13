@@ -58,11 +58,18 @@ if __name__ == "__main__":
     }
 
     srtApp = QApplication([])
+    app_data = load_app_data()
+
+    # With Login View
+    # show_login() 
+
+
+    # Without Login View
     user_manager = UserManager()
     user_manager.set_user(user_data)
-    app_data = load_app_data()
     main = MainWindow(user_manager, app_data=app_data)
     main.show()
+    
     sys.exit(srtApp.exec())
 
 
