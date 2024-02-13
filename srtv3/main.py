@@ -6,7 +6,11 @@ from LoginWindow import LoginWindow
 from views import MainWindow
 from dotenv import load_dotenv
 import pyqtgraph as pg
+<<<<<<< HEAD
 import qdarktheme
+=======
+from user import UserManager
+>>>>>>> 353d0fab209e9b845bcb42e2eef0855794a67e85
 
 load_dotenv()
 
@@ -46,11 +50,31 @@ def on_close_main():
 
 
 if __name__ == "__main__":
+    user_data = {
+        "id": 3,
+        "username": "c.lepp",
+        "password": "A123cl",
+        "role": "Admin",
+        "first_name": "Cody",
+        "last_name": "Lepp",
+        "email": "cody.lepp@admin.srt",
+        "login_attempts": 0
+    }
+
     srtApp = QApplication([])
     qdarktheme.setup_theme()
     app_data = load_app_data()
-    show_login()
 
+    # With Login View
+    # show_login() 
+
+
+    # Without Login View
+    user_manager = UserManager()
+    user_manager.set_user(user_data)
+    main = MainWindow(user_manager, app_data=app_data)
+    main.show()
+    
     sys.exit(srtApp.exec())
 
 

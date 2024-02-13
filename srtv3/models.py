@@ -17,35 +17,48 @@ import markdown2
 class TableModel(QAbstractTableModel):
     def __init__(self, data: DataFrame):
         super().__init__()
-        self._data = data
+        self.cur_data = data
+        self.queries = {("", ""): data}
     
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
-            value = self._data.iloc[index.row(), index.column()]
+            value = self.cur_data.iloc[index.row(), index.column()]
             return str(value)
     
     def rowCount(self, index):
-        return self._data.shape[0]
+        return self.cur_data.shape[0]
         
     def columnCount(self, index):
-        return self._data.shape[1]
+        return self.cur_data.shape[1]
     
     def headerData(self, section, orientation, role):
         if role == Qt.ItemDataRole.DisplayRole:
             if orientation == Qt.Orientation.Horizontal:
-                return str(self._data.columns[section])
+                return str(self.cur_data.columns[section])
 
             if orientation == Qt.Orientation.Vertical:
-                return str(self._data.index[section])
+                return str(self.cur_data.index[section])
     
     def sort(self, col_index, order):
         if order == Qt.SortOrder.AscendingOrder:
             ascending = True
         else:
             ascending = False
-        column = self._data.columns[col_index]
-        self._data.sort_values(by=[column], ascending=ascending, inplace=True)
+        column = self.cur_data.columns[col_index]
+        self.cur_data.sort_values(by=[column], ascending=ascending, inplace=True)
+
+    def filter(self, column, value):
+        if (column, value) in self.queries.keys():
+            self.cur_data = self.queries[(column, value)]
+        else:
+            filtered_df = self.cur_data[self.cur_data[column] == value]
+            self.queries[(column, value)] = filtered_df
+            self.cur_data = filtered_df
     
+    def reset(self):
+        self.cur_data = self.queries[("","")]
+
+
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -57,7 +70,7 @@ class MplCanvas(FigureCanvasQTAgg):
 
 class DataFramePlotter:
     @staticmethod
-    def plot(canvas, column, data, type, legend):
+    def plot(canvas, column, data, type, legend, **kwargs):
         # Ensure the Layout remains the same
         ax = canvas.axes
         ax.clear()
@@ -86,8 +99,6 @@ class DataFramePlotter:
 
             else:
                 encoded_column, map = encode_categorical_column(data, column)
-
-                print(encoded_column)
                 counts, bins = np.histogram(encoded_column)
                 ax.stairs(counts, bins, fill=True)
                 labels = list(map.keys())
@@ -99,21 +110,26 @@ class DataFramePlotter:
                 ax.set_ylabel("Frequency")
                 ax.set_xlabel("Values")
 
-        # elif type == "Pie Chart":
-        #     if dtype in ('int', 'float'):
-        #         print(f"Chart type with {dtype} not supported")
-        #         pass
+        elif type == "Pie Chart":
+            if dtype in ('int', 'float'):
+                print(f"Chart type with {dtype} not supported")
+                pass
 
-        #     else:
-        #         # make pie chart
-        #         x = data[column].value_counts()
-        #         colors = plt.get_cmap('Blues')(np.linspace(0.2, 0.7, len(x)))
-        #         ax.pie(x, colors=colors, radius=3, center=(4,4),
-        #             wedgeprops={"linewidth": 1, "edgecolor":"white"}, frame=True)
+            else:
+                # make pie chart
+                x = data[column].value_counts()
+                colors = plt.get_cmap('Blues')(np.linspace(0.2, 0.7, len(x)))
+                ax.pie(x, colors=colors, radius=3, center=(4,4),
+                    wedgeprops={"linewidth": 1, "edgecolor":"white"}, frame=True)
                 
-        #         ax.set(xlim=(0,8), xticks=np.arange(1,8),
-        #             ylim=(0,8), yticks=np.arange(1,8))
-        #         ax.set_title("Pie Chart")
+                ax.set(xlim=(0,8), xticks=np.arange(1,8),
+                    ylim=(0,8), yticks=np.arange(1,8))
+                ax.set_title("Pie Chart")
+
+        elif type == "Correlation Plot":
+            x = data[column]
+            target = kwargs['target']
+            ax.hist2d(column, target, data)
 
 
         else:
@@ -167,42 +183,6 @@ class DataFramePlotter:
         canvas.draw()
 
 
-class TreeItem:
-    def __init__(self, data, parent=None) -> None:
-        self.data = data
-        self.parent = parent
-        self.children = []
-
-    def data(self, column):
-        """
-        return the data value for the given column index
-        """
-        if column >= 0 and column < len(self.data):
-            return self.data[column]
-        return None
-    
-    def set_data(self, column, value):
-        if column >= 0 and column < len(self.data):
-            self.data[column] = value
-    
-    def parent(self):
-        return self.parent
-    
-    def child(self, row):
-        if row >= 0 and row < len(self.children):
-            return self.chidlern[row]
-        return None
-    
-    def child_count(self):
-        return len(self.children)
-    
-    def column_count(self):
-        return len(self.data)
-    
-    def append_child(self, item):
-        self.children.append(item)
-    
-
 class MarkdownModel:
     def __init__(self, file_path) -> None:
         self.file_path = file_path # path to markdown file.
@@ -232,65 +212,3 @@ class MarkdownModel:
 
     def headers(self):
         return self._html_parser.get_headers(self.html_content)
-
-
-class TreeModel(QAbstractItemModel):
-    def __init__(self, data, parent=None) -> None:
-        super().__init__(parent)
-        self.rootItem = TreeItem([])
-        self.setupModelData(data, self.rootItem)
-
-    def data(self, index, role):
-        if not index.isValid():
-            return QVariant()
-        if role != Qt.ItemDataRole.DisplayRole:
-            return QVariant()
-        
-        item = index.internalPointer()
-        return item.data(index.column())
-    
-    def flags(self, index: QModelIndex) -> Qt.ItemFlag:
-        return super().flags(index)
-    
-    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
-        return super().headerData(section, orientation, role)
-    
-    def index(self, row, column, parent):
-        if not self.hasIndex(row, column, parent):
-            return QModelIndex()
-        
-        parentItem = self.rootItem if not parent.isValid() else parent.internalPointer()
-
-        childItem = parentItem.child(row)
-        if childItem:
-            return self.createIndex(row, column, childItem)
-        return QModelIndex()
-    
-    def parent(self, index):
-        if not index.isValid():
-            return QModelIndex()
-        childItem = index.internalPointer()
-        parentItem = childItem.parent()
-        if parentItem == self.rootItem:
-            return QModelIndex()
-        
-        return self.createIndex(parentItem.row(), 0, parentItem)
-    
-    def rowCount(self, parent: QModelIndex = ...) -> int:
-        parentItem = self.rootItem if not parent.isValid() else parent.internalPointer()
-        return parentItem.child_count()
-    
-    def columnCount(self, parent: QModelIndex = ...) -> int:
-        parentItem = self.rootItem if not parent.isValid() else parent.internalPointer()
-        return parentItem.column_count()
-    
-    def setupModelData(self, data, parent):
-        for element in data:
-            if isinstance(element, str):
-                itemData = [element, ""]
-                newItem = TreeItem(itemData, parent)
-                parent.appendChild(newItem)
-            elif isinstance(element, list):
-                if parent.child_count() > 0:
-                    currentParent = parent.child(parent.child_count() - 1)
-                    self.setupModelData(element, currentParent)
