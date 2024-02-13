@@ -13,15 +13,14 @@ from PyQt6.QtCore import QSize, QUrl, pyqtSignal, Qt, pyqtSlot
 from PyQt6.QtGui import QIcon, QAction, QPixmap
 
 from widgets import (
-    FilterWidget, ComboBox, PandasPlotter, 
-    TableWidget, TreeWidgetFactory, CustomTableView, 
+    PandasPlotter, TreeWidgetFactory, TableView, 
     ControlDockTabWidget)
 from user import User
-from models import TableModel, TreeModel, MarkdownModel
+from models import TableModel, MarkdownModel
 from paths import Paths
 from pandas import read_csv
 import pyqtgraph as pg
-from utils import determine_visualization_type, detect_csv_separator, path_to_title, Transformer
+from utils import detect_csv_separator, path_to_title, Transformer
 from settings import SettingsPage
 from ProfileWindow import Ui_Form
 
@@ -62,7 +61,6 @@ class MainWindow(QMainWindow):
         self.setup_main_window()
         self.create_actions()
         self.create_menu()
-
 
         # change the tab to index 0
         self.on_tab_switch(0)
@@ -150,8 +148,8 @@ class MainWindow(QMainWindow):
         about_menu.addAction(self.about_action)
 
     def create_dock_widgets(self):
-        self.right_dock = QDockWidget('Right Dock')
-        self.left_dock = QDockWidget('Left Dock')
+        self.right_dock = QDockWidget('Plots', self)
+        self.left_dock = QDockWidget('Controls', self)
 
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.left_dock)
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.right_dock)
@@ -270,7 +268,6 @@ class MainWindow(QMainWindow):
 
     def on_import(self):
         """Import file."""
-        print("On import...")
         options = QFileDialog.Option.ReadOnly  # Optional: Set additional options as needed
 
         # Set filters for Markdown and PDF files
@@ -307,14 +304,12 @@ class MainWindow(QMainWindow):
         Disable the correct docks
         """
         print(f"Handling Markdown file: {file_path}")
+
         html_model = MarkdownModel(file_path)
         html_view = HtmlView(html_model.html_content)
-
-        print(html_model.headers())
         html_tree_view = TreeWidgetFactory().build_html_tree(self.left_dock, html_model.headers())
 
         self.tab_bar.addTab(html_view, html_model.title)
-
         tab_idx = self.tab_bar.count() - 1
         self.controllers[tab_idx] = html_tree_view
         
@@ -350,16 +345,14 @@ class MainWindow(QMainWindow):
 
         # create table view
         self.model = TableModel(df)
-        table_widget = CustomTableView(self.tab_bar, self.model)
-
-       
+        table_widget = TableView(self.tab_bar, self.model)
 
         print("Control back to browser")
         self.tab_bar.addTab(table_widget, title)
         
         tab_idx = self.tab_bar.count() - 1
         # place controller in controls dict
-        curr_control_dock_widget = ControlDockTabWidget(self.left_dock, df)
+        curr_control_dock_widget = ControlDockTabWidget(self.left_dock, df, table_widget)
         curr_control_dock_widget.sort_selection.connect(self.on_sort_selection)
         self.controllers[tab_idx] = curr_control_dock_widget
 
@@ -473,17 +466,14 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(int)
     def on_tab_switch(self, tab_index):
-        print(f"Tab switched to index: {tab_index}")
         current_tab = self.tab_bar.widget(tab_index)
         if current_tab.type == 'TableView':
-            print("Table view tab shown")
             # Show both docks with proper widgets
             self.right_dock.setVisible(True)
             self.right_dock_toggle.setEnabled(True)
             self.right_dock.setWidget(self.plotters[tab_index])
             self.left_dock.setWidget(self.controllers[tab_index])
-        else:
-            print("Html view tab shown")
+        elif current_tab.type == 'HtmlView':
             # Hide right dock
             self.right_dock.setVisible(False)
             self.right_dock_toggle.setEnabled(False)
@@ -491,12 +481,15 @@ class MainWindow(QMainWindow):
             self.left_dock.setVisible(True)
             self.left_dock_toggle.setEnabled(True)
             self.left_dock.setWidget(self.controllers[tab_index])
+        else:
+            # Hide Both
+            self.right_dock.setVisible(False)
+            self.right_dock.setEnabled(False)
+            self.left_dock.setVisible(False)
+            self.left_dock.setEnabled(False)
 
     @pyqtSlot(int)
     def on_sort_selection(self, col_idx):
-        # select the column
-        # get the current table
-        # select the column
         curr_table = self.tab_bar.currentWidget()
         curr_table.selectColumn(col_idx)
         return
@@ -535,158 +528,6 @@ class HtmlView(QWidget):
         self.text_browser.setHtml(self.html_content)
         self.setLayout(self.layout)
 
-
-    
-
-class DataDashboard(QWidget):
-    def __init__(self,parent=None, df=None):
-        super().__init__(parent)
-        self.df = df
-        self.init_ui()
-    
-    def init_ui(self):
-        # set layout with three columns.
-        self.h_layout = QHBoxLayout(self)
-        self.h_layout.setSpacing(0)
-
-        # Make Column containers
-        self.left_container = QWidget()
-        self.middle_container = QWidget()
-        self.right_container = QWidget()
-
-        # Make Widgets
-        self.table_widget = TableWidget(self.df)
-        self.plot_widget = PandasPlotter(df=self.df)
-        self.sort_by_box = ComboBox(self.right_container, "Sort by:", self.df.columns)
-        self.sort_order = ComboBox(self.right_container, "Sorting Order:", ['Ascending', 'Descending'])
-        self.tree_widget = TreeWidgetFactory.build_tree(self.left_container, self.df)
-        
-
-        # Set up left and right containers
-        self.setup_left_container()        
-        self.setup_middle_container()
-        self.setup_right_container()
-
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(self.right_container)
-
-        self.h_layout.addWidget(self.left_container)
-        self.h_layout.addWidget(self.middle_container)
-        self.h_layout.addWidget(scroll_area)
-        
-    def setup_left_container(self):
-        # Holds the tree view of the columns and dtypes
-        self.left_container.setLayout(QVBoxLayout())
-        self.tree_widget.itemClicked.connect(self.on_tree_item_clicked)
-        self.left_container.layout().addWidget(self.tree_widget)
-        self.left_container.layout().addWidget(self.plot_widget)
-
-    def setup_middle_container(self):
-        self.middle_container.setLayout(QVBoxLayout())
-        self.middle_container.layout().addWidget(self.table_widget)
-
-    def setup_right_container(self):
-        # Holds Filter widgets
-        self.right_container.setLayout(QVBoxLayout())
-        self.right_container.layout().addWidget(self.sort_by_box)
-        self.right_container.layout().addWidget(self.sort_order)
-        widgets = self.make_filter_widgets()
-        
-        for w in widgets:
-            self.right_container.layout().addWidget(w)
-    
-    def make_filter_widgets(self):
-        df = self.df
-        filters = []
-        for col in df.columns:
-            row_str = df[col].astype(str)
-            w = FilterWidget(col, row_str.unique())
-            filters.append(w)
-        
-        return filters
-
-    def on_tree_item_clicked(self):
-        # Plot the distribution of the item clicked
-        # column = self.tree_widget.currentItem().text(0)
-        # self.plot_widget.plot_dist(column, 'histogram')
-        
-        # get thee text
-        text = self.tree_widget.currentItem().text(0)
-        column_header = self.df[text]
-
-
-        # handle the rest of the plotting
-        # from the text keyword, get the column
-        column_data = self.df[text]
-
-        # with the column get the data type
-        column_dtype = self.df[text].dtype
-        
-        # determine the uniqueness based on the column values
-        uniqueness = 1
-
-        # get the plot type
-        plot_type = determine_visualization_type(column_dtype, uniqueness)
-
-        # pass the plot type to the plotter
-
-        
-        self.plot_widget.visualize(column_header, plot_type)
-        # have the plotter plot the graph
-        # have the graph draw to the canvas
-        # have the plot widget to update the view
-        return
-
-
-# The Data View is a container for the DataPane (Dashboard)
-class DataView(QWidget):
-    def __init__(self, df):
-        print("Creating DataView...")
-        super().__init__()
-        self.df = df
-        self.init_ui()
-
-    def init_ui(self):
-        self.v_layout = QVBoxLayout()
-        self.tab = QTabWidget()
-        self.tab.setTabPosition(QTabWidget.TabPosition.North)
-        self.tab.setDocumentMode(True)
-
-        self.create_tabs()
-        self.v_layout.addWidget(self.tab)
-        self.setLayout(self.v_layout)
-
-    def create_tabs(self):
-        data = DataDashboard(self, self.df)
-        info = QWidget()
-        info.setLayout(QHBoxLayout())
-        info.layout().addWidget(QWidget())
-
-        describe = TableWidget(self.df.describe())
-        plot = QWidget()
-
-        for action, name in [(data, 'Data Dashboard'), (info,'Info'), 
-                             (describe,'Describe'), (plot, 'Plot')]:
-            self.tab.addTab(action, name)
-        
-    def add_visualization(self, viz_widget):
-        # add new item to right container
-        return
-    
-    def get_main_table(self):
-        left_layout = self.left_container.layout()
-        if left_layout.count() > 0:
-            main_table = left_layout.itemAt(0).widget()
-            return main_table
-        else:
-            return None
-    
-    def add_table(self, table):
-        # add table to left container
-        self.stacked_layout.addWidget(table)
-        return
-    
 
 class ProfileWindow(QWidget):
     def __init__(self, user: User, parent=None):

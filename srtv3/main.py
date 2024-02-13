@@ -6,6 +6,7 @@ from LoginWindow import LoginWindow
 from views import MainWindow
 from dotenv import load_dotenv
 import pyqtgraph as pg
+from user import UserManager
 
 load_dotenv()
 
@@ -45,10 +46,23 @@ def on_close_main():
 
 
 if __name__ == "__main__":
-    srtApp = QApplication([])
-    app_data = load_app_data()
-    show_login()
+    user_data = {
+        "id": 3,
+        "username": "c.lepp",
+        "password": "A123cl",
+        "role": "Admin",
+        "first_name": "Cody",
+        "last_name": "Lepp",
+        "email": "cody.lepp@admin.srt",
+        "login_attempts": 0
+    }
 
+    srtApp = QApplication([])
+    user_manager = UserManager()
+    user_manager.set_user(user_data)
+    app_data = load_app_data()
+    main = MainWindow(user_manager, app_data=app_data)
+    main.show()
     sys.exit(srtApp.exec())
 
 
