@@ -24,7 +24,7 @@ class Ui_Form(object):
         self.profile.setObjectName("profile")
         self.frame = QtWidgets.QFrame(parent=self.profile)
         self.frame.setGeometry(QtCore.QRect(460, 0, 321, 821))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
@@ -41,6 +41,7 @@ class Ui_Form(object):
         self.profile_frame.setMinimumSize(QtCore.QSize(100, 100))
         self.profile_frame.setMaximumSize(QtCore.QSize(100, 100))
         self.profile_frame.setStyleSheet("QFrame {\n"
+
 "    border-radius: 50%\n"
 "}")
         self.profile_frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
