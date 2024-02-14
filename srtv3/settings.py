@@ -12,7 +12,6 @@ class SettingsPage(QWidget):
         super().__init__(parent)
         self.type = "SettingsPage"
         self.main = main
-        self.theme_preference = 'dark'
         self.setupUi()
         self.radioDark.setChecked(True)
         
