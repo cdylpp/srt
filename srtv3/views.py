@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_markdown('Welcome.md')
+        self.main_tab = self.handle_markdown('srtv3/Welcome.md')
         self.tab_bar.addTab(self.main_tab, "Welcome")
         
         

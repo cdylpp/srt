@@ -1,7 +1,7 @@
-import sys, os
+import sys
+import qdarktheme
 
-from PyQt6.QtCore import QCoreApplication, Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QApplication, QRadioButton, QFrame,
     QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QPushButton, QSizePolicy, QSlider, QSpacerItem,
@@ -12,18 +12,38 @@ class SettingsPage(QWidget):
         super().__init__(parent)
         self.type = "SettingsPage"
         self.main = main
+        self.theme_preference = 'dark'
         self.setupUi()
         self.radioDark.setChecked(True)
-        # Connect the 'toggled' signal to changeTheme
-        self.radioDark.toggled.connect(self.changeTheme)
+        
+        # Load the saved theme preference
+        # self.load_theme_preference()
+
+    #def load_theme_preference(self):
+        # self.apply_theme(self.theme_preference)
+
+    #def save_theme_preference(self):
+        # Need to write code here to save the users theme preference to another
+        # file that will be called by the load_them_preference() method
+
+    # Function to apply the selected theme
+    def apply_theme(self, theme):
+        if theme == 'dark':
+            qdarktheme.setup_theme()
+        else:
+            qdarktheme.setup_theme("light")
+
+    # Function to handle when the theme radio buttons are clicked
+    def handle_theme_change(self):
+        if self.radioDark.isChecked():
+            self.theme_preference = 'dark'
+        else:
+            self.theme_preference = 'light'
+        self.apply_theme(self.theme_preference)
 
     def setupUi(self):
         self.setObjectName("Form")
         self.resize(758, 866)
-        self.setStyleSheet(
-            "background-color: rgb(44, 49, 60);\n"
-            "color: rgb(246, 247, 247);\n"
-        )
 
         self.gridLayout_2 = QGridLayout(self)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -69,11 +89,7 @@ class SettingsPage(QWidget):
 
         self.horizontalSlider = QSlider(self.frame)
         self.horizontalSlider.setObjectName("horizontalSlider")
-        self.horizontalSlider.setStyleSheet(
-            "QSlider::handle {\n"
-            "    background-color: rgb(22, 25, 29);\n"
-            "}"
-        )
+      
         self.horizontalSlider.setOrientation(Qt.Orientation.Horizontal)
         self.verticalLayout.addWidget(self.horizontalSlider)
 
@@ -82,58 +98,16 @@ class SettingsPage(QWidget):
 
         self.pushButton = QPushButton("Restore Default Settings", self.frame)
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.setStyleSheet(
-            "QPushButton{\n"
-            "	background-color: rgb(22, 25, 29);\n"
-            "}"
-        )
+      
         self.verticalLayout.addWidget(self.pushButton, 0, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
 
         self.gridLayout_2.addWidget(self.frame, 1, 0, 1, 1)
 
+        # Connect the radio buttons to the handle_theme_change function
+        self.radioDark.toggled.connect(self.handle_theme_change)
+        self.radioLight.toggled.connect(self.handle_theme_change)
+
         self.retranslateUi()
 
     def retranslateUi(self):
-        self.setWindowTitle(QCoreApplication.translate("Form", "Form", None))
-
-    def changeTheme(self):
-        if self.radioDark.isChecked():
-            self.applyDarkTheme()
-        elif self.radioLight.isChecked():
-            self.applyLightTheme()
-
-    def applyDarkTheme(self):
-        self.loadStyleSheet("darktheme")
-
-    def applyLightTheme(self):
-        self.loadStyleSheet("lighttheme")
-
-    def loadStyleSheet(self, theme_name):
-        # Assuming the .qss files are stored in "C:/Users/acarr/srt/src/resources/themes/"
-        # current_directory = os.getcwd()
-        # stylesheet_path = os.path.join(current_directory, f"data/{theme_name}.qss")
-        # try:
-        #     with open(stylesheet_path, "r") as file:
-        #         print(f"Changed the settings: {theme_name}")
-        #         styleSheet = str(file)
-        #         self.setStyleSheet(styleSheet)
-        #         # stylesheet = file.read()
-        #         # self.setStyleSheet(stylesheet)
-        #         # if self.main_window:
-        #         #     self.main_window.setStyleSheet(stylesheet)
-        # except FileNotFoundError:
-        #     print(f"Failed to load stylesheet: {stylesheet_path}")
-
-        if theme_name == 'lighttheme':
-            self.setStyleSheet(
-                "background-color: rgb(246, 246, 246);\n"
-            )
-
-        elif theme_name == 'darktheme':
-            self.setStyleSheet(
-                "background-color: rgb(30, 30, 30);\n"
-            )
-        else:
-            print("Style not supported.")
-
-
+        self.setWindowTitle("Settings")
