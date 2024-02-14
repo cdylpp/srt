@@ -41,7 +41,6 @@ class Ui_Form(object):
         self.profile_frame.setMinimumSize(QtCore.QSize(100, 100))
         self.profile_frame.setMaximumSize(QtCore.QSize(100, 100))
         self.profile_frame.setStyleSheet("QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
 "    border-radius: 50%\n"
 "}")
         self.profile_frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
@@ -52,7 +51,6 @@ class Ui_Form(object):
         self.addPic_button.setMinimumSize(QtCore.QSize(31, 31))
         self.addPic_button.setMaximumSize(QtCore.QSize(31, 31))
         self.addPic_button.setStyleSheet("QPushButton {\n"
-"        color: rgb(0, 136, 185);\n"
 "        font: 24pt \"Segoe UI\";\n"
 "        border: none;\n"
 "        background-color:none;\n"
@@ -74,7 +72,6 @@ class Ui_Form(object):
         self.role = QtWidgets.QLabel(parent=self.frame)
         self.role.setMaximumSize(QtCore.QSize(16777215, 118))
         self.role.setStyleSheet("\n"
-"color: rgb(0, 0, 0);\n"
 "font: 9pt \"Segoe UI\";")
         self.role.setText("")
         self.role.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -84,7 +81,6 @@ class Ui_Form(object):
         self.verticalLayout.addItem(spacerItem2)
         self.full_name = QtWidgets.QLabel(parent=self.frame)
         self.full_name.setStyleSheet("\n"
-"color: rgb(0, 0, 0);\n"
 "font: 9pt \"Segoe UI\";")
         self.full_name.setText("")
         self.full_name.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -94,7 +90,6 @@ class Ui_Form(object):
         self.verticalLayout.addItem(spacerItem3)
         self.email = QtWidgets.QLabel(parent=self.frame)
         self.email.setStyleSheet("\n"
-"color: rgb(0, 0, 0);\n"
 "font: 9pt \"Segoe UI\";")
         self.email.setText("")
         self.email.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -104,7 +99,6 @@ class Ui_Form(object):
         self.verticalLayout.addItem(spacerItem4)
         self.contactInfo_button = QtWidgets.QPushButton(parent=self.frame)
         self.contactInfo_button.setStyleSheet("border:none;\n"
-"color: rgb(0, 0, 0);\n"
 "font: 700 9pt \"Segoe UI\";")
         self.contactInfo_button.setObjectName("contactInfo_button")
         self.verticalLayout.addWidget(self.contactInfo_button)
@@ -116,17 +110,12 @@ class Ui_Form(object):
         self.contactInfo_groupBox.setSizePolicy(sizePolicy)
         self.contactInfo_groupBox.setMinimumSize(QtCore.QSize(241, 91))
         self.contactInfo_groupBox.setStyleSheet("QLabel {\n"
-"    color: rgb(0, 0, 0);\n"
 "    font: 700 9pt \"Segoe UI\";\n"
 "}\n"
 "\n"
 "\n"
-"QComboBox{\n"
-"    color: rgb(0, 0, 0);\n"
-"}\n"
 "\n"
 "QPushButton{\n"
-"    color: rgb(0, 0, 0);\n"
 "    font: 700;\n"
 "}\n"
 "\n"
@@ -186,8 +175,7 @@ class Ui_Form(object):
         self.phone_number.setSizePolicy(sizePolicy)
         self.phone_number.setMinimumSize(QtCore.QSize(80, 48))
         self.phone_number.setMaximumSize(QtCore.QSize(80, 48))
-        self.phone_number.setStyleSheet("color: rgb(0, 0, 0);\n"
-"font: 9pt \"Segoe UI\";")
+        self.phone_number.setStyleSheet("font: 9pt \"Segoe UI\";")
         self.phone_number.setText("254-658-1236")
         self.phone_number.setIndent(5)
         self.phone_number.setObjectName("phone_number")
@@ -232,7 +220,6 @@ class Ui_Form(object):
         self.verticalLayout.addItem(spacerItem11)
         self.changePass_button = QtWidgets.QPushButton(parent=self.frame)
         self.changePass_button.setStyleSheet("border:none;\n"
-"color: rgb(0, 0, 0);\n"
 "font: 700 9pt \"Segoe UI\";")
         self.changePass_button.setObjectName("changePass_button")
         self.verticalLayout.addWidget(self.changePass_button)
