@@ -4,12 +4,12 @@ from PyQt6.QtCore import pyqtSlot
 from AppDataManager import AppDataManager
 from LoginWindow import LoginWindow
 from views import MainWindow
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import pyqtgraph as pg
 import qdarktheme
 from user import UserManager
 
-load_dotenv()
+#load_dotenv()
 
 
 def load_app_data():

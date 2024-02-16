@@ -1,4 +1,5 @@
-from PySide6 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtGui
+from PyQt6.QtCore import pyqtSignal
 from login_window import Ui_Form
 from database import DatabaseManager
 from user import User, UserManager
@@ -6,9 +7,9 @@ from utils import Validator
 
 class LoginWindow(QtWidgets.QDialog):
 
-    login_accepted = QtCore.Signal(UserManager)
-    login_reject = QtCore.Signal()
-    login_window_closed = QtCore.Signal()
+    login_accepted = pyqtSignal(UserManager)
+    login_reject = pyqtSignal()
+    login_window_closed = pyqtSignal()
     
     def __init__(self, db_type, **kwargs) -> None:
         super().__init__()
