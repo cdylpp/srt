@@ -23,6 +23,7 @@ from pandas import read_csv
 import pyqtgraph as pg
 from utils import detect_csv_separator, path_to_title, Transformer
 from ProfileWindow import Ui_Form
+from settings import SettingsView
 
 
 style_sheet = """
@@ -79,7 +80,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_markdown('srtv3/Welcome.md')
+        self.main_tab = self.handle_markdown('Welcome.md')
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
         # Call method that sets up each page
@@ -407,7 +408,6 @@ class MainWindow(QMainWindow):
             print("User object is not defined or not an instance of User.")
 
 
-
     @pyqtSlot()
     def on_database_button(self):
         print("Handle database button")
@@ -620,7 +620,7 @@ class PlotView(QWidget):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-class SettingsView(QWidget):
+""" class SettingsView(QWidget):
     def __init__(self, parent: QWidget, main: QMainWindow):
         super().__init__(parent)
         self.type = "SettingsPage"
@@ -742,6 +742,6 @@ class SettingsView(QWidget):
             )
         else:
             print("Style not supported.")
-
+ """
 class Change_Pass_Window(QWidget):
     print('Password Changed')

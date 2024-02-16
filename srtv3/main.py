@@ -63,7 +63,7 @@ if __name__ == "__main__":
     app_data = load_app_data()
 
     # With Login View
-    show_login() 
+    # show_login() 
 
 
     # Without Login View
