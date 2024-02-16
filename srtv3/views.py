@@ -23,6 +23,7 @@ from pandas import read_csv
 import pyqtgraph as pg
 from utils import detect_csv_separator, path_to_title, Transformer
 from ProfileWindow import Ui_Form
+from settings import SettingsView
 
 
 style_sheet = """
@@ -619,7 +620,7 @@ class PlotView(QWidget):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-class SettingsView(QWidget):
+""" class SettingsView(QWidget):
     def __init__(self, parent: QWidget, main: QMainWindow):
         super().__init__(parent)
         self.type = "SettingsPage"
@@ -741,6 +742,6 @@ class SettingsView(QWidget):
             )
         else:
             print("Style not supported.")
-
+ """
 class Change_Pass_Window(QWidget):
     print('Password Changed')

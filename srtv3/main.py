@@ -59,7 +59,7 @@ if __name__ == "__main__":
     }
 
     srtApp = QApplication([])
-    qdarktheme.setup_theme('light')
+    qdarktheme.setup_theme()
     app_data = load_app_data()
 
     # With Login View
