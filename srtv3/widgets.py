@@ -1,96 +1,183 @@
 from PyQt6 import QtWidgets
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
+
 import pandas as pd
-from utils import value_to_text
+from utils import value_to_text, variable_type
 
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QCheckBox, QGroupBox, QButtonGroup, 
     QVBoxLayout, QMainWindow, QComboBox, QLabel, QTableView, QTreeWidget,
-    QTreeWidgetItem, QHeaderView, QTabWidget, QHBoxLayout, QGridLayout, QPushButton)
+    QTreeWidgetItem, QHeaderView, QTabWidget, QHBoxLayout, QGridLayout, 
+    QPushButton, QSlider)
 
 from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
-from models import DataFramePlotter, MplCanvas
+from models import SNSPlotter
 
-
-
-class PandasPlotter(QWidget):
-    def __init__(self, parent=None, df=None):
+class ParameterComboBox(QComboBox):
+    controlAndText = pyqtSignal(str, str)
+    def __init__(self, parent: QWidget | None, param_type: str) -> None:
         super().__init__(parent)
-        self.df = df
+        self.param_type = param_type
+        self.currentTextChanged.connect(self.emit_control_signal)
+    
+    @pyqtSlot(str)
+    def emit_control_signal(self, text):
+        self.controlAndText.emit(self.param_type, text)
+
+
+class PlotViewController(QWidget):
+    """
+    Visualization Tab
+    Controls the plot view.
+    """
+    plot_clicked = pyqtSignal()
+
+    def __init__(self, parent, data: pd.DataFrame, plotView):
+        super().__init__(parent)
+        self.type = "PlotView"
+        self.df = data
+        self.plotView = plotView
         self.plot_types = [
-            'Distribution','Scatter Plot','Box Plot', 'Line Plot',
-            'Heatmap', 'Bar Plot', 'Violin Plot', 'Pie Chart', 'Area Plot',
-            'Stacked Bar Plot', 'Bubble Chart', 'Correlation Plot'
+            '','Distribution','Histogram','Box Plot',
+            'Scatter Plot', 'Correlation Map'
         ]
+        self.palettes = ["", "rocket", "mako", "flare", "crest", "viridis", "plasma", "inferno", "magma", "cividis"]
+        self.parameters = {"x":None, 
+                           "y":None,
+                           "hue":None,
+                           "palette":None,
+                           "col":None,
+                           "discrete":None,
+                           "fill":None
+                           }
+        self.controls = []
         self.init_ui()
     
     def init_ui(self):
-        self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
+        # choose `type`, choose `column`
+        # dtype = get_dtype(`column`)
+        # get widgets based on `type`, and `column`
+        widgets = []
 
-        h_box = QHBoxLayout()
-
-        pt_label = QLabel("Plot type:",self)
-        self.plot_type = QComboBox(self)
-        self.plot_type.setToolTip("Select plot type")
+        plot_label = QLabel("Choose plot type:")
+        self.plot_type = ParameterComboBox(self, "plot_type")
         self.plot_type.addItems(self.plot_types)
-        self.plot_type.currentTextChanged.connect(self.on_plot_selection)
+        self.plot_type.controlAndText.connect(self.update_parameters)
+        widgets.append((plot_label, self.plot_type))
+        self.controls.append(self.plot_type)
 
-        col_label = QLabel("Column:",self)
-        self.columns = QComboBox(self)
-        self.columns.setToolTip("Select column")
-        self.columns.addItems(self.df.columns)
-        self.columns.currentTextChanged.connect(self.on_column_selection)
+        x_label = QLabel("Choose x:")
+        self.x = ParameterComboBox(self, "x")
+        self.x.addItem("")
+        self.x.addItems(self.df.columns)
+        self.x.controlAndText.connect(self.update_parameters)
+        widgets.append((x_label, self.x))
+        self.controls.append(self.x)
 
-        self.legend_checkbox = QCheckBox(self)
-        self.legend_checkbox.setText("Show Legend")
-        self.legend_checkbox.setChecked(True)
-        self.legend_checkbox.stateChanged.connect(self.on_legend_toggle)
+        y_label = QLabel("Choose y:")
+        self.y = ParameterComboBox(self, "y")
+        self.y.addItem("")
+        self.y.addItems(self.df.columns)
+        self.y.controlAndText.connect(self.update_parameters)
+        widgets.append((y_label, self.y))
+        self.controls.append(self.y)
 
-        h_box.addWidget(pt_label)
-        h_box.addWidget(self.plot_type)
-        h_box.addWidget(col_label)
-        h_box.addWidget(self.columns)
-        h_box.addWidget(self.legend_checkbox)
+        hue_label = QLabel("Choose hue:")
+        self.hue = ParameterComboBox(self, "hue")
+        self.hue.addItem("")
+        self.hue.addItems(self.df.columns)
+        self.hue.controlAndText.connect(self.update_parameters)
+        widgets.append((hue_label, self.hue))
+        self.controls.append(self.hue)
 
-        layout = QVBoxLayout()
-        layout.addLayout(h_box)
-        layout.addWidget(self.canvas)
-        self.setLayout(layout)
+        dim_label = QLabel("Choose column:")
+        self.dim = ParameterComboBox(self, "col")
+        self.dim.addItem("")
+        self.dim.addItems(self.df.columns)
+        self.dim.controlAndText.connect(self.update_parameters)
+        widgets.append((dim_label, self.dim))
+        self.controls.append(self.dim)
+
+        palette_label = QLabel("Choose palette:")
+        self.palette = ParameterComboBox(self, "palette")
+        self.palette.addItems(self.palettes)
+        self.palette.controlAndText.connect(self.update_parameters)
+        widgets.append((palette_label, self.palette))
+        self.controls.append(self.palette)
+
+        fill_label = QLabel("Fill:")
+        self.fill = ParameterComboBox(self, "fill")
+        self.fill.addItems(['', 'Yes', 'No'])
+        self.fill.controlAndText.connect(self.update_parameters)
+        widgets.append((fill_label, self.fill))
+        self.controls.append(self.fill)
+
+        plot_button = QPushButton("Plot")
+        plot_button.clicked.connect(self.on_plot_button)
+        widgets.append(plot_button)
+
+        reset_button = QPushButton("Reset Filters")
+        reset_button.clicked.connect(self.on_reset_button)
+        widgets.append(reset_button)
+
+        # Create a vertical layout
+        self.layout = QVBoxLayout()
+
+        for w in widgets:
+            if isinstance(w, tuple):
+                label, widget = w
+                row = QHBoxLayout()
+                row.addWidget(label, alignment=Qt.AlignmentFlag.AlignLeft)
+                row.addWidget(widget, alignment=Qt.AlignmentFlag.AlignLeft)
+                self.layout.addLayout(row)
+            else:
+                self.layout.addWidget(w)
+
+
+        # Add a stretch to push widgets to the top
+        self.layout.addStretch(1)
+
+        self.setLayout(self.layout)
     
-
-    def visualize(self, column_header, plot_type):
-        data = self.df[column_header]
-        DataFramePlotter.plot(self.canvas, column_header, data, plot_type)
-
-
-    @pyqtSlot(str)
-    def on_plot_selection(self, txt):
-        print(f"plot type chosen: {txt}")
-        self.plot()
     
-
-    @pyqtSlot(str)
-    def on_column_selection(self, txt):
-        print(f"column chosen: {txt}")
-        self.plot()
-
-
     @pyqtSlot()
-    def on_legend_toggle(self):
-        if self.legend_checkbox.isChecked():
-            print("Show Legend")
-        else:
-            print("Hide Legend")
-
-
-    def plot(self):
+    def on_plot_button(self):
         plot_type = self.plot_type.currentText()
-        column = self.columns.currentText()
-        legend = self.legend_checkbox.isChecked()
-        DataFramePlotter.plot(self.canvas, column, self.df, plot_type, legend)
+        # get parameters
+        kwargs = self.get_parameters()
+
+        # pass to plot model to generate the plot
+        figure, canvas = self.plotView.figure, self.plotView.canvas
+        SNSPlotter.plot(self.df, figure, canvas, plot_type, **kwargs)
+        self.plot_clicked.emit()
+        return
 
 
+    @pyqtSlot(str, str)
+    def update_parameters(self, caller, text):
+        if caller == "plot_type":
+            return
+        
+        if caller == "fill":
+            self.parameters[caller] = True if text == "Yes" else False
+            return
 
+        self.parameters[caller] = text
+        return
+    
+    @pyqtSlot()
+    def on_reset_button(self):
+        # reset all the filters
+        for control in self.controls:
+            control.setCurrentIndex(0)
+        return 
+        
+
+    def get_parameters(self):
+        parms = {}
+        for key, value in self.parameters.items():
+            if value:
+                parms[key] = value
+        return parms
 
 
 class TableView(QTableView):
@@ -187,16 +274,22 @@ class TreeWidgetFactory():
                 if tag == 'h2':
                     top_level = item
         return tree
+    
 
+    @staticmethod
+    def build_classifier_tree(parent, classifiers, stats):
+        pass
 
 class ControlDockTabWidget(QTabWidget):
     sort_selection = pyqtSignal(int, bool)
     filter_selection = pyqtSignal(int, str)
 
-    def __init__(self, parent, df, table_view) -> None:
+    def __init__(self, parent, df, table_view, plotView) -> None:
         super().__init__(parent)
         self.df = df
         self.table_view = table_view
+        self.plotView = plotView
+        self.plot_options = None
 
         # Tab Containers
         # Widgets go inside the containers
@@ -205,7 +298,7 @@ class ControlDockTabWidget(QTabWidget):
 
         self.insights_tab = QWidget()
         self.build_insight_tab()
-        self.visualizations_tab = QWidget()
+        self.visualizations_tab = PlotViewController(self, self.df, plotView=self.plotView)
 
         self.addTab(self.controls_tab, 'Controls')
         self.addTab(self.insights_tab, 'Insights')
@@ -247,7 +340,7 @@ class ControlDockTabWidget(QTabWidget):
         self.reset_filter.clicked.connect(self.on_reset_filter)
 
         # Only show columns that have a uniquessnes score of less than 1
-        nonunqiue_columns = [col for col in self.df.columns if self.df[col].nunique() / self.df[col].count() < 1]
+        nonunqiue_columns = [col for col in self.df.columns if self.df[col].nunique() < self.df[col].count()]
         self.filter_by.addItems(nonunqiue_columns)
         self.filter_by.currentTextChanged.connect(self.on_filter_by) # change the variable list for the unique
 
@@ -269,10 +362,7 @@ class ControlDockTabWidget(QTabWidget):
         self.measures_tree = TreeWidgetFactory().build_tree(self.insights_tab, self.df)
         v_layout.addWidget(self.measures_tree)
         self.insights_tab.setLayout(v_layout)
-        
-    def build_viz_tab(self):
-        pass
-    
+
     @pyqtSlot(int)
     def on_sort_selection(self, col_idx):
         self.table_view.selectColumn(col_idx)
@@ -301,7 +391,89 @@ class ControlDockTabWidget(QTabWidget):
 
     def on_reset_filter(self):
         self.table_view.resetFilter()
+    
+     
+class ModellingController(QWidget):
+    def __init__(self, parent: QWidget, data: pd.DataFrame) -> None:
+        super().__init__(parent)
+        self.data = data
+        self.model_types = [
+            '','All', 'Logistic', 'KNN', 'Linear SVM', 'Kernel SVM', 'Naive Bayes',
+            'Decision Tree', 'Random Forest', 'XGBoost'
+        ]
+        self.init_ui()
+
+    def init_ui(self):
+        # Target Value
+        target_label = QLabel("Select Target Variable:")
+        target = ParameterComboBox(self, 'target')
+        target.addItem("")
+        target.addItems(self.data.columns)
+
+        # Model Type
+        model_label = QLabel("Select Model:")
+        model = ParameterComboBox(self, 'model')
+        model.addItems(self.model_types)
+
+        # Train Test Split
+        split_label = QLabel("Train / Test Split:")
+        test_label = QLabel("Test")
+        train_label = QLabel("Train")
+        split_slider = QSlider(Qt.Orientation.Horizontal)
+        split_slider.setMinimum(1)
+        split_slider.setMaximum(99)
+        split_slider.setValue(20)
+        split_slider.valueChanged.connect(self.slider_value_changed)
+
+        self.value_label = QLabel()
+
+        prediction_button = QPushButton("Run Prediction")
+        prediction_button.clicked.connect(self.run_prediction)
+        reset_button = QPushButton("Reset Prediction")
+        reset_button.clicked.connect(self.reset_parameters)
+
+        row1 = QHBoxLayout()
+        row1.addWidget(target_label, alignment=Qt.AlignmentFlag.AlignLeft)
+        row1.addWidget(target, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        row2 = QHBoxLayout()
+        row2.addWidget(model_label, alignment=Qt.AlignmentFlag.AlignLeft)
+        row2.addWidget(model, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        row3 = QHBoxLayout()
+        row3.addWidget(split_label, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        row4 = QHBoxLayout()
+        row4.addWidget(test_label, alignment=Qt.AlignmentFlag.AlignLeft)
+        row4.addWidget(split_slider, alignment=Qt.AlignmentFlag.AlignLeft)
+        row4.addWidget(train_label, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        layout = QVBoxLayout()
+        layout.addLayout(row1)
+        layout.addLayout(row2)
+        layout.addLayout(row3)
+        layout.addLayout(row4)
+        layout.addWidget(self.value_label)
+        layout.addWidget(prediction_button)
+        layout.addWidget(reset_button)
+
+        layout.addStretch(1)
+
+        self.setLayout(layout)
 
 
+    def slider_value_changed(self, value):
+        val = value / 100
+        self.value_label.setText(f"Train: {1-val:.2f}, Test: {val:.2f}")
+    
+    def run_prediction(self):
+        print("runnint prediction...")
+        pass
+
+    def reset_parameters(self):
+        print("reset params")
+        pass
+        
+        
 
 

@@ -147,7 +147,7 @@ def value_to_text(value):
     else:
         raise ValueError("Unsupported data type")
     
-def map_numpy_type_to_string(numpy_type):
+def variable_type(numpy_type):
     """
     Maps NumPy types to their corresponding string representations.
 
@@ -155,16 +155,16 @@ def map_numpy_type_to_string(numpy_type):
     - numpy_type (type): The NumPy data type.
 
     Returns:
-    - str: The string representation of the NumPy data type.
+    - str: Continuous or Discrete.
     """
     if np.issubdtype(numpy_type, np.integer):
-        return "int"
+        return "discrete"
     elif np.issubdtype(numpy_type, np.floating):
-        return "float"
+        return "continuous"
     elif np.issubdtype(numpy_type, np.bool_):
-        return "bool"
+        return "discrete"
     elif np.issubdtype(numpy_type, np.object_):
-        return "str"  # Treat 'object' type as string
+        return "discrete"  # Treat 'object' type as string
     else:
         return "Unknown"
 
@@ -269,9 +269,45 @@ def encode_categorical_columns(df):
 # print("\nEncoded Maps:")
 # print(encoded_maps)
 
+def check_numerical_column(df, column_name):
+    """
+    Check if a column has numerical values.
 
+    Parameters:
+    - df: DataFrame, the input DataFrame.
+    - column_name: str, the name of the column to check.
 
+    Returns:
+    - bool, True if the column has numerical values, False otherwise.
+    """
+    try:
+        # Try converting the column to numerical type
+        pd.to_numeric(df[column_name])
+        return True
+    except (ValueError, TypeError):
+        # Column does not contain numerical values
+        return False
 
+def encode_categorical_columns(df):
+    """
+    Encode all columns of a DataFrame with categorical values to numerical values.
+
+    Parameters:
+    - df: DataFrame, the input DataFrame.
+
+    Returns:
+    - DataFrame, the DataFrame with categorical columns encoded to numerical values.
+    """
+    # Create a copy of the DataFrame to avoid modifying the original
+    encoded_df = df.copy()
+
+    # Iterate through each column
+    for column_name in encoded_df.columns:
+        if not check_numerical_column(encoded_df, column_name):
+            # Encode non-numerical columns
+            encoded_df[column_name] = pd.factorize(encoded_df[column_name])[0]
+
+    return encoded_df
 
 
 

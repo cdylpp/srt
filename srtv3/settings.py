@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (QApplication, QRadioButton, QFrame,
     QPushButton, QSizePolicy, QSlider, QSpacerItem,
     QVBoxLayout, QWidget, QMainWindow)
 
-class SettingsPage(QWidget):
+class SettingsView(QWidget):
     def __init__(self, parent: QWidget, main: QMainWindow):
         super().__init__(parent)
         self.type = "SettingsPage"

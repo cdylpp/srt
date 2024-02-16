@@ -1,47 +1,35 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+# identify models
+from data import DataGrabber, printResults
+from classifiers import Classifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+import pandas as pd
 
-def create_uniform_plot(data):
-    # Determine plot parameters
-    num_plots = len(data)
-    num_rows = int(np.ceil(np.sqrt(num_plots)))
-    num_cols = int(np.ceil(num_plots / num_rows))
-    fig, axs = plt.subplots(num_rows, num_cols, figsize=(10, 6))
+MODELS = ['Logistic', 'KNN', 'Linear SVM', 'Kernel SVM', 'Naive Bayes',
+          'Decision Tree', 'Random Forest', 'XGBoost']
+# get the data
 
-    # Flatten the axs array if it's not 2D
-    if not isinstance(axs, np.ndarray):
-        axs = np.array([axs])
+df = pd.read_csv('datasets/student_data.csv', sep= ";")
+mapping = {'Graduate':2, 'Enrolled':1, "Dropout":0}
+df['Output'] = df['Output'].map(mapping)
 
-    # Plot data
-    for i, ax in enumerate(axs.flatten()):
-        if i < num_plots:
-            ax.plot(data[i])
-            ax.set_title(f"Plot {i+1}")
-        else:
-            ax.axis('off')  # Turn off extra subplots
+y = df['Output']
+X = df.drop('Output', axis=1)
 
-    # Adjust layout
-    fig.tight_layout()
 
-    return fig
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 
-# Example usage with random data
-data = [np.random.rand(10) for _ in range(5)]
-fig = create_uniform_plot(data)
+classifiers = {}
+# Build / train classifiers for model in MODELS:
+for model in MODELS:
+    classifiers[model] = Classifier(X_train, y_train, model)
 
-# Example PyQt integration
-class PlotWindow(QMainWindow):
-    def __init__(self, fig):
-        super().__init__()
-        self.setWindowTitle("Uniform Plot")
-        self.canvas = FigureCanvas(fig)
-        self.setCentralWidget(QWidget(self))
-        layout = QVBoxLayout(self.centralWidget())
-        layout.addWidget(self.canvas)
-
-app = QApplication([])
-window = PlotWindow(fig)
-window.show()
-app.exec()
+# Test each model
+metrics = [accuracy_score, confusion_matrix]
+results = {}
+for model, clf in classifiers.items():
+    y_test_pred = clf.model.predict(X_test)
+    results[model] = [metric(y_test, y_test_pred) for metric in metrics]
+    
+# Show the results
+printResults(results)
