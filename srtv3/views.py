@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_markdown('srtv3/Welcome.md')
+        self.main_tab = self.handle_markdown('Welcome.md')
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
         # Call method that sets up each page
@@ -405,7 +405,6 @@ class MainWindow(QMainWindow):
             self.tab_bar.setCurrentIndex(tabIndex)
         else:
             print("User object is not defined or not an instance of User.")
-
 
 
     @pyqtSlot()
