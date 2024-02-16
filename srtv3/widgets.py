@@ -308,14 +308,15 @@ class ControlDockTabWidget(QTabWidget):
         self.setTabPosition(QTabWidget.TabPosition.North)
     
     def build_control_tab(self):
+        widgets = []
         v_box = QVBoxLayout()
-        grid_layout = QGridLayout()
         
         # Label, ComboBox, Order, Button
         sort_label = QLabel("Sort by:")
         self.sort_by = QComboBox(self.controls_tab)
         self.sort_by.addItems(self.df.columns)
         self.sort_by.currentIndexChanged.connect(self.on_sort_selection)
+        widgets.append((sort_label, self.sort_by))
 
         self.sort_order = QCheckBox(self.controls_tab)
         self.sort_order.setText("Ascending")
@@ -323,37 +324,41 @@ class ControlDockTabWidget(QTabWidget):
 
         sort_button = QPushButton( "Sort", self.controls_tab)
         sort_button.clicked.connect(self.on_sort_button)
-
-        grid_layout.addWidget(sort_label, 0, 0, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(self.sort_by, 0, 1, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(self.sort_order, 1, 0, Qt.AlignmentFlag.AlignCenter)
-        grid_layout.addWidget(sort_button, 1, 1, Qt.AlignmentFlag.AlignCenter)
+        widgets.append((self.sort_order, sort_button))
 
         # Filter Label, Combo, Combo, Button
         filter_label = QLabel("Filter by:")
         self.filter_by = QComboBox(self.controls_tab)
+        widgets.append((filter_label, self.filter_by))
+
         values_label = QLabel("Filter values:")
         self.filter_values = QComboBox(self.controls_tab)
+        widgets.append((values_label, self.filter_values))
+
         filter_button = QPushButton("Filter", self.controls_tab)
         filter_button.clicked.connect(self.on_filter_button)
         self.reset_filter = QPushButton("Reset Filter", self.controls_tab)
         self.reset_filter.clicked.connect(self.on_reset_filter)
+        widgets.append((filter_button, self.reset_filter))
 
         # Only show columns that have a uniquessnes score of less than 1
         nonunqiue_columns = [col for col in self.df.columns if self.df[col].nunique() < self.df[col].count()]
         self.filter_by.addItems(nonunqiue_columns)
         self.filter_by.currentTextChanged.connect(self.on_filter_by) # change the variable list for the unique
 
-        grid_layout.addWidget(filter_label, 2, 0, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(self.filter_by, 2, 1, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(values_label, 3, 0, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(self.filter_values, 3, 1, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(filter_button, 4, 0, Qt.AlignmentFlag.AlignLeft)
-        grid_layout.addWidget(self.reset_filter, 4, 1, Qt.AlignmentFlag.AlignLeft)
+        # Format layout
+        for widget_group in widgets:
+            row = QHBoxLayout()
+            if isinstance(widget_group, tuple):
+                left, right = widget_group
+                row.addWidget(left, alignment=Qt.AlignmentFlag.AlignLeft)
+                row.addWidget(right, alignment=Qt.AlignmentFlag.AlignLeft)
+            else:
+                row.addWidget(widget_group,alignment=Qt.AlignmentFlag.AlignLeft)
+            
+            v_box.addLayout(row)
 
-        
-
-        v_box.addLayout(grid_layout)
+        v_box.addStretch(1)
 
         self.controls_tab.setLayout(v_box)
         

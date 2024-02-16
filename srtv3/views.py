@@ -24,6 +24,7 @@ import pyqtgraph as pg
 from utils import detect_csv_separator, path_to_title, Transformer
 from ProfileWindow import Ui_Form
 from settings import SettingsView
+from collections import namedtuple
 
 
 style_sheet = """
@@ -41,11 +42,8 @@ class MainWindow(QMainWindow):
         self.user_manager = None
         self.app_data = app_data
         self.user = user_manager.get_user()
-        self.model = None
-
-        self.views = []
-        self.plot_views = {}
-        self.controllers = {}
+        self.curr_model = None
+        self.tabs = {} # key: int, value: tuple. Holds the widgets for each tab index
 
         self.init_ui()
 
@@ -75,7 +73,7 @@ class MainWindow(QMainWindow):
         self.tab_bar.setTabsClosable(True) # Add close buttons to tabs
         self.tab_bar.setTabBarAutoHide(True) # Hides tab bar when less than 2 tabs
         self.tab_bar.tabCloseRequested.connect(self.on_close_tab) # signal to on_close_tab
-        self.tab_bar.currentChanged.connect(self.on_tab_switch)
+        self.tab_bar.currentChanged.connect(self.on_tab_switch) # Switch Tab logic
 
         self.create_dock_widgets()
 
@@ -83,8 +81,6 @@ class MainWindow(QMainWindow):
         self.main_tab = self.handle_markdown('Welcome.md')
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
-        # Call method that sets up each page
-        # self.setUpTab(self.main_tab)
         self.setCentralWidget(self.tab_bar)
 
         self.status_bar = QStatusBar()
@@ -256,14 +252,25 @@ class MainWindow(QMainWindow):
         self.window_list.append(new_window)
 
     def on_new_tab(self):
-        """Create a new web tab."""
-        new_tab = QWidget()
-        self.tab_bar.addTab(new_tab, "New Tab")
+        """Create a new tab."""
+
 
         # Update the tab_bar index to keep track of the new tab.
         # Load the url for the new page.
         tab_index = self.tab_bar.currentIndex()
         self.tab_bar.setCurrentIndex(tab_index + 1)
+
+    def build_tab(self, title: str, center, left=None, right=None, data=None):
+        Tab = namedtuple("Tab", ['title','main','l_dock','r_dock','data'])
+        # switch the tab to the new window.
+        idx = self.tab_bar.count()
+        # update the tabs dict
+        self.tabs[idx] = Tab(title, center, left, right, data)
+        # set the correct widgets for the current tab
+        self.tab_bar.addTab(center, title)
+        self.tab_bar.setCurrentIndex(idx)
+        
+        return
 
     def on_import(self):
         """Import file."""
@@ -308,9 +315,7 @@ class MainWindow(QMainWindow):
         html_view = HtmlView(html_model.html_content)
         html_tree_view = TreeWidgetFactory().build_html_tree(self.left_dock, html_model.headers())
 
-        self.tab_bar.addTab(html_view, html_model.title)
-        tab_idx = self.tab_bar.count() - 1
-        self.controllers[tab_idx] = html_tree_view
+        self.build_tab(html_model.title, html_view, html_tree_view, None, html_model)
         
     def handle_pdf(self, file_path):
         # Code to handle PDF file
@@ -327,8 +332,6 @@ class MainWindow(QMainWindow):
         Create a DataFrame to hold the data.
         Create a model to pass to QTableWidget.
         """
-        print("Handling files...")
-
         # get the delimiter
         seperator = detect_csv_separator(file_path)
         df = read_csv(file_path, sep=seperator)
@@ -342,26 +345,19 @@ class MainWindow(QMainWindow):
         # set title to df
         df.attrs['title'] = title
 
-        # create table view
-        self.model = TableModel(df)
-        table_widget = TableView(self.tab_bar, self.model)
+        # create center view
+        model = TableModel(df)
+        table_widget = TableView(self.tab_bar, model)
 
-        print("Control back to browser")
-        self.tab_bar.addTab(table_widget, title)
-
+        # create right widget
         plotView = PlotView(self.right_dock)
-        
-        tab_idx = self.tab_bar.count() - 1
 
-        # Add controller to list of controllers
+        # create left widget
         controller = ControlDockTabWidget(self.left_dock, df, table_widget, plotView)
         controller.sort_selection.connect(self.on_sort_selection)
         controller.visualizations_tab.plot_clicked.connect(self.on_plot_button)
 
-        self.controllers[tab_idx] = controller
-
-        # Add plotView to list of plotViews
-        self.plot_views[tab_idx] = plotView
+        self.build_tab(title, table_widget, controller, plotView, df)
         return
 
     def updateProgressBar(self, progress):
@@ -388,8 +384,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def on_about_action(self):
-        view = self.handle_markdown('About.md')
-        # self.tab_bar.addTab(view, 'About')
+        self.handle_markdown('About.md')
 
     @pyqtSlot()
     def on_settings_button(self):
@@ -401,12 +396,10 @@ class MainWindow(QMainWindow):
                     return
 
             # If not found, create a new settings tab
-            settingsWidget = SettingsView(parent=self, main=self)
-            tabIndex = self.tab_bar.addTab(settingsWidget, "Settings")
-            self.tab_bar.setCurrentIndex(tabIndex)
+            settingsWidget = SettingsView(parent=self.tab_bar)
+            self.build_tab("Settings", settingsWidget)
         else:
             print("User object is not defined or not an instance of User.")
-
 
     @pyqtSlot()
     def on_database_button(self):
@@ -416,16 +409,14 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def on_reports_button(self):
         # Open Reports Pane with 
-        # Left Dock -> ModelingController
-        controller = ModellingController(self.left_dock, self.model.cur_data)
+        title = "Predictive Analysis"
+        left_controller = ModellingController(self.left_dock, self.curr_model)
         # Right Dock -> QTreeWidget
-        # model_info = TreeWidgetFactory().build_classifier_tree(self.right_dock)
-
+        # right_controller = TreeWidgetFactory().build_classifier_tree(self.right_dock)
         # tab_widget -> PlotView()
-        plotView = PlotView(self.tab_bar)
-        self.tab_bar.addTab(plotView, "Prediction Report")
-        self.tab_bar.setCurrentWidget(plotView)
-        self.left_dock.setWidget(controller)
+        centerView = PlotView(self.tab_bar)
+        self.build_tab(title, centerView, left_controller, data=self.curr_model)
+
         return
 
     @pyqtSlot()
@@ -434,6 +425,17 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def on_home_button(self):
+        # Take the User back to the welcome Tab
+        # if the user has an open welcome tab, bring the user to this tab.
+        # else if the user does not have a welcome tab make one.
+        for i, tab in self.tabs.items():
+            if tab.title == "welcome":
+                self.tab_bar.setCurrentIndex(i)
+                return
+        
+        # No tab index found.
+        self.handle_markdown("Welcome.md")
+
         print("Home Button")
 
     @pyqtSlot()
@@ -493,15 +495,17 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(int)
     def on_tab_switch(self, tab_index):
-        current_tab = self.tab_bar.widget(tab_index)
+        _, current_tab, left_widget, right_widget, data = self.tabs[tab_index]
+
         if current_tab.type == 'TableView':
             # Show controller dock until a plot is plotted.
             self.right_dock.setVisible(False)
             self.right_dock_toggle.setEnabled(True)
             # Correlate the TableView with the correct PlotView
-            self.right_dock.setWidget(self.plot_views[tab_index])
+            self.right_dock.setWidget(right_widget)
             # And with the correct controller.
-            self.left_dock.setWidget(self.controllers[tab_index])
+            self.left_dock.setWidget(left_widget)
+
 
         elif current_tab.type == 'HtmlView':
             # Hide right dock
@@ -510,7 +514,17 @@ class MainWindow(QMainWindow):
             # Show left dock with proper widget
             self.left_dock.setVisible(True)
             self.left_dock_toggle.setEnabled(True)
-            self.left_dock.setWidget(self.controllers[tab_index])
+            self.left_dock.setWidget(left_widget)
+
+
+        elif current_tab.type == "PlotView":
+            # Hide Right
+            self.right_dock.setVisible(False)
+            self.right_dock_toggle.setEnabled(False)
+            # Show Left
+            self.left_dock.setVisible(True)
+            self.left_dock_toggle.setEnabled(True)
+            self.left_dock.setWidget(left_widget)
 
         else:
             # Hide Both
@@ -518,6 +532,13 @@ class MainWindow(QMainWindow):
             self.right_dock.setEnabled(False)
             self.left_dock.setVisible(False)
             self.left_dock.setEnabled(False)
+
+            # Set both docks
+            self.left_dock.setWidget(QWidget())
+            self.right_dock.setWidget(QWidget())
+        
+        # set the current data
+        self.curr_model = data
 
     @pyqtSlot(int)
     def on_sort_selection(self, col_idx):
@@ -611,6 +632,7 @@ class PlotView(QWidget):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.type = "PlotView"
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         self.init_ui()
@@ -620,128 +642,5 @@ class PlotView(QWidget):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-""" class SettingsView(QWidget):
-    def __init__(self, parent: QWidget, main: QMainWindow):
-        super().__init__(parent)
-        self.type = "SettingsPage"
-        self.main = main
-        self.setupUi()
-        self.radioDark.setChecked(True)
-        # Connect the 'toggled' signal to changeTheme
-        self.radioDark.toggled.connect(self.changeTheme)
-
-    def setupUi(self):
-        self.resize(758, 866)
-        self.setStyleSheet(
-            "background-color: rgb(44, 49, 60);\n"
-            "color: rgb(246, 247, 247);\n"
-        )
-
-        self.gridLayout_2 = QGridLayout(self)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-
-        self.frame = QFrame(self)
-        self.frame.setObjectName("frame")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
-        self.frame.setSizePolicy(sizePolicy)
-        self.frame.setMinimumSize(300, 400)
-        self.frame.setMaximumSize(350, 600)
-        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.verticalLayout = QVBoxLayout(self.frame)
-        self.verticalLayout.setObjectName("verticalLayout")
-
-        self.groupBox = QGroupBox("Theme", self.frame)
-        self.groupBox.setObjectName("groupBox")
-        self.verticalLayout.addWidget(self.groupBox)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-
-        self.radioDark = QRadioButton("Dark", self.groupBox)
-        self.radioDark.setObjectName("radioDark")
-        self.horizontalLayout.addWidget(self.radioDark)
-
-        self.radioLight = QRadioButton("Light", self.groupBox)
-        self.radioLight.setObjectName("radioLight")
-        self.horizontalLayout.addWidget(self.radioLight)
-
-        self.groupBox.setLayout(self.horizontalLayout)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        self.verticalLayout.addItem(self.verticalSpacer)
-
-        self.label_3 = QLabel("Contrast", self.frame)
-        self.label_3.setObjectName("label_3")
-        self.verticalLayout.addWidget(self.label_3, 0, Qt.AlignmentFlag.AlignTop)
-
-        self.horizontalSlider = QSlider(self.frame)
-        self.horizontalSlider.setObjectName("horizontalSlider")
-        self.horizontalSlider.setStyleSheet(
-            "QSlider::handle {\n"
-            "    background-color: rgb(22, 25, 29);\n"
-            "}"
-        )
-        self.horizontalSlider.setOrientation(Qt.Orientation.Horizontal)
-        self.verticalLayout.addWidget(self.horizontalSlider)
-
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        self.verticalLayout.addItem(self.verticalSpacer_2)
-
-        self.pushButton = QPushButton("Restore Default Settings", self.frame)
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton.setStyleSheet(
-            "QPushButton{\n"
-            "	background-color: rgb(22, 25, 29);\n"
-            "}"
-        )
-        self.verticalLayout.addWidget(self.pushButton, 0, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-
-        self.gridLayout_2.addWidget(self.frame, 1, 0, 1, 1)
-
-    def changeTheme(self):
-        if self.radioDark.isChecked():
-            self.applyDarkTheme()
-        elif self.radioLight.isChecked():
-            self.applyLightTheme()
-
-    def applyDarkTheme(self):
-        self.loadStyleSheet("darktheme")
-
-    def applyLightTheme(self):
-        self.loadStyleSheet("lighttheme")
-
-    def loadStyleSheet(self, theme_name):
-        # Assuming the .qss files are stored in "C:/Users/acarr/srt/src/resources/themes/"
-        # current_directory = os.getcwd()
-        # stylesheet_path = os.path.join(current_directory, f"data/{theme_name}.qss")
-        # try:
-        #     with open(stylesheet_path, "r") as file:
-        #         print(f"Changed the settings: {theme_name}")
-        #         styleSheet = str(file)
-        #         self.setStyleSheet(styleSheet)
-        #         # stylesheet = file.read()
-        #         # self.setStyleSheet(stylesheet)
-        #         # if self.main_window:
-        #         #     self.main_window.setStyleSheet(stylesheet)
-        # except FileNotFoundError:
-        #     print(f"Failed to load stylesheet: {stylesheet_path}")
-
-        if theme_name == 'lighttheme':
-            self.setStyleSheet(
-                "background-color: rgb(246, 246, 246);\n"
-            )
-
-        elif theme_name == 'darktheme':
-            self.setStyleSheet(
-                "background-color: rgb(30, 30, 30);\n"
-            )
-        else:
-            print("Style not supported.")
- """
 class Change_Pass_Window(QWidget):
     print('Password Changed')

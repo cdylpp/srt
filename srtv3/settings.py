@@ -8,10 +8,9 @@ from PyQt6.QtWidgets import (QApplication, QRadioButton, QFrame,
     QVBoxLayout, QWidget, QMainWindow)
 
 class SettingsView(QWidget):
-    def __init__(self, parent: QWidget, main: QMainWindow):
+    def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.type = "SettingsPage"
-        self.main = main
+        self.type = "SettingsView"
         self.setupUi()
         self.radioDark.setChecked(True)
         
