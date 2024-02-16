@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_markdown('Welcome.md')
+        self.main_tab = self.handle_markdown('srtv3/Welcome.md')
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
         # Call method that sets up each page
@@ -392,11 +392,21 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def on_settings_button(self):
-        """Handle the settings for the Main window"""
-        settings_tab = SettingsView(self.tab_bar, self)
-        self.tab_bar.addTab(settings_tab, "Settings")
-        print("Handle settings dialog")
-        return
+        if hasattr(self, 'user') and isinstance(self.user, User):
+            # Check if there's already a settings tab and switch to it
+            for i in range(self.tab_bar.count()):
+                if isinstance(self.tab_bar.widget(i), SettingsPage):
+                    self.tab_bar.setCurrentIndex(i)
+                    return
+
+            # If not found, create a new settings tab
+            settingsWidget = SettingsPage(parent=self, main=self)
+            tabIndex = self.tab_bar.addTab(settingsWidget, "Settings")
+            self.tab_bar.setCurrentIndex(tabIndex)
+        else:
+            print("User object is not defined or not an instance of User.")
+
+
 
     @pyqtSlot()
     def on_database_button(self):
