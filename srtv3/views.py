@@ -395,12 +395,12 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'user') and isinstance(self.user, User):
             # Check if there's already a settings tab and switch to it
             for i in range(self.tab_bar.count()):
-                if isinstance(self.tab_bar.widget(i), SettingsPage):
+                if isinstance(self.tab_bar.widget(i), SettingsView):
                     self.tab_bar.setCurrentIndex(i)
                     return
 
             # If not found, create a new settings tab
-            settingsWidget = SettingsPage(parent=self, main=self)
+            settingsWidget = SettingsView(parent=self, main=self)
             tabIndex = self.tab_bar.addTab(settingsWidget, "Settings")
             self.tab_bar.setCurrentIndex(tabIndex)
         else:
