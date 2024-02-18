@@ -14,10 +14,10 @@ from matplotlib.figure import Figure
 
 from widgets import (
     TreeWidgetFactory, TableView, 
-    ControlDockTabWidget, ModellingController)
+    ControlDockTabWidget, ModellingController, MetricController)
 
 from user import User
-from models import TableModel, MarkdownModel
+from models import TableModel, MarkdownModel, Classifier
 from paths import Paths
 from pandas import read_csv
 import pyqtgraph as pg
@@ -408,14 +408,19 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def on_reports_button(self):
-        # Open Reports Pane with 
+        # Open Reports Pane with
         title = "Predictive Analysis"
-        left_controller = ModellingController(self.left_dock, self.curr_model)
-        # Right Dock -> QTreeWidget
-        # right_controller = TreeWidgetFactory().build_classifier_tree(self.right_dock)
-        # tab_widget -> PlotView()
+        # model
+        classifier = Classifier(self.curr_model)
+        # model controller
+        left_controller = ModellingController(self.left_dock, self.curr_model, classifier)
+        # view
         centerView = PlotView(self.tab_bar)
-        self.build_tab(title, centerView, left_controller, data=self.curr_model)
+        # view controller
+        right_controller = MetricController(self.right_dock, classifier, centerView)
+        classifier.modelsBuilt.connect(self.on_models_built)
+
+        self.build_tab(title, centerView, left_controller, right_controller, data=self.curr_model)
 
         return
 
@@ -539,6 +544,17 @@ class MainWindow(QMainWindow):
         
         # set the current data
         self.curr_model = data
+    
+    @pyqtSlot()
+    def on_models_built(self):
+        # Get the tree view from the right controller
+        cur_idx = self.tab_bar.currentIndex()
+        right_controller = self.tabs[cur_idx].r_dock
+        self.right_dock.setWidget(right_controller.tree)
+
+        # show the right dock
+        self.right_dock.setVisible(True)
+        self.right_dock_toggle.setEnabled(True)
 
     @pyqtSlot(int)
     def on_sort_selection(self, col_idx):

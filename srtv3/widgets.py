@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QSlider)
 
 from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
-from models import SNSPlotter
+from models import SNSPlotter, Classifier
 
 class ParameterComboBox(QComboBox):
     controlAndText = pyqtSignal(str, str)
@@ -138,7 +138,6 @@ class PlotViewController(QWidget):
 
         self.setLayout(self.layout)
     
-    
     @pyqtSlot()
     def on_plot_button(self):
         plot_type = self.plot_type.currentText()
@@ -150,7 +149,6 @@ class PlotViewController(QWidget):
         SNSPlotter.plot(self.df, figure, canvas, plot_type, **kwargs)
         self.plot_clicked.emit()
         return
-
 
     @pyqtSlot(str, str)
     def update_parameters(self, caller, text):
@@ -236,6 +234,8 @@ class TreeWidgetFactory():
     
     @staticmethod
     def build_html_tree(parent, headers):
+        # Only build the tree AFTER the models have be trained
+
         tree = QTreeWidget(parent)
         tree.setColumnCount(1)  # Set the number of columns
         stack = []
@@ -275,10 +275,27 @@ class TreeWidgetFactory():
                     top_level = item
         return tree
     
-
     @staticmethod
-    def build_classifier_tree(parent, classifiers, stats):
-        pass
+    def build_classifier_tree(parent, classifier: Classifier):
+        tree = QTreeWidget(parent)
+        tree.setColumnCount(2)
+        tree.setHeaderLabels(['Model', 'Value'])
+
+        # create Parents := models
+        parents = []
+        for model in classifier.models.keys():
+            parent = QTreeWidgetItem(tree, [model, '', ''])
+            score = classifier.get_score(model) * 100
+            score_row = QTreeWidgetItem(["Score", f'{int(score)}%'])
+            score_row.setToolTip(0, "Mean accuracy on the given test data and labels")
+            parent.addChild(score_row)
+
+            conf_row = QTreeWidgetItem(["Confusion Matrix", ''])
+            conf_row.setToolTip(0, "Plot the distribution of True positive, true negatives, false positives, and false negatives")
+            parent.addChild(conf_row)
+        
+        return tree
+
 
 class ControlDockTabWidget(QTabWidget):
     sort_selection = pyqtSignal(int, bool)
@@ -397,38 +414,78 @@ class ControlDockTabWidget(QTabWidget):
     def on_reset_filter(self):
         self.table_view.resetFilter()
     
-     
+
+class MetricController(QWidget):
+    def __init__(self, parent: QWidget, classifier: Classifier, view) -> None:
+        super().__init__(parent)
+        self.classifier = classifier
+        self.view = view
+        self.tree = None
+        self.classifier.modelsBuilt.connect(self.on_models_built) # build Tree when models have been built
+    
+    @pyqtSlot()
+    def on_models_built(self):
+        # models have been built, now create the tree.
+        self.tree = TreeWidgetFactory.build_classifier_tree(self, self.classifier)
+        self.tree.itemPressed.connect(self.on_item_pressed)
+    
+    @pyqtSlot(QTreeWidgetItem)
+    def on_item_pressed(self, item):
+        if item:
+            if item.childCount() == 0:
+                model_name = item.parent().text(0)
+                
+            else:
+                model_name = item.text(0)
+                
+
+            
+            conf_mat = self.classifier.get_confusion(model_name)
+            # pass to the plotter
+            self.plot_confusion(conf_mat, model_name)
+    
+    def plot_confusion(self, confusion_matrix, model):
+        fig, canvas = self.view.figure, self.view.canvas
+        kwargs = {"xticklabels": ['Positive', 'Negative'],
+                  "yticklabels": ['True', 'False'],
+                  "cmap": "Blues"
+                  }
+        SNSPlotter().confusion_matrix(confusion_matrix, fig, canvas, model, **kwargs)
+        
+
+
 class ModellingController(QWidget):
-    def __init__(self, parent: QWidget, data: pd.DataFrame) -> None:
+    def __init__(self, parent: QWidget, data: pd.DataFrame, classifier: Classifier) -> None:
         super().__init__(parent)
         self.data = data
         self.model_types = [
-            '','All', 'Logistic', 'KNN', 'Linear SVM', 'Kernel SVM', 'Naive Bayes',
+            '','All', 'Logistic', 'KNN', 'Linear SVM', 'Kernel SVM', 'Gaussian Naive Bayes',
             'Decision Tree', 'Random Forest', 'XGBoost'
         ]
+        self.classifier = classifier
         self.init_ui()
 
     def init_ui(self):
         # Target Value
         target_label = QLabel("Select Target Variable:")
-        target = ParameterComboBox(self, 'target')
-        target.addItem("")
-        target.addItems(self.data.columns)
+        self.target = ParameterComboBox(self, 'target')
+        self.target.addItem("")
+        self.target.addItems(self.data.columns)
 
         # Model Type
         model_label = QLabel("Select Model:")
-        model = ParameterComboBox(self, 'model')
-        model.addItems(self.model_types)
+        self.model = ParameterComboBox(self, 'model')
+        self.model.addItems(self.model_types)
 
         # Train Test Split
         split_label = QLabel("Train / Test Split:")
         test_label = QLabel("Test")
         train_label = QLabel("Train")
-        split_slider = QSlider(Qt.Orientation.Horizontal)
-        split_slider.setMinimum(1)
-        split_slider.setMaximum(99)
-        split_slider.setValue(20)
-        split_slider.valueChanged.connect(self.slider_value_changed)
+        self.split_slider = QSlider(Qt.Orientation.Horizontal)
+        self.split_slider.setMinimum(1)
+        self.split_slider.setMaximum(99)
+        self.split_slider.setValue(20)
+        self.split_slider.valueChanged.connect(self.slider_value_changed)
 
         self.value_label = QLabel()
 
@@ -439,18 +496,18 @@ class ModellingController(QWidget):
 
         row1 = QHBoxLayout()
         row1.addWidget(target_label, alignment=Qt.AlignmentFlag.AlignLeft)
-        row1.addWidget(target, alignment=Qt.AlignmentFlag.AlignLeft)
+        row1.addWidget(self.target, alignment=Qt.AlignmentFlag.AlignLeft)
 
         row2 = QHBoxLayout()
         row2.addWidget(model_label, alignment=Qt.AlignmentFlag.AlignLeft)
-        row2.addWidget(model, alignment=Qt.AlignmentFlag.AlignLeft)
+        row2.addWidget(self.model, alignment=Qt.AlignmentFlag.AlignLeft)
 
         row3 = QHBoxLayout()
         row3.addWidget(split_label, alignment=Qt.AlignmentFlag.AlignLeft)
 
         row4 = QHBoxLayout()
         row4.addWidget(test_label, alignment=Qt.AlignmentFlag.AlignLeft)
-        row4.addWidget(split_slider, alignment=Qt.AlignmentFlag.AlignLeft)
+        row4.addWidget(self.split_slider, alignment=Qt.AlignmentFlag.AlignLeft)
         row4.addWidget(train_label, alignment=Qt.AlignmentFlag.AlignLeft)
 
         layout = QVBoxLayout()
@@ -466,18 +523,37 @@ class ModellingController(QWidget):
 
         self.setLayout(layout)
 
-
     def slider_value_changed(self, value):
         val = value / 100
         self.value_label.setText(f"Train: {1-val:.2f}, Test: {val:.2f}")
     
+    @pyqtSlot()
     def run_prediction(self):
-        print("runnint prediction...")
-        pass
+        # get target
+        # get model
+        # get train_test_split param
+        target = self.target.currentText()
+        model = self.model.currentText() # only handles all models right now.
+        test_size = self.split_slider.value() / 100
 
+        # special case for the student_data.csv
+        if target == 'output':
+            remove = 'Enrolled'
+        else:
+            remove = None
+        
+        # set parameters
+        self.classifier.set_params(target, test_size, remove)
+        # train the models
+        self.classifier.train()
+        return
+    
+    @pyqtSlot()
     def reset_parameters(self):
-        print("reset params")
-        pass
+        self.target.setCurrentIndex(0)
+        self.model.setCurrentIndex(0)
+        self.split_slider.setValue(25)
+        return
         
         
 
