@@ -1,6 +1,7 @@
 
 import matplotlib
 matplotlib.use('QtAgg')
+import time
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
@@ -23,17 +24,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
-"""
-
-
-
-
-
-
-
-
-
-"""
 
 class Classifier(QObject):
 
@@ -65,6 +55,7 @@ class Classifier(QObject):
             'Linear SVM': SVC(kernel='linear'), 
             'Random Forest': RandomForestClassifier(max_depth=10)
         }
+        self.times = {}
         self.classifiers = {}
 
     def set_params(self, target: str, test_size: float = .2, remove: str = None):
@@ -98,8 +89,11 @@ class Classifier(QObject):
 
     def train(self):
         for name, model in self.models.items():
+            start = time.time()
             clf = model.fit(self.X_train, self.y_train)
+            end = time.time()
             self.classifiers[name] = clf
+            self.times[name] = (end - start)
 
         self.modelsBuilt.emit()
         return

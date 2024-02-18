@@ -292,8 +292,13 @@ class TreeWidgetFactory():
             parent.addChild(score_row)
 
             conf_row = QTreeWidgetItem(["Confusion Matrix", ''])
-            conf_row.setToolTip(0, "Plot the distribution of True positive, true negatives, false positives, and false negatives")
+            conf_row.setToolTip(0, "Plot the distribution of\nTrue positive, true negatives, false positives, and false negatives")
             parent.addChild(conf_row)
+
+            duration = QTreeWidgetItem(['Time taken', f'{classifier.times[model]:.3f} seconds'])
+            duration.setToolTip(0, "Time taken to train the model")
+            parent.addChild(duration)
+            
         
         return tree
 
