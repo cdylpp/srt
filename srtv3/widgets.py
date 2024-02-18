@@ -285,6 +285,7 @@ class TreeWidgetFactory():
         parents = []
         for model in classifier.models.keys():
             parent = QTreeWidgetItem(tree, [model, '', ''])
+            parent.setToolTip(0, classifier.model_descriptions[model])
             score = classifier.get_score(model) * 100
             score_row = QTreeWidgetItem(["Score", f'{int(score)}%'])
             score_row.setToolTip(0, "Mean accuracy on the given test data and labels")
@@ -437,9 +438,7 @@ class MetricController(QWidget):
                 
             else:
                 model_name = item.text(0)
-                
-
-            
+                 
             conf_mat = self.classifier.get_confusion(model_name)
             # pass to the plotter
             self.plot_confusion(conf_mat, model_name)

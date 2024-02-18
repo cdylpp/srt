@@ -23,11 +23,33 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+"""
 
+
+
+
+
+
+
+
+
+"""
 
 class Classifier(QObject):
 
     modelsBuilt = pyqtSignal()
+
+    model_descriptions = {
+        'Logistic': "Logistic Regression: A linear classifier that models the probability of a binary outcome.",
+        'KNN': "K-Nearest Neighbors (KNN): A simple algorithm that classifies new data points based on the majority class of their nearest neighbors.",
+        'XGBoost': "XGBoost: An efficient and scalable gradient boosting framework that uses decision trees as base learners, achieving state-of-the-art performance on many tasks.", 
+        'Gaussian Naive Bayes': "Gaussian Naive Bayes: A classifier based on Bayes' theorem that assumes features are independent and have Gaussian distributions.",
+        'Decision Tree': "Decision Tree: A tree-based classifier that makes decisions by recursively splitting the feature space into smaller regions.", 
+        'Kernel SVM': "Kernel SVM (Support Vector Machine): An SVM that can handle non-linear decision boundaries by transforming the input space using kernel functions.", 
+        'Linear SVM': "Linear SVM (Support Vector Machine): A linear classifier that finds the hyperplane that best separates the classes.", 
+        'Random Forest': "Random Forest: An ensemble classifier consisting of multiple decision trees, which improves performance by averaging predictions over many trees."
+    }
+
     def __init__(self, data: pd.DataFrame, remove: str = None) -> None:
         super().__init__()
         self.data = data
