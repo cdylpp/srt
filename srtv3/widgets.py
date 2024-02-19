@@ -2,6 +2,7 @@ from PyQt6 import QtWidgets
 
 import pandas as pd
 from utils import value_to_text, variable_type
+from bs4 import BeautifulSoup
 
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QCheckBox, QGroupBox, QButtonGroup, 
@@ -233,11 +234,11 @@ class TreeWidgetFactory():
         return tree
     
     @staticmethod
-    def build_html_tree(parent, headers):
-        # Only build the tree AFTER the models have be trained
-
+    def build_nav_tree(parent, html_content) -> QTreeWidget:
         tree = QTreeWidget(parent)
-        tree.setColumnCount(1)  # Set the number of columns
+        soup = BeautifulSoup(html_content, "html.parser")
+        headers = soup.find_all(["h1", "h2", "h3"])
+
         stack = []
         top_level = None
 

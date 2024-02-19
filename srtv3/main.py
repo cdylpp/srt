@@ -6,7 +6,7 @@ from LoginWindow import LoginWindow
 from views import MainWindow
 #from dotenv import load_dotenv
 import pyqtgraph as pg
-import qdarktheme
+#import qdarktheme
 from user import UserManager
 
 #load_dotenv()
@@ -58,8 +58,8 @@ if __name__ == "__main__":
         "login_attempts": 0
     }
 
-    srtApp = QApplication([])
-    qdarktheme.setup_theme()
+    srtApp = QApplication(sys.argv)
+    # qdarktheme.setup_theme()
     app_data = load_app_data()
 
     # With Login View

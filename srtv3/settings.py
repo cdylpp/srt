@@ -25,19 +25,19 @@ class SettingsView(QWidget):
         # file that will be called by the load_them_preference() method
 
     # Function to apply the selected theme
-    def apply_theme(self, theme):
-        if theme == 'dark':
-            qdarktheme.setup_theme()
-        else:
-            qdarktheme.setup_theme("light")
+    # def apply_theme(self, theme):
+    #     if theme == 'dark':
+    #         qdarktheme.setup_theme()
+    #     else:
+    #         qdarktheme.setup_theme("light")
 
     # Function to handle when the theme radio buttons are clicked
-    def handle_theme_change(self):
-        if self.radioDark.isChecked():
-            self.theme_preference = 'dark'
-        else:
-            self.theme_preference = 'light'
-        self.apply_theme(self.theme_preference)
+    # def handle_theme_change(self):
+    #     if self.radioDark.isChecked():
+    #         self.theme_preference = 'dark'
+    #     else:
+    #         self.theme_preference = 'light'
+    #     self.apply_theme(self.theme_preference)
 
     def setupUi(self):
         self.setObjectName("Form")
@@ -102,8 +102,8 @@ class SettingsView(QWidget):
         self.gridLayout_2.addWidget(self.frame, 1, 0, 1, 1)
 
         # Connect the radio buttons to the handle_theme_change function
-        self.radioDark.toggled.connect(self.handle_theme_change)
-        self.radioLight.toggled.connect(self.handle_theme_change)
+        # self.radioDark.toggled.connect(self.handle_theme_change)
+        # self.radioLight.toggled.connect(self.handle_theme_change)
 
         self.retranslateUi()
 
