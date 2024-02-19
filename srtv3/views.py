@@ -308,7 +308,7 @@ class MainWindow(QMainWindow):
     def handle_html(self, file_path):
         # Create a QWebEngineView widget
         web_view = QWebEngineView(self)
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             html_content = file.read()
 
         # Load the content of a local file
