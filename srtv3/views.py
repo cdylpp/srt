@@ -165,7 +165,7 @@ class MainWindow(QMainWindow):
         database_button.triggered.connect(self.on_database_button)
 
         reports_button = QAction(
-            QIcon(Paths.icon("clipboard.svg")), 
+            QIcon(Paths.icon("trending-up.svg")), 
             "Reports", 
             self
         )
@@ -213,14 +213,14 @@ class MainWindow(QMainWindow):
         self.settings_button.triggered.connect(self.on_settings_button)
 
         self.right_dock_toggle = QAction(
-            QIcon(Paths.icon("trending-up.svg")),
+            QIcon(Paths.icon("bar-chart-2.svg")),
             'Toggle Plot Dock',
             self
         )
         self.right_dock_toggle.triggered.connect(self.on_right_dock_toggle)
 
         self.left_dock_toggle = QAction(
-            QIcon(Paths.icon('edit-3.svg')),
+            QIcon(Paths.icon('sliders.svg')),
             'Toggle Control Dock',
             self
         )
