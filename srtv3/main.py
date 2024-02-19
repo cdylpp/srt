@@ -4,12 +4,12 @@ from PyQt6.QtCore import pyqtSlot
 from AppDataManager import AppDataManager
 from LoginWindow import LoginWindow
 from views import MainWindow
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 import pyqtgraph as pg
 #import qdarktheme
 from user import UserManager
 
-#load_dotenv()
+load_dotenv()
 
 
 def load_app_data():
@@ -63,14 +63,14 @@ if __name__ == "__main__":
     app_data = load_app_data()
 
     # With Login View
-    # show_login() 
+    show_login() 
 
 
     # Without Login View
-    user_manager = UserManager()
-    user_manager.set_user(user_data)
-    main = MainWindow(user_manager, app_data=app_data)
-    main.show()
+    # user_manager = UserManager()
+    # user_manager.set_user(user_data)
+    # main = MainWindow(user_manager, app_data=app_data)
+    # main.show()
     
     sys.exit(srtApp.exec())
 

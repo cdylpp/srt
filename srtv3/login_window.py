@@ -34,14 +34,14 @@ class Ui_Form(object):
         self.widget = QWidget(Form)
         self.widget.setObjectName(u"widget")
         self.widget.setGeometry(QRect(0, 0, 800, 600))
-        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setMinimumSize(QSize(800, 600))
         self.widget.setMaximumSize(QSize(800, 600))
-        self.widget.setLayoutDirection(Qt.LeftToRight)
+        self.widget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.widget.setStyleSheet(u"background-color: rgb(52, 53, 65);\n"
 "\n"
 "QLabel {\n"
@@ -59,7 +59,7 @@ class Ui_Form(object):
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.widget_2 = QWidget(self.widget)
         self.widget_2.setObjectName(u"widget_2")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.widget_2.sizePolicy().hasHeightForWidth())
@@ -74,8 +74,8 @@ class Ui_Form(object):
         sizePolicy1.setHeightForWidth(self.logo_frame.sizePolicy().hasHeightForWidth())
         self.logo_frame.setSizePolicy(sizePolicy1)
         self.logo_frame.setMinimumSize(QSize(300, 100))
-        self.logo_frame.setFrameShape(QFrame.StyledPanel)
-        self.logo_frame.setFrameShadow(QFrame.Raised)
+        self.logo_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.logo_frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_3 = QGridLayout(self.logo_frame)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.logo = QLabel(self.logo_frame)
@@ -86,12 +86,12 @@ class Ui_Form(object):
         self.logo.setMaximumSize(QSize(105, 120))
         self.logo.setPixmap(QPixmap(u":/Logo/Logo/Stay Smart Logo 1.png"))
         self.logo.setScaledContents(True)
-        self.logo.setAlignment(Qt.AlignCenter)
+        self.logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_3.addWidget(self.logo, 0, 0, 1, 1)
 
 
-        self.gridLayout.addWidget(self.logo_frame, 0, 0, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.gridLayout.addWidget(self.logo_frame, 0, 0, 1, 1, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -104,7 +104,7 @@ class Ui_Form(object):
         self.label.setPixmap(QPixmap(u":/IconsBlue/IconsBlue/#0088b9/user.svg"))
         self.label.setScaledContents(True)
 
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
 
         self.lineEdit = QLineEdit(self.widget_2)
         self.lineEdit.setObjectName(u"lineEdit")
@@ -117,7 +117,7 @@ class Ui_Form(object):
 "color:rgb(0, 0, 0);\n"
 "padding-bottom:7px;")
 
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.lineEdit)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.lineEdit)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -141,7 +141,7 @@ class Ui_Form(object):
 "border-bottom-color:rgba(17, 243, 255, 255);\n"
 "color:rgb(0, 0, 0);\n"
 "padding-bottom:7px;")
-        self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.horizontalLayout_2.addWidget(self.password_input)
 
@@ -151,8 +151,8 @@ class Ui_Form(object):
         self.visibility_button.setStyleSheet(u"bottom-padding:5px;\n"
 "border:2px;")
         icon = QIcon()
-        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye-off.svg", QSize(), QIcon.Normal, QIcon.Off)
-        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye.svg", QSize(), QIcon.Normal, QIcon.On)
+        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye-off.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
         self.visibility_button.setIcon(icon)
         self.visibility_button.setCheckable(True)
 
@@ -164,13 +164,13 @@ class Ui_Form(object):
         self.remembeme_checkBox = QCheckBox(self.widget_2)
         self.remembeme_checkBox.setObjectName(u"remembeme_checkBox")
         self.remembeme_checkBox.setMaximumSize(QSize(16777215, 29))
-        self.remembeme_checkBox.setLayoutDirection(Qt.LeftToRight)
+        self.remembeme_checkBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.remembeme_checkBox.setStyleSheet(u"color: white;\n"
 "border-radius:10px;\n"
 "padding:5px;\n"
 "")
 
-        self.verticalLayout.addWidget(self.remembeme_checkBox, 0, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.verticalLayout.addWidget(self.remembeme_checkBox, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
         self.login_button = QPushButton(self.widget_2)
         self.login_button.setObjectName(u"login_button")
@@ -196,7 +196,7 @@ class Ui_Form(object):
 "\n"
 "")
 
-        self.verticalLayout.addWidget(self.login_button, 0, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.verticalLayout.addWidget(self.login_button, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
         self.forgot_button = QPushButton(self.widget_2)
         self.forgot_button.setObjectName(u"forgot_button")
@@ -220,7 +220,7 @@ class Ui_Form(object):
 "}\n"
 "")
 
-        self.verticalLayout.addWidget(self.forgot_button, 0, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.verticalLayout.addWidget(self.forgot_button, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
 
         self.gridLayout.addLayout(self.verticalLayout, 1, 0, 1, 1)
