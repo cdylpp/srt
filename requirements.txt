@@ -16,3 +16,7 @@ cairocffi
 iconify
 python-dotenv
 pyqtgraph-0.13.4.dev0
+bs4
+markdown2
+pyqtdarktheme
+PyQt6-WebEngine

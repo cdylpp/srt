@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_html('Welcome2.0.html')
+        self.main_tab = self.handle_html('srtv3\Welcome2.0.html')
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
         self.setCentralWidget(self.tab_bar)
@@ -405,7 +405,7 @@ class MainWindow(QMainWindow):
 
 
     def on_about_action(self):
-        self.handle_html('About.html')
+        self.handle_html('srtv3\About.html')
 
 
     def on_settings_button(self):

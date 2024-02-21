@@ -24,7 +24,7 @@ class LoginWindow(QtWidgets.QDialog):
     def init_ui(self):
         # logging info
         print("Init Login View")
-        self.setWindowTitle("SRT Login")
+        self.setWindowTitle("StaySmart: Student Retention Tool")
         icon = QIcon("srtv3\images\StaySmartLogo1")  # Specify the path to your icon file
         self.setWindowIcon(icon)
 
@@ -145,7 +145,7 @@ class ForgotPassWindow(QtWidgets.QDialog):
     def __init__(self, db_manager):
         super().__init__()
         self.db_manager = db_manager
-        self.setWindowTitle('Reset Password')
+        self.setWindowTitle('Forgot Password?')
         icon = QIcon("srtv3\images\StaySmartLogo1")  # Specify the path to your icon file
         self.setWindowIcon(icon)
 
@@ -153,6 +153,12 @@ class ForgotPassWindow(QtWidgets.QDialog):
         self.email_input = QtWidgets.QLineEdit()
         self.reset_button = QtWidgets.QPushButton('Reset Password')
         self.cancel_button = QtWidgets.QPushButton('Cancel')
+
+        # Set stylesheets
+        self.setStyleSheet("background-color: #343541;")
+        self.email_input.setStyleSheet("border: none; background-color: #FFFFFF; color: black;")
+        self.reset_button.setStyleSheet("background-color: #00A8E9; color: #FFFFFF;")
+        self.cancel_button.setStyleSheet("background-color: black; color: #FFFFFF;")
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.email_label)
