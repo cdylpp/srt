@@ -1,0 +1,43 @@
+<body style="background-color: #333; color: #ddd; font-family: Cambria, serif;">
+  <p>This is the text</p>
+
+  <p>Once the <code>Output</code> column is selected and the distribution is shown, we want to drill down into the <code>Output = Dropout</code> rows.</p>
+
+  <blockquote style="background-color: #333; border-left: 10px solid #ccc; margin: 1.5em 0; padding: 0.5em 10px;">
+    <p><strong>🔍 Feature 1</strong></p>
+    <p>Filter by Column: <code>Output</code><br>Filter by value: <code>Dropout</code><br>Plot the filter as a pie chart</p>
+  </blockquote>
+
+  <ul style="list-style-type: none; padding: 0;">
+    <li style="margin-bottom: 5px;"><input type="checkbox"> Write Script to convert the Kaggle dataset to non-numerical data (simulate dataset in human readable format.)</li>
+    <li style="margin-bottom: 5px;"><input type="checkbox"> Insert tardies and absents into both datasets.</li>
+    <li style="margin-bottom: 5px;"><input type="checkbox"> Update column headers of large dataset to make them snake_case with no special chars.</li>
+  </ul>
+
+  <blockquote style="background-color: #333; border-left: 10px solid #ccc; margin: 1.5em 0; padding: 0.5em 10px;">
+    <p><strong>📊 Feature 2: Multi-Attribute Distribution Plot</strong></p>
+    <p>Plot the distribution of <code>Grade</code> and <code>Absents</code> and <code>Tardies</code>. Call these participation metrics.</p>
+  </blockquote>
+
+  <blockquote style="background-color: #333; border-left: 10px solid #ccc; margin: 1.5em 0; padding: 0.5em 10px;">
+    <p><strong>📈 Feature 3: Plot a Correlation Matrix</strong></p>
+    <p>Plot a correlation matrix highlighting the correlation between these variables.</p>
+  </blockquote>
+
+  <p>We now have a hypothesis! The <code>Grade</code>, <code>Absents</code>, and <code>Tardies</code> have an effect on the retention of our students. Lets feed this information into a prediction model.</p>
+
+  <blockquote style="background-color: #333; border-left: 10px solid #ccc; margin: 1.5em 0; padding: 0.5em 10px;">
+    <p><strong>🤖 Feature 4: Choose Prediction Models</strong></p>
+    <p>We can choose a classification model, a <em>k</em> nearest neighbors model, or a regression model.<br>We click the classification model and train it on the already labelled set with <code>{Graduate, Dropout}</code> and use to on the <code>Enrolled</code> rows.</p>
+  </blockquote>
+
+  <blockquote style="background-color: #333; border-left: 10px solid #ccc; margin: 1.5em 0; padding: 0.5em 10px;">
+    <p><strong>📊 Feature 5: Plot the Findings and the ML Model Scores</strong></p>
+    <p>We plot findings and show the scores or the prediction rates.</p>
+  </blockquote>
+
+  <blockquote style="background-color: #333; border-left: 10px solid #ccc; margin: 1.5em 0; padding: 0.5em 10px;">
+    <p><strong>📄 Feature 6: Report the ML Findings</strong></p>
+    <p>We report the findings use a <code>to_pdf</code> function that prints the report with the statistics.</p>
+  </blockquote>
+</body>

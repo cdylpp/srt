@@ -1,23 +1,24 @@
 # DataAnalysisPage is the view that is under the Data Analysis tab
 # This view should control and maintain all interactions within the Data Analysis Tab
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QLabel, QLineEdit, QTabWidget, 
-    QToolBar, QProgressBar, QStatusBar, QVBoxLayout, QFileDialog, QWidget, 
-    QHBoxLayout, QVBoxLayout, QScrollArea, QTextBrowser, QDockWidget, QPushButton, QTableView,
-    QMessageBox, QGridLayout, QFrame, QGroupBox, QRadioButton,QSpacerItem, QSizePolicy, QSlider)
+    QApplication, QMainWindow, QWidget, QTabWidget, 
+    QToolBar, QStatusBar, QVBoxLayout, QFileDialog, QWidget, 
+    QVBoxLayout, QTextBrowser, QDockWidget,
+    QMessageBox)
 
-from PyQt6.QtCore import QSize, pyqtSignal, Qt, pyqtSlot, QCoreApplication
+from PyQt6.QtCore import QSize, pyqtSignal, Qt, pyqtSlot
 from PyQt6.QtGui import QIcon, QAction, QPixmap
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from widgets import (
     TreeWidgetFactory, TableView, 
-    ControlDockTabWidget, ModellingController)
+    ControlDockTabWidget, ModellingController, MetricController)
 
 from user import User
-from models import TableModel, MarkdownModel
+from models import TableModel, MarkdownModel, Classifier
 from paths import Paths
 from pandas import read_csv
 import pyqtgraph as pg
@@ -78,7 +79,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_markdown('Welcome.md')
+        self.main_tab = self.handle_html('Welcome2.0.html')
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
         self.setCentralWidget(self.tab_bar)
@@ -164,7 +165,7 @@ class MainWindow(QMainWindow):
         database_button.triggered.connect(self.on_database_button)
 
         reports_button = QAction(
-            QIcon(Paths.icon("clipboard.svg")), 
+            QIcon(Paths.icon("trending-up.svg")), 
             "Reports", 
             self
         )
@@ -212,14 +213,14 @@ class MainWindow(QMainWindow):
         self.settings_button.triggered.connect(self.on_settings_button)
 
         self.right_dock_toggle = QAction(
-            QIcon(Paths.icon("trending-up.svg")),
+            QIcon(Paths.icon("bar-chart-2.svg")),
             'Toggle Plot Dock',
             self
         )
         self.right_dock_toggle.triggered.connect(self.on_right_dock_toggle)
 
         self.left_dock_toggle = QAction(
-            QIcon(Paths.icon('edit-3.svg')),
+            QIcon(Paths.icon('sliders.svg')),
             'Toggle Control Dock',
             self
         )
@@ -253,8 +254,6 @@ class MainWindow(QMainWindow):
 
     def on_new_tab(self):
         """Create a new tab."""
-
-
         # Update the tab_bar index to keep track of the new tab.
         # Load the url for the new page.
         tab_index = self.tab_bar.currentIndex()
@@ -300,9 +299,29 @@ class MainWindow(QMainWindow):
             elif file_path.endswith('.csv'):
                 # Handle CSV file
                 self.handle_csv(file_path)
+            elif file_path.endswith('.html'):
+                self.handle_html(file_path)
             else:
                 # Handle other file types
                 self.handle_other(file_path)
+    
+    def handle_html(self, file_path):
+        # Create a QWebEngineView widget
+        web_view = QWebEngineView(self)
+        with open(file_path, 'r', encoding='utf-8') as file:
+            html_content = file.read()
+
+        # Load the content of a local file
+        web_view.setHtml(html_content)
+        web_view.titleChanged.connect(self.update_tab_title)
+
+
+        # Build Navigation Widget
+        tree = TreeWidgetFactory().build_nav_tree(self.left_dock, html_content)
+        tree.setHeaderLabel("Navigation")
+        tree.itemClicked.connect(self.nav_item_clicked)
+        
+        self.build_tab(web_view.title(), web_view, left=tree, data=html_content)
 
     def handle_markdown(self, file_path):
         """
@@ -312,10 +331,12 @@ class MainWindow(QMainWindow):
         print(f"Handling Markdown file: {file_path}")
 
         html_model = MarkdownModel(file_path)
-        html_view = HtmlView(html_model.html_content)
-        html_tree_view = TreeWidgetFactory().build_html_tree(self.left_dock, html_model.headers())
+        html_view = QWebEngineView()
+        html_view.setHtml(html_model.html_content)
 
-        self.build_tab(html_model.title, html_view, html_tree_view, None, html_model)
+        html_tree_view = TreeWidgetFactory().build_nav_tree(self.left_dock, html_model.html_content)
+
+        self.build_tab(html_view.title(), html_view, html_tree_view, data=html_model)
         
     def handle_pdf(self, file_path):
         # Code to handle PDF file
@@ -382,11 +403,11 @@ class MainWindow(QMainWindow):
         title = self.list_of_data_pages[self.tab_bar.currentIndex()].page().title()
         self.tab_bar.setTabText(tab_index, title)
 
-    @pyqtSlot()
-    def on_about_action(self):
-        self.handle_markdown('About.md')
 
-    @pyqtSlot()
+    def on_about_action(self):
+        self.handle_html('About.html')
+
+
     def on_settings_button(self):
         if hasattr(self, 'user') and isinstance(self.user, User):
             # Check if there's already a settings tab and switch to it
@@ -401,44 +422,48 @@ class MainWindow(QMainWindow):
         else:
             print("User object is not defined or not an instance of User.")
 
-    @pyqtSlot()
+
     def on_database_button(self):
         print("Handle database button")
         return
 
-    @pyqtSlot()
+
     def on_reports_button(self):
-        # Open Reports Pane with 
+        # Open Reports Pane with
         title = "Predictive Analysis"
-        left_controller = ModellingController(self.left_dock, self.curr_model)
-        # Right Dock -> QTreeWidget
-        # right_controller = TreeWidgetFactory().build_classifier_tree(self.right_dock)
-        # tab_widget -> PlotView()
+        # model
+        classifier = Classifier(self.curr_model)
+        # model controller
+        left_controller = ModellingController(self.left_dock, self.curr_model, classifier)
+        # view
         centerView = PlotView(self.tab_bar)
-        self.build_tab(title, centerView, left_controller, data=self.curr_model)
+        # view controller
+        right_controller = MetricController(self.right_dock, classifier, centerView)
+        classifier.modelsBuilt.connect(self.on_models_built)
+
+        self.build_tab(title, centerView, left_controller, right_controller, data=self.curr_model)
 
         return
 
-    @pyqtSlot()
+
     def on_sign_out_button(self):
         print("Handle log-out button")
 
-    @pyqtSlot()
+
     def on_home_button(self):
         # Take the User back to the welcome Tab
         # if the user has an open welcome tab, bring the user to this tab.
         # else if the user does not have a welcome tab make one.
         for i, tab in self.tabs.items():
-            if tab.title == "welcome":
+            if isinstance(tab.main, QWebEngineView) and tab.main.title() == "Welcome":
                 self.tab_bar.setCurrentIndex(i)
                 return
         
         # No tab index found.
-        self.handle_markdown("Welcome.md")
+        self.handle_html("Welcome2.0.html")
 
-        print("Home Button")
 
-    @pyqtSlot()
+
     def on_profile_button(self):
         if hasattr(self, 'user') and isinstance(self.user, User):
             # Check if there's already a profile tab and switch to it
@@ -457,21 +482,21 @@ class MainWindow(QMainWindow):
         else:
             print("User object is not defined or not an instance of User.")
 
-    @pyqtSlot(int)
+
     def on_close_tab(self, tab_index):
         """Slot is emitted when the close button on a tab is clicked. 
         index refers to the tab that should be removed."""
         self.tab_bar.removeTab(tab_index)
 
-    @pyqtSlot()
+
     def on_describe_action(self):
         pass
 
-    @pyqtSlot()
+
     def on_info_action(self):
         pass
 
-    @pyqtSlot()
+
     def on_plot_button(self):
         """
         Show the plot view when the plot button is clicked
@@ -479,35 +504,25 @@ class MainWindow(QMainWindow):
         if not self.right_dock.isVisible():
             self.right_dock.setVisible(True)
     
-    @pyqtSlot()
+
     def on_right_dock_toggle(self):
         if self.right_dock.isVisible():
             self.right_dock.setVisible(False)
         else:
             self.right_dock.setVisible(True)
 
-    @pyqtSlot()
+
     def on_left_dock_toggle(self):
         if self.left_dock.isVisible():
             self.left_dock.setVisible(False)
         else:
             self.left_dock.setVisible(True)
 
-    @pyqtSlot(int)
+
     def on_tab_switch(self, tab_index):
         _, current_tab, left_widget, right_widget, data = self.tabs[tab_index]
 
-        if current_tab.type == 'TableView':
-            # Show controller dock until a plot is plotted.
-            self.right_dock.setVisible(False)
-            self.right_dock_toggle.setEnabled(True)
-            # Correlate the TableView with the correct PlotView
-            self.right_dock.setWidget(right_widget)
-            # And with the correct controller.
-            self.left_dock.setWidget(left_widget)
-
-
-        elif current_tab.type == 'HtmlView':
+        if isinstance(current_tab, (QWebEngineView, HtmlView)):
             # Hide right dock
             self.right_dock.setVisible(False)
             self.right_dock_toggle.setEnabled(False)
@@ -517,7 +532,17 @@ class MainWindow(QMainWindow):
             self.left_dock.setWidget(left_widget)
 
 
-        elif current_tab.type == "PlotView":
+        elif isinstance(current_tab, TableView):
+            # Show controller dock until a plot is plotted.
+            self.right_dock.setVisible(False)
+            self.right_dock_toggle.setEnabled(True)
+            # Correlate the TableView with the correct PlotView
+            self.right_dock.setWidget(right_widget)
+            # And with the correct controller.
+            self.left_dock.setWidget(left_widget)
+
+
+        elif isinstance(current_tab, PlotView):
             # Hide Right
             self.right_dock.setVisible(False)
             self.right_dock_toggle.setEnabled(False)
@@ -539,13 +564,33 @@ class MainWindow(QMainWindow):
         
         # set the current data
         self.curr_model = data
+    
 
-    @pyqtSlot(int)
+    def on_models_built(self):
+        # Get the tree view from the right controller
+        cur_idx = self.tab_bar.currentIndex()
+        right_controller = self.tabs[cur_idx].r_dock
+        self.right_dock.setWidget(right_controller.tree)
+
+        # show the right dock
+        self.right_dock.setVisible(True)
+        self.right_dock_toggle.setEnabled(True)
+
+
     def on_sort_selection(self, col_idx):
         curr_table = self.tab_bar.currentWidget()
         curr_table.selectColumn(col_idx)
         return
-        
+
+    def nav_item_clicked(self, item):
+        print(f"Header: {item.text(0)} clicked")
+
+    def update_tab_title(self, title):
+        cur_idx = self.tab_bar.currentIndex()
+        self.tab_bar.setTabText(cur_idx, title)
+        pass
+
+
     def sizeMainWindow(self):
         """Use QApplication.primaryScreen() to access information 
         about the screen and use it to size the application window 
@@ -568,7 +613,6 @@ class MainWindow(QMainWindow):
 class HtmlView(QWidget):
     def __init__(self, html_content):
         super().__init__()
-        self.type = 'HtmlView'
         self.html_content = html_content
         self.init_ui()
 
@@ -583,7 +627,6 @@ class HtmlView(QWidget):
 class ProfileView(QWidget):
     def __init__(self, user: User, parent=None):
         super().__init__(parent)
-        self.type = "ProfileView"
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.user = user
@@ -632,7 +675,6 @@ class PlotView(QWidget):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.type = "PlotView"
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         self.init_ui()

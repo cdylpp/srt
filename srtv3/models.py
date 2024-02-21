@@ -1,21 +1,116 @@
 
 import matplotlib
 matplotlib.use('QtAgg')
+import time
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
-from PyQt6.QtCore import QModelIndex, QObject, Qt, QAbstractTableModel, QAbstractItemModel, QVariant
+from PyQt6.QtCore import QModelIndex, QObject, Qt, QAbstractTableModel, QAbstractItemModel, QVariant, pyqtSignal
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 plt.style.use("dark_background")
 
 from utils import variable_type, encode_categorical_columns, HtmlParser, path_to_title
-import numpy as np
 import pandas as pd
 import markdown2
-import random
 import seaborn as sns
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+
+class Classifier(QObject):
+
+    modelsBuilt = pyqtSignal()
+
+    model_descriptions = {
+        'Logistic': "Logistic Regression: A linear classifier that models the probability of a binary outcome.",
+        'KNN': "K-Nearest Neighbors (KNN): A simple algorithm that classifies new data points based on the majority class of their nearest neighbors.",
+        'XGBoost': "XGBoost: An efficient and scalable gradient boosting framework that uses decision trees as base learners, achieving state-of-the-art performance on many tasks.", 
+        'Gaussian Naive Bayes': "Gaussian Naive Bayes: A classifier based on Bayes' theorem that assumes features are independent and have Gaussian distributions.",
+        'Decision Tree': "Decision Tree: A tree-based classifier that makes decisions by recursively splitting the feature space into smaller regions.", 
+        'Kernel SVM': "Kernel SVM (Support Vector Machine): An SVM that can handle non-linear decision boundaries by transforming the input space using kernel functions.", 
+        'Linear SVM': "Linear SVM (Support Vector Machine): A linear classifier that finds the hyperplane that best separates the classes.", 
+        'Random Forest': "Random Forest: An ensemble classifier consisting of multiple decision trees, which improves performance by averaging predictions over many trees."
+    }
+
+    def __init__(self, data: pd.DataFrame, remove: str = None) -> None:
+        super().__init__()
+        self.data = data
+        self.target = None
+        self.test_size = None
+        self.models = {
+            'Logistic': LogisticRegression(solver='liblinear'),
+            'KNN': KNeighborsClassifier(n_neighbors=5, weights='distance'),
+            'XGBoost': GradientBoostingClassifier(), 
+            'Gaussian Naive Bayes': GaussianNB(),
+            'Decision Tree': DecisionTreeClassifier(), 
+            'Kernel SVM': SVC(kernel='rbf'), 
+            'Linear SVM': SVC(kernel='linear'), 
+            'Random Forest': RandomForestClassifier(max_depth=10)
+        }
+        self.times = {}
+        self.classifiers = {}
+
+    def set_params(self, target: str, test_size: float = .2, remove: str = None):
+        self.target = target
+        self.test_size = test_size
+        if remove:
+            self.remove(remove)
+
+        self.X_train, self.X_test, self.y_train, self.y_test = self.split()
+
+    def remove(self, value):
+        """
+        Removes the `value` from the target column.
+        """
+        self.data = self.data[self.data[self.target] != value]
+        return
+
+    def encode_target(self):
+        if self.data[self.target].dtype == 'object':
+            values = self.data[self.target].unique()
+            mapping = {}
+            for i, val in enumerate(values):
+                mapping[val] = i
+
+            self.data[self.target] = self.data[self.target].map(mapping)
+
+    def split(self):
+        self.encode_target()
+        y, X = self.data[self.target], self.data.drop(self.target, axis=1)
+        return train_test_split(X, y, test_size=self.test_size)
+
+    def train(self):
+        for name, model in self.models.items():
+            start = time.time()
+            clf = model.fit(self.X_train, self.y_train)
+            end = time.time()
+            self.classifiers[name] = clf
+            self.times[name] = (end - start)
+
+        self.modelsBuilt.emit()
+        return
+
+    def get_confusion(self, model: str):
+        # return the confusion for the model type
+        clf = self.classifiers[model]
+        return confusion_matrix(self.y_test, clf.predict(self.X_test))
+
+    def get_score(self, model: str) -> float:
+        return self.classifiers[model].score(self.X_test, self.y_test)
+
+    def get_info(self):
+        # Dump model info
+        pass
     
+
 class TableModel(QAbstractTableModel):
     def __init__(self, data: DataFrame):
         super().__init__()
@@ -137,10 +232,23 @@ class SNSPlotter:
         """
         data = encode_categorical_columns(data)
         sns.heatmap(data.corr(), annot=False, cmap='coolwarm', linewidths=0.5, ax=fig.add_subplot(111))
-
-
-        
-        
+    
+    @staticmethod
+    def confusion_matrix(conf_matrix, fig: Figure, canvas: FigureCanvasQTAgg, model: str, **kwargs):
+        """
+        Plots the confusion matrix for the prediction
+        kwargs:
+            - cmap: palette
+            - xticklabels: 
+            - yticklabels:
+        """
+        fig.clear()
+        # Plot confusion matrix as a heatmap
+        sns.heatmap(conf_matrix, annot=True, fmt="d", ax=fig.add_subplot(111), **kwargs)
+        fig.axes[0].set_xlabel('Predicted labels')
+        fig.axes[0].set_ylabel('True labels')
+        fig.axes[0].set_title(f'Confusion Matrix for {model}')
+        canvas.draw()
 
 
 class MarkdownModel:
