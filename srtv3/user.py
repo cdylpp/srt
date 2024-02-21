@@ -4,6 +4,9 @@ import sys, os, json
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel
 from PyQt6.QtGui import QFont, QPixmap
 
+import AppDataManager
+
+
 class ProfileDialog(QWidget):
     def __init__(self, user):
         super().__init__()
@@ -95,9 +98,23 @@ class User:
     
 
 class UserManager:
-    def __init__(self):
+    def __init__(self, app_data_manager: AppDataManager):
+        self.max_attempts = 3
         self._user = None
-        self._login_attempts = 0
+        self.app_data_manager = app_data_manager
+
+    def is_locked_out(self, username) -> bool:
+        return self.app_data_manager.is_user_locked_out(username)
+
+    def handle_login_attempts(self, username, success: bool) -> None:
+        if success:
+            self.app_data_manager.set_login_attempts(username, 0)
+            self.app_data_manager.set_user_lockout(username, False)
+        else:
+            attempts = self.app_data_manager.get_login_attempts(username) +1
+            self.app_data_manager.set_login_attempts(username, attempts)
+            if attempts >= self.max_attempts:
+                self.app_data_manager.set_user_lockout(username, True)
 
     def set_user(self, user_data: dict[str, str]) -> None:
         self._user = User(user_data)
@@ -107,10 +124,6 @@ class UserManager:
     
     def get_user(self) -> User:
         return self._user
-
-    def failed_attempt(self) -> None:
-        self._login_attempts += 1
-        return
     
     def get_login_attempts(self) -> int:
         return self._login_attempts
@@ -136,9 +149,6 @@ class UserManager:
         user = cursor.fetchone()
         cursor.close()
         return user is not None
-
-    def handle_login_attempts(self, username) -> None:
-        return
         
     def reset_login_attempts(self, username):
         cursor = self.db_manager.db_connection.cursor()

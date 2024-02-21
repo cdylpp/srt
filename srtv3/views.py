@@ -37,6 +37,7 @@ style_sheet = """
 class MainWindow(QMainWindow):
 
     browser_closed = pyqtSignal()
+    sign_out = pyqtSignal()
 
     def __init__(self, user_manager=None, app_data=None):
         super().__init__()
@@ -79,7 +80,7 @@ class MainWindow(QMainWindow):
         self.create_dock_widgets()
 
         # Create Welcome View
-        self.main_tab = self.handle_html('Welcome2.0.html')
+        self.main_tab = self.handle_html(Paths.data('Welcome2.0.html'))
         # self.tab_bar.addTab(self.main_tab, "Welcome")
 
         self.setCentralWidget(self.tab_bar)
@@ -124,7 +125,7 @@ class MainWindow(QMainWindow):
 
     def create_menu(self):
         """Create the application"s menu bar."""
-        self.menuBar().setNativeMenuBar(False)
+        self.menuBar().setNativeMenuBar(True)
 
         # Create File menu and add actions
         file_menu = self.menuBar().addMenu("File")
@@ -405,7 +406,7 @@ class MainWindow(QMainWindow):
 
 
     def on_about_action(self):
-        self.handle_html('About.html')
+        self.handle_html(Paths.data('About.html'))
 
 
     def on_settings_button(self):
@@ -448,6 +449,13 @@ class MainWindow(QMainWindow):
 
     def on_sign_out_button(self):
         print("Handle log-out button")
+        reply = QMessageBox.question(self, 'Confirm Logout',
+                                     "Are you sure you want to log out?",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                     QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
+            self.sign_out.emit()  # Emit the sign-out signal
+            self.close()  # Close the main window
 
 
     def on_home_button(self):
@@ -460,7 +468,7 @@ class MainWindow(QMainWindow):
                 return
         
         # No tab index found.
-        self.handle_html("Welcome2.0.html")
+        self.handle_html(Paths.data('Welcome2.0.html'))
 
 
 

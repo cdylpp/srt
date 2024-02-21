@@ -1,7 +1,8 @@
 import os, sys
 import json
+from paths import Paths
 
-APP_DATA = os.path.relpath('data/app_data.json')
+APP_DATA = Paths.data('app_data.json')
 
 
 class AppDataManager:
@@ -49,5 +50,37 @@ class AppDataManager:
         self._data['prev_user'] = username
         self.update_json()
         print("prev_user set to: ", username)
-
         return
+
+    def get_login_attempts(self, username) -> int:
+        return self._data.get(username, {}).get('login_attempts', 0)
+
+    def set_login_attempts(self, username, attempts):
+        if username not in self._data:
+            self._data[username] = {}
+        self._data[username]['login attempts'] = attempts
+        self.update_json()
+
+    def is_user_locked_out(self, username) -> bool:
+        return self._data.get(username, {}).get('locked_out', False)
+
+    def set_user_lockout(self, username, locked_out):
+        if username not in self._data:
+            self._data[username] = {}
+        self._data[username]['locked_out'] = locked_out
+        self.update_json()
+
+    def get_locked_accounts(self):
+        """Returns a list of usernames that are locked out."""
+        locked_accounts = []
+        for username, user_data in self._data.items():
+            if user_data.get('locked_out', False):
+                locked_accounts.append({'username': username})
+        return locked_accounts
+
+    def reset_account_lock(self, username):
+        """Resets the lock status and login attempts for a given username."""
+        if username in self._data:
+            self._data[username]['locked_out'] = False
+            self._data[username]['login_attempts'] = 0
+            self.update_json()

@@ -1,5 +1,6 @@
-import sys, os
+import sys, os, subprocess
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import pyqtSlot
 from AppDataManager import AppDataManager
 from LoginWindow import LoginWindow
@@ -8,6 +9,17 @@ from dotenv import load_dotenv
 import pyqtgraph as pg
 import qdarktheme
 from user import UserManager
+from paths import Paths
+
+DB_URL = "mysql://srtAdmin:Bubmi1-xynvez-kijpuv@srt-database-1.cve60ywu8ysv.us-west-1.rds.amazonaws.com/srtdatabase"
+AUTH_FLAG = False
+
+try:
+    from ctypes import windll
+    appid = "nu.capstone.srt.v3"
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid)
+except ImportError:
+    pass
 
 load_dotenv()
 
@@ -16,31 +28,22 @@ def load_app_data():
     print("Loading app data")
     return AppDataManager()
 
-APP_DATA = load_app_data()
+def on_login_accepted():
+    global AUTH_FLAG
+    AUTH_FLAG = True
 
-def show_login():
-    login = LoginWindow('mysql', db_url=os.getenv("DB_URL"), app_data=APP_DATA)
-    login.login_reject.connect(show_login)  # Connect rejection to show login again
-    login.login_accepted.connect(on_login_accepted)
-    login.login_window_closed.connect(cleanup_before_quit)
-    login.exec()
+def on_sign_out(app):
+    app.quit()
+    sys.exit()
 
-def on_login_accepted(user_manager):
-    # Pass User Manager to the MainWindow
-    main_window = MainWindow(user_manager, app_data=APP_DATA)
-    main_window.browser_closed.connect(on_close_main)
-    main_window.exec()
 
 @pyqtSlot()
 def cleanup_before_quit(s):
-    if s:
-        # Login Accepted. Window closed to get to main view. Don't exit.
-        print("Close login window")
-    else:
+    if not s:
         # login closed without success. Close application
         print("Quit Clean up.")
         sys.exit()
-    
+
 def on_close_main():
     cleanup_before_quit(False)
     
@@ -63,15 +66,26 @@ if __name__ == "__main__":
     app_data = load_app_data()
 
     # With Login View
-    show_login() 
+    login = LoginWindow('mysql', db_url=DB_URL, app_data=app_data)
+    login.user_manager = UserManager(app_data)
+    login.login_accepted.connect(on_login_accepted)
+    login.login_window_closed.connect(cleanup_before_quit)
 
+    while not AUTH_FLAG:
+        login.exec()
+    
+    main_window = MainWindow(login.user_manager, app_data=app_data)
+    main_window.browser_closed.connect(on_close_main)
+    main_window.sign_out.connect(lambda: on_sign_out(srtApp))  # Handle the sign-out signal
+    main_window.show()  # Show the main window
 
     # Without Login View
     # user_manager = UserManager()
     # user_manager.set_user(user_data)
     # main = MainWindow(user_manager, app_data=app_data)
     # main.show()
-    
+
+    srtApp.setWindowIcon(QIcon(Paths.image("StaySmartLogo1.png")))
     sys.exit(srtApp.exec())
 
 

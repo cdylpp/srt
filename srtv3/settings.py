@@ -3,17 +3,23 @@ import qdarktheme
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QApplication, QRadioButton, QFrame,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QPushButton, QSizePolicy, QSlider, QSpacerItem,
-    QVBoxLayout, QWidget, QMainWindow)
+                             QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+                             QPushButton, QSizePolicy, QSlider, QSpacerItem,
+                             QVBoxLayout, QWidget, QMainWindow, QDialog, QListWidget)
+from PyQt6.QtWidgets import QMessageBox
+
 
 class SettingsView(QWidget):
-    def __init__(self, parent: QWidget):
+    def __init__(self, user, app_data_manager, parent=None):
         super().__init__(parent)
+        self.user = user
+        self.app_data_manager = app_data_manager
         self.type = "SettingsView"
         self.setupUi()
         self.radioDark.setChecked(True)
-        
+        if self.user.get_role() == "Admin":
+            self.create_account_unlock_button()
+            self.unlock_button.clicked.connect(self.show_locked_accounts)
         # Load the saved theme preference
         # self.load_theme_preference()
 
@@ -25,6 +31,40 @@ class SettingsView(QWidget):
         # file that will be called by the load_them_preference() method
 
     # Function to apply the selected theme
+    def create_account_unlock_button(self):
+        self.unlock_button = QPushButton("Account Unlock", self)
+        self.unlock_button.clicked.connect(self.show_locked_accounts)
+
+    def show_locked_accounts(self):
+        locked_accounts = self.app_data_manager.get_locked_accounts()
+        self.list_dialog = QDialog(self)
+        self.list_dialog.setWindowTitle("Locked Accounts")
+
+        layout = QVBoxLayout()
+        self.list_widget = QListWidget()
+
+        for account in locked_accounts:
+            self.list_widget.addItem(account['username'])
+
+        unlock_button = QPushButton("Unlock Account")
+        unlock_button.clicked.connect(self.on_account_selected)
+
+        layout.addWidget(self.list_widget)
+        layout.addWidget(unlock_button)
+        self.list_dialog.setLayout(layout)
+        self.list_dialog.exec()
+
+    def on_account_selected(self):
+        selected_item = self.list_widget.currentItem()
+        if selected_item:
+            username = selected_item.text()
+            self.unlock_account(username)
+            self.list_dialog.close()
+
+    def unlock_account(self, username):
+        self.app_data_manager.reset_account_lock(username)
+        QMessageBox.information(self, "Account Unlocked", f"{username};s account has been unlocked.")
+
     def apply_theme(self, theme):
         if theme == 'dark':
             qdarktheme.setup_theme()
