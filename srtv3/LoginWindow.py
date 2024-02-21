@@ -24,7 +24,7 @@ class LoginWindow(QtWidgets.QDialog):
         # logging info
         print("Init Login View")
         self.setWindowTitle("StaySmart: Student Retention Tool")
-        icon = QIcon("srtv3\images\StaySmartLogo1")  # Specify the path to your icon file
+        icon = QIcon(Paths.image("StaySmartLogo1.png")) # Specify the path to your icon file
         self.setWindowIcon(icon)
 
         # Wrap ui in Form widget
