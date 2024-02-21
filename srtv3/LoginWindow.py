@@ -1,5 +1,7 @@
 from PyQt6 import QtWidgets, QtGui
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QVBoxLayout
 from login_window import Ui_Form
 from database import DatabaseManager
 from user import User, UserManager
@@ -23,9 +25,9 @@ class LoginWindow(QtWidgets.QDialog):
         # logging info
         print("Init Login View")
         self.setWindowTitle("SRT Login")
+        icon = QIcon("srtv3\images\StaySmartLogo1")  # Specify the path to your icon file
+        self.setWindowIcon(icon)
 
-        
-        
         # Wrap ui in Form widget
         self.ui = Ui_Form()
         self.ui.setupUi(self)
@@ -51,9 +53,38 @@ class LoginWindow(QtWidgets.QDialog):
             user = self.user_manager.get_user()
 
             msg_box = QtWidgets.QMessageBox()
-            msg_box.setStyleSheet("QLabel { color: white; }")
-            msg_box.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
+            icon = QIcon("srtv3\images\StaySmartLogo1")
+            self.setWindowIcon(icon)
+            msg_box.setWindowTitle('Login Successful')
+            msg_box.setText(f'Welcome, {user.get_name()}!')
 
+            # Apply styles to the QMessageBox
+            msg_box.setStyleSheet("""
+                QMessageBox {
+                    background-color: rgb(52, 53, 65);
+                }
+                QLabel {
+                    color: white;
+                }
+                QPushButton {
+                    color: white;
+                    background-color: black;
+                    border: 1px solid black;
+                    padding: 5px 10px;
+                }
+                QPushButton:hover {
+                    background-color: gray;
+                }
+            """)
+
+            # Create a layout for the message box
+            layout = QVBoxLayout()
+            layout.addWidget(msg_box)
+            msg_box.setLayout(layout)
+            layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            msg_box.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse | Qt.TextInteractionFlag.TextSelectableByKeyboard)  # Allow text selection
+            msg_box.exec()
 
             self.handle_remember_me(self.ui.remembeme_checkBox.isChecked())
             
@@ -101,10 +132,10 @@ class LoginWindow(QtWidgets.QDialog):
         return
 
     def show_hide_password(self):
-        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.Normal:
-            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
+        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.EchoMode.Normal:
+            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         else:
-            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Normal)
+            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
@@ -115,6 +146,8 @@ class ForgotPassWindow(QtWidgets.QDialog):
         super().__init__()
         self.db_manager = db_manager
         self.setWindowTitle('Reset Password')
+        icon = QIcon("srtv3\images\StaySmartLogo1")  # Specify the path to your icon file
+        self.setWindowIcon(icon)
 
         self.email_label = QtWidgets.QLabel('Email:')
         self.email_input = QtWidgets.QLineEdit()
