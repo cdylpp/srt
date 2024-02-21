@@ -101,7 +101,7 @@ class Ui_Form(object):
         self.label = QLabel(self.widget_2)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(20, 20))
-        self.label.setPixmap(QPixmap(u":/IconsBlue/IconsBlue/#0088b9/user.svg"))
+        self.label.setPixmap(QPixmap("srtv3/Icons/user.svg"))
         self.label.setScaledContents(True)
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
@@ -128,7 +128,7 @@ class Ui_Form(object):
         self.pass_label.setObjectName(u"pass_label")
         self.pass_label.setMaximumSize(QSize(20, 20))
         self.pass_label.setStyleSheet(u"color: rgb(12, 67, 112);")
-        self.pass_label.setPixmap(QPixmap(u":/IconsBlue/IconsBlue/#0088b9/key.svg"))
+        self.pass_label.setPixmap(QPixmap("srtv3/Icons/key.svg"))
         self.pass_label.setScaledContents(True)
 
         self.horizontalLayout_2.addWidget(self.pass_label)
@@ -151,8 +151,8 @@ class Ui_Form(object):
         self.visibility_button.setStyleSheet(u"bottom-padding:5px;\n"
 "border:2px;")
         icon = QIcon()
-        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye-off.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        icon.addFile(u":/IconsBlue/IconsBlue/#0088b9/eye.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+        icon.addFile("srtv3\Icons\eye-off.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile("srtv3\Icons\eye.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
         self.visibility_button.setIcon(icon)
         self.visibility_button.setCheckable(True)
 
@@ -167,7 +167,7 @@ class Ui_Form(object):
         self.remembeme_checkBox.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.remembeme_checkBox.setStyleSheet(u"color: white;\n"
 "border-radius:10px;\n"
-"padding:5px;\n"
+"padding:0px;\n"
 "")
 
         self.verticalLayout.addWidget(self.remembeme_checkBox, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
@@ -241,15 +241,16 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        Form.setWindowTitle("StaySmart: Student Retention Tool")
         self.logo.setText("")
         self.label.setText("")
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("Form", u"Username", None))
+        self.lineEdit.setPlaceholderText("Username")
         self.pass_label.setText("")
-        self.password_input.setPlaceholderText(QCoreApplication.translate("Form", u"Password", None))
+        self.password_input.setPlaceholderText("Password")
         self.visibility_button.setText("")
-        self.remembeme_checkBox.setText(QCoreApplication.translate("Form", u"  Remember Me", None))
-        self.login_button.setText(QCoreApplication.translate("Form", u"Login", None))
-        self.forgot_button.setText(QCoreApplication.translate("Form", u"Forgot Password?", None))
+        self.remembeme_checkBox.setText("Remember Me")
+        self.login_button.setText("Login")
+        self.forgot_button.setText("Forgot Password?")
+
     # retranslateUi
 
