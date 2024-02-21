@@ -1,10 +1,11 @@
-from PyQt6 import QtWidgets, QtGui
+from PyQt6 import QtWidgets
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QIcon
 from login_window import Ui_Form
 from database import DatabaseManager
-from user import User, UserManager
+from user import UserManager
+from paths import Paths
 from utils import Validator
-
 class LoginWindow(QtWidgets.QDialog):
 
     login_accepted = pyqtSignal(UserManager)
@@ -134,7 +135,7 @@ class ForgotPassWindow(QtWidgets.QDialog):
         super().__init__()
         self.db_manager = db_manager
         self.setWindowTitle('Forgot Password?')
-        icon = QIcon("srtv3\images\StaySmartLogo1")  # Specify the path to your icon file
+        icon = QIcon(Paths.image("StaySmartLogo1.png"))  # Specify the path to your icon file
         self.setWindowIcon(icon)
 
         self.email_label = QtWidgets.QLabel('Email:')
