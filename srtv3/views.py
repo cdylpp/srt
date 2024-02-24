@@ -39,10 +39,10 @@ class MainWindow(QMainWindow):
     browser_closed = pyqtSignal()
     sign_out = pyqtSignal()
 
-    def __init__(self, user_manager=None, app_data=None):
+    def __init__(self, user_manager=None, app_data_manager=None): #replaced app_data=None
         super().__init__()
         self.user_manager = None
-        self.app_data = app_data
+        self.app_data_manager = app_data_manager #replaced self.app_data = app_data
         self.user = user_manager.get_user()
         self.curr_model = None
         self.tabs = {} # key: int, value: tuple. Holds the widgets for each tab index
@@ -411,14 +411,12 @@ class MainWindow(QMainWindow):
 
     def on_settings_button(self):
         if hasattr(self, 'user') and isinstance(self.user, User):
-            # Check if there's already a settings tab and switch to it
             for i in range(self.tab_bar.count()):
                 if isinstance(self.tab_bar.widget(i), SettingsView):
                     self.tab_bar.setCurrentIndex(i)
                     return
 
-            # If not found, create a new settings tab
-            settingsWidget = SettingsView(parent=self.tab_bar)
+            settingsWidget = SettingsView(user=self.user, app_data_manager=self.app_data_manager, parent=self.tab_bar) #new line
             self.build_tab("Settings", settingsWidget)
         else:
             print("User object is not defined or not an instance of User.")
