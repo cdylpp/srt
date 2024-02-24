@@ -46,8 +46,6 @@ def cleanup_before_quit(s):
 
 def on_close_main():
     cleanup_before_quit(False)
-    
-
 
 if __name__ == "__main__":
     user_data = {
@@ -65,11 +63,11 @@ if __name__ == "__main__":
     qdarktheme.setup_theme()
     app_data = load_app_data()
 
-    # With Login View
     login = LoginWindow('mysql', db_url=DB_URL, app_data=app_data)
     login.user_manager = UserManager(app_data)
     login.login_accepted.connect(on_login_accepted)
     login.login_window_closed.connect(cleanup_before_quit)
+    login.rejected.connect(lambda: cleanup_before_quit(False))  #to close loginwindow upon clicking exit
 
     while not AUTH_FLAG:
         login.exec()
@@ -78,12 +76,6 @@ if __name__ == "__main__":
     main_window.browser_closed.connect(on_close_main)
     main_window.sign_out.connect(lambda: on_sign_out(srtApp))  # Handle the sign-out signal
     main_window.show()  # Show the main window
-
-    # Without Login View
-    #user_manager = UserManager()
-    #user_manager.set_user(user_data)
-    #main = MainWindow(user_manager, app_data=app_data)
-    #main.show()
 
     srtApp.setWindowIcon(QIcon(Paths.image("StaySmartLogo1.png")))
     sys.exit(srtApp.exec())
