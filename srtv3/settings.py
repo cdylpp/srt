@@ -7,7 +7,6 @@ from PyQt6.QtWidgets import (QApplication, QRadioButton, QFrame,
                              QPushButton, QSizePolicy, QSlider, QSpacerItem,
                              QVBoxLayout, QWidget, QMainWindow, QDialog, QListWidget)
 from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtCore import QFile, QIODevice
 
 
 class SettingsView(QWidget):
