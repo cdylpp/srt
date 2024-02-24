@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
     QMessageBox)
 
 from PyQt6.QtCore import QSize, pyqtSignal, Qt, pyqtSlot
-from PyQt6.QtGui import QIcon, QAction, QPixmap
+from PyQt6.QtGui import QIcon, QAction, QPixmap, QPainter, QPainterPath, QBitmap, QColor, QPainter, QBrush
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -656,10 +656,10 @@ class ProfileView(QWidget):
         self.ui.full_name.setText(self.user.get_name())
         # Assuming you have a method to get the phone number
         #self.ui.phoneNumberLabel.setText(self.user.get_phone_number())
-    
+
     def add_pic(self):
         file_dialog = QFileDialog()
-        file_dialog.setNameFilter("Images (*.png *.xpm *.jpg *.jpeg *.bmp *.gif)") #files need * and added jpeg & gif
+        file_dialog.setNameFilter("Images (*.png *.xpm *.jpg *.jpeg *.bmp *.gif)")  # files need * and added jpeg & gif
         file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
 
         if file_dialog.exec():
@@ -667,9 +667,23 @@ class ProfileView(QWidget):
             pixmap = QPixmap(file_path)
 
             if not pixmap.isNull():
-                targetSize = self.ui.profile_pic.size()  # Ensure this is the correct reference to your QLabel
+                targetSize = self.ui.profile_pic.size()
                 scaledPixmap = pixmap.scaled(targetSize.width(), targetSize.height(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-                self.ui.profile_pic.setPixmap(scaledPixmap)  # Ensure this is the correct reference to your QLabel
+
+                # Create a rounded pixmap
+                rounded_pixmap = QPixmap(targetSize)
+                rounded_pixmap.fill(Qt.GlobalColor.transparent)
+                painter = QPainter(rounded_pixmap)
+                painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+                painter.setBrush(QBrush(scaledPixmap))
+                painter.setPen(Qt.GlobalColor.transparent)
+                painter.drawRoundedRect(0, 0, targetSize.width(), targetSize.height(), targetSize.width() / 2, targetSize.height() / 2)
+                painter.end()
+
+                self.ui.profile_pic.setMask(rounded_pixmap.mask())
+
+                self.ui.profile_pic.setPixmap(rounded_pixmap)
+
             else:
                 QMessageBox.warning(self, "Image Load Error", "The selected image could not be loaded. Please try a different file.")
 
