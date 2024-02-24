@@ -122,7 +122,7 @@ class LoginWindow(QtWidgets.QDialog):
         return
 
     def show_hide_password(self):
-        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.EchoMode.Normal:
+        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.EchoMode.Normal:  #need to have QtWidgets or else visibility does not work
             self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         else:
             self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)

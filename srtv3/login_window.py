@@ -101,7 +101,7 @@ class Ui_Form(object):
         self.label = QLabel(self.widget_2)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(20, 20))
-        self.label.setPixmap(QPixmap("Icons/user.svg"))
+        self.label.setPixmap(QPixmap("Icons/user.svg")) #removed srtv3/ before icons not needed
         self.label.setScaledContents(True)
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
