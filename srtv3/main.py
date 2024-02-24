@@ -72,7 +72,7 @@ if __name__ == "__main__":
     while not AUTH_FLAG:
         login.exec()
     
-    main_window = MainWindow(login.user_manager, app_data=app_data)
+    main_window = MainWindow(login.user_manager, app_data_manager=app_data) #added '_manager' to app_data
     main_window.browser_closed.connect(on_close_main)
     main_window.sign_out.connect(lambda: on_sign_out(srtApp))  # Handle the sign-out signal
     main_window.show()  # Show the main window
