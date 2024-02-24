@@ -16,7 +16,7 @@ class SettingsView(QWidget):
         self.app_data_manager = app_data_manager
         self.type = "SettingsView"
         self.setupUi()
-        self.radioDark.setChecked(True)
+
         if self.user.get_role() == "Admin":
             self.create_account_unlock_button()
             self.unlock_button.clicked.connect(self.show_locked_accounts)
