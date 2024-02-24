@@ -659,7 +659,7 @@ class ProfileView(QWidget):
     
     def add_pic(self):
         file_dialog = QFileDialog()
-        file_dialog.setNameFilter("Images (.png.xpm .jpg.bmp)")
+        file_dialog.setNameFilter("Images (*.png *.xpm *.jpg *.jpeg *.bmp *.gif)") #files need * and added jpeg & gif
         file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
 
         if file_dialog.exec():
