@@ -23,7 +23,6 @@ except ImportError:
 
 load_dotenv()
 
-
 def load_app_data():
     print("Loading app data")
     return AppDataManager()
@@ -35,7 +34,6 @@ def on_login_accepted():
 def on_sign_out(app):
     app.quit()
     sys.exit()
-
 
 @pyqtSlot()
 def cleanup_before_quit(s):

@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
     QMessageBox)
 
 from PyQt6.QtCore import QSize, pyqtSignal, Qt, pyqtSlot
-from PyQt6.QtGui import QIcon, QAction, QPixmap, QPainter, QPainterPath, QBitmap, QColor, QPainter, QBrush
+from PyQt6.QtGui import QIcon, QAction, QPixmap, QPainter, QBrush
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -181,7 +181,7 @@ class MainWindow(QMainWindow):
 
         home_button = QAction(
             QIcon(Paths.icon("home.svg")), 
-            "Home", 
+            "Home",
             self
         )
         home_button.triggered.connect(self.on_home_button)
@@ -668,7 +668,7 @@ class ProfileView(QWidget):
 
         default_profile_pics = {
             "k.ross": "C:\\Users\\karen\\OneDrive\\Pictures\\app\\20231007_171153.copy13.jpg",
-            "c.lepp": "path_to_default_image2.png",
+            "c.lepp": "path.png",
             "a.carrigan": "path.png",
             "j.gilligan": "path.png",
             "a.mason": "path.png",

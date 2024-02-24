@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import (QApplication, QRadioButton, QFrame,
                              QPushButton, QSizePolicy, QSlider, QSpacerItem,
                              QVBoxLayout, QWidget, QMainWindow, QDialog, QListWidget)
 from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import QFile, QIODevice
 
 
 class SettingsView(QWidget):
@@ -127,7 +128,7 @@ class SettingsView(QWidget):
 
         self.horizontalSlider = QSlider(self.frame)
         self.horizontalSlider.setObjectName("horizontalSlider")
-      
+
         self.horizontalSlider.setOrientation(Qt.Orientation.Horizontal)
         self.verticalLayout.addWidget(self.horizontalSlider)
 
@@ -136,7 +137,7 @@ class SettingsView(QWidget):
 
         self.pushButton = QPushButton("Restore Default Settings", self.frame)
         self.pushButton.setObjectName("pushButton")
-      
+
         self.verticalLayout.addWidget(self.pushButton, 0, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
 
         self.gridLayout_2.addWidget(self.frame, 1, 0, 1, 1)
