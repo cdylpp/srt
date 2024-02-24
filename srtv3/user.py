@@ -77,6 +77,7 @@ class User:
         self._first_name = info['first_name']
         self._last_name = info['last_name']
         self._role = info['role']
+        self._profile_pic_path = info.get('profile_pic_path', None)  # New field
     
     def __repr__(self) -> str:
         return f'User(id: {self._id}, username: {self._username})'
@@ -95,7 +96,12 @@ class User:
     
     def get_user_data(self):
         return self._info
-    
+
+    def get_profile_pic_path(self) -> str:
+        return self._profile_pic_path
+
+    def set_profile_pic_path(self, path: str) -> None:
+        self._profile_pic_path = path
 
 class UserManager:
     def __init__(self, app_data_manager: AppDataManager):

@@ -615,8 +615,6 @@ class MainWindow(QMainWindow):
     
 
 
-
-
 # Widget for viewing markdown 
 class HtmlView(QWidget):
     def __init__(self, html_content):
@@ -649,17 +647,50 @@ class ProfileView(QWidget):
         #self.ui.delcontact_button.clicked.connect(self.delContactRow)
         #self.ui.contactInfo_button.clicked.connect(self.show_contactInfo)
 
+    def scale_and_round_image(self, pixmap, targetSize):
+        scaled_pixmap = pixmap.scaled(targetSize, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        rounded_pixmap = QPixmap(targetSize)
+        rounded_pixmap.fill(Qt.GlobalColor.transparent)
+        painter = QPainter(rounded_pixmap)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setBrush(QBrush(scaled_pixmap))
+        painter.setPen(Qt.GlobalColor.transparent)
+        painter.drawRoundedRect(0, 0, targetSize.width(), targetSize.height(),targetSize.width() / 2, targetSize.height() / 2)
+        painter.end()
+        return rounded_pixmap
+
+    def set_profile_picture(self, pixmap):
+        self.ui.profile_pic.setMask(pixmap.mask())
+        self.ui.profile_pic.setPixmap(pixmap)
+
     def populate_user_data(self):
-        """Populate the UI with data from the User object."""
         self.ui.role.setText(self.user.get_role())
         self.ui.email.setText(self.user.get_email())
         self.ui.full_name.setText(self.user.get_name())
-        # Assuming you have a method to get the phone number
-        #self.ui.phoneNumberLabel.setText(self.user.get_phone_number())
+
+        default_profile_pics = {
+            "k.ross": "C:\\Users\\karen\\OneDrive\\Pictures\\app\\20231007_171153.copy13.jpg",
+            "c.lepp": "path_to_default_image2.png",
+            "a.carrigan": "path.png",
+            "j.gilligan": "path.png",
+            "a.mason": "path.png",
+            "d.wood": "path.png",
+        }
+
+        default_pic_path = default_profile_pics.get(self.user.get_username(), None)
+        if default_pic_path:
+            self.user.set_profile_pic_path(default_pic_path)
+            pixmap = QPixmap(default_pic_path)
+        else:
+            profile_pic_path = self.user.get_profile_pic_path()
+            pixmap = QPixmap(profile_pic_path) if profile_pic_path else QPixmap("path_to_placeholder_image.png")
+
+        scaled_rounded_pixmap = self.scale_and_round_image(pixmap, self.ui.profile_pic.size())
+        self.set_profile_picture(scaled_rounded_pixmap)
 
     def add_pic(self):
         file_dialog = QFileDialog()
-        file_dialog.setNameFilter("Images (*.png *.xpm *.jpg *.jpeg *.bmp *.gif)")  # files need * and added jpeg & gif
+        file_dialog.setNameFilter("Images (*.png *.xpm *.jpg *.jpeg *.bmp *.gif)")
         file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
 
         if file_dialog.exec():
@@ -667,23 +698,9 @@ class ProfileView(QWidget):
             pixmap = QPixmap(file_path)
 
             if not pixmap.isNull():
-                targetSize = self.ui.profile_pic.size()
-                scaledPixmap = pixmap.scaled(targetSize.width(), targetSize.height(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-
-                # Create a rounded pixmap
-                rounded_pixmap = QPixmap(targetSize)
-                rounded_pixmap.fill(Qt.GlobalColor.transparent)
-                painter = QPainter(rounded_pixmap)
-                painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-                painter.setBrush(QBrush(scaledPixmap))
-                painter.setPen(Qt.GlobalColor.transparent)
-                painter.drawRoundedRect(0, 0, targetSize.width(), targetSize.height(), targetSize.width() / 2, targetSize.height() / 2)
-                painter.end()
-
-                self.ui.profile_pic.setMask(rounded_pixmap.mask())
-
-                self.ui.profile_pic.setPixmap(rounded_pixmap)
-
+                scaled_rounded_pixmap = self.scale_and_round_image(pixmap, self.ui.profile_pic.size())
+                self.set_profile_picture(scaled_rounded_pixmap)
+                self.user.set_profile_pic_path(file_path)
             else:
                 QMessageBox.warning(self, "Image Load Error", "The selected image could not be loaded. Please try a different file.")
 
