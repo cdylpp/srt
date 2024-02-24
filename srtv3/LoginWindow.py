@@ -1,4 +1,5 @@
 from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QLineEdit
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QIcon
 from login_window import Ui_Form
@@ -24,7 +25,7 @@ class LoginWindow(QtWidgets.QDialog):
         # logging info
         print("Init Login View")
         self.setWindowTitle("StaySmart: Student Retention Tool")
-        icon = QIcon(Paths.image("StaySmartLogo1.png")) # Specify the path to your icon file
+        icon = QIcon(Paths.image("StaySmartLogo1.png"))  #Specify the path to your icon file
         self.setWindowIcon(icon)
 
         # Wrap ui in Form widget
@@ -121,10 +122,10 @@ class LoginWindow(QtWidgets.QDialog):
         return
 
     def show_hide_password(self):
-        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.Normal:
-            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
+        if self.ui.password_input.echoMode() == QtWidgets.QLineEdit.EchoMode.Normal:
+            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         else:
-            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.Normal)
+            self.ui.password_input.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
 
     def show_forgot_pass_window(self):
         forgot_pass_window = ForgotPassWindow(self.db_manager)
