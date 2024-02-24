@@ -101,7 +101,7 @@ class Ui_Form(object):
         self.label = QLabel(self.widget_2)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(20, 20))
-        self.label.setPixmap(QPixmap("srtv3/Icons/user.svg"))
+        self.label.setPixmap(QPixmap("Icons/user.svg"))
         self.label.setScaledContents(True)
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
@@ -128,7 +128,7 @@ class Ui_Form(object):
         self.pass_label.setObjectName(u"pass_label")
         self.pass_label.setMaximumSize(QSize(20, 20))
         self.pass_label.setStyleSheet(u"color: rgb(12, 67, 112);")
-        self.pass_label.setPixmap(QPixmap("srtv3/Icons/key.svg"))
+        self.pass_label.setPixmap(QPixmap("Icons/key.svg"))
         self.pass_label.setScaledContents(True)
 
         self.horizontalLayout_2.addWidget(self.pass_label)
@@ -151,8 +151,8 @@ class Ui_Form(object):
         self.visibility_button.setStyleSheet(u"bottom-padding:5px;\n"
 "border:2px;")
         icon = QIcon()
-        icon.addFile("srtv3\Icons\eye-off.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        icon.addFile("srtv3\Icons\eye.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+        icon.addFile("Icons\eye-off.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile("Icons\eye.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
         self.visibility_button.setIcon(icon)
         self.visibility_button.setCheckable(True)
 
