@@ -18,4 +18,4 @@ QToolBar QAction:hover {
     background-color: rgb(255, 165, 0);
 }
 
-/* Add more widget styles as needed */
+/* qss Not actually applied */
