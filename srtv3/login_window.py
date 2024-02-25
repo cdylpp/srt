@@ -152,8 +152,8 @@ class Ui_Form(object):
         self.visibility_button.setStyleSheet(u"bottom-padding:5px;\n"
 "border:2px;")
         icon = QIcon()
-        icon.addFile(Paths.icon("eye.svg"), QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        icon.addFile(Paths.icon("eye-off.svg"), QSize(), QIcon.Mode.Normal, QIcon.State.On)
+        icon.addFile(Paths.icon("eye-off.svg"), QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(Paths.icon("eye.svg"), QSize(), QIcon.Mode.Normal, QIcon.State.On)
         self.visibility_button.setIcon(icon)
         self.visibility_button.setCheckable(True)
 
