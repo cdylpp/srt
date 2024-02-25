@@ -245,7 +245,15 @@ class MainWindow(QMainWindow):
 
         self.tool_bar.addAction(profile_button)
         self.tool_bar.addAction(self.settings_button)
-        self.tool_bar.addAction(sign_out_button) 
+        self.tool_bar.addAction(sign_out_button)
+
+        actions = [logo, home_button, file_button, database_button, reports_button,
+                   self.left_dock_toggle, profile_button, self.settings_button, sign_out_button] #Do not remove encapsulates buttons into actions
+
+        for action in actions:
+            widget = self.tool_bar.widgetForAction(action)
+            if widget:
+                widget.setStyleSheet("color: black;")   #Do not remove needed for hover words to show black
 
     def on_new_window(self):
         """Create new instance of the Browser class."""
