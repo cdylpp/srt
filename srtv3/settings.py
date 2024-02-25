@@ -67,7 +67,7 @@ class SettingsView(QWidget):
 
     def apply_theme(self, theme):
         if theme == 'dark':
-            qdarktheme.setup_theme()
+            qdarktheme.setup_theme()  #using preset darktheme
         else:
             qdarktheme.setup_theme("light")
 
@@ -149,3 +149,4 @@ class SettingsView(QWidget):
 
     def retranslateUi(self):
         self.setWindowTitle("Settings")
+
