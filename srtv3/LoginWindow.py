@@ -50,29 +50,34 @@ class LoginWindow(QtWidgets.QDialog):
         self.ui.password_input.setDisabled(False)
 
     def on_login_clicked(self):
-        username,password = self.get_user_info()
+        username, password = self.get_user_info()
         if self.user_manager.is_locked_out(username):
-            QtWidgets.QMessageBox.warning(self, 'Account Locked', 'Your account is locked. Please contact your system '
-                                                                  'administrator')
-            self.ui.password_input.setDisabled(True) # Disable the password field
+            locked_msg = QtWidgets.QMessageBox(self)
+            locked_msg.setStyleSheet("QLabel { color: white; } \
+                                    QMessageBox { background-color: rgb(52, 53, 65); } \
+                                    QPushButton { background-color: black; color: white; }")
+            locked_msg.warning(self, 'Account Locked', 'Your account is locked. Please contact your system '
+                                                                'administrator')
+            self.ui.password_input.setDisabled(True)  # Disable the password field
             return
 
         if self.valid_login(username, password):
             # Successful Login
             # Set the user in user manager
             self.accept()
-            self.user_manager.set_user(self.db_manager.get_user(username, password)) 
+            self.user_manager.set_user(self.db_manager.get_user(username, password))
             user = self.user_manager.get_user()
             # Reset login attempts on successful login
             self.user_manager.handle_login_attempts(username, success=True)
 
-            msg_box = QtWidgets.QMessageBox()
-            msg_box.setStyleSheet("QLabel { color: white; }")
+            msg_box = QtWidgets.QMessageBox(self)
+            msg_box.setStyleSheet("QLabel { color: white; } \
+                                QMessageBox { background-color: rgb(52, 53, 65); } \
+                                QPushButton { background-color: black; color: white; }")
             msg_box.information(self, 'Login Successful', f'Welcome, {user.get_name()}!')
 
-
             self.handle_remember_me(self.ui.remembeme_checkBox.isChecked())
-            
+
             # Signal User Manager to the MainWindow
             self.login_accepted.emit(self.user_manager)
             self.close()
@@ -80,11 +85,16 @@ class LoginWindow(QtWidgets.QDialog):
         else:
             # Handle failed login attempt
             self.user_manager.handle_login_attempts(username, success=False)
-            QtWidgets.QMessageBox.warning(self, 'Login Failed', 'Invalid credentials.')
+            failed_msg = QtWidgets.QMessageBox(self)
+            failed_msg.setStyleSheet("QLabel { color: white; } \
+                                    QMessageBox { background-color: rgb(52, 53, 65); } \
+                                    QPushButton { background-color: black; color: white; }")
+            failed_msg.warning(self, 'Login Failed', 'Invalid credentials.')
             # Check if user should be locked out
             if self.user_manager.is_locked_out(username):
                 self.ui.password_input.setDisabled(True)
             self.login_reject.emit()
+
     
     def get_user_info(self):
         """

@@ -1,6 +1,10 @@
 {
-    "prev_user": "c.lepp",
+    "prev_user": "",
     "c.lepp": {
+        "login attempts": 0,
+        "locked_out": false
+    },
+    "d.wood": {
         "login attempts": 0,
         "locked_out": false
     }
