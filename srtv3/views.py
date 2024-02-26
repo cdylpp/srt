@@ -463,7 +463,6 @@ class MainWindow(QMainWindow):
             self.sign_out.emit()  # Emit the sign-out signal
             self.close()  # Close the main window
 
-
     def on_home_button(self):
         # Take the User back to the welcome Tab
         # if the user has an open welcome tab, bring the user to this tab.
