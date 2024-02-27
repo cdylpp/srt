@@ -174,6 +174,9 @@ class SNSPlotter:
 
         if type == "Distribution":
             SNSPlotter().distribution(data, fig, var_type, **kwargs)
+            
+        if type == "Histogram":
+            SNSPlotter().histogram(data, fig, **kwargs)
 
         elif type == "Box Plot":
             SNSPlotter().box_plot(data, fig, **kwargs)
@@ -249,6 +252,16 @@ class SNSPlotter:
         fig.axes[0].set_ylabel('True labels')
         fig.axes[0].set_title(f'Confusion Matrix for {model}')
         canvas.draw()
+        
+    @staticmethod
+    def histogram(data, fig: Figure, **kwargs):
+        sns.countplot(data, ax=fig.add_subplot(111), **kwargs)
+        fig.axes[0].set_title(f"Value Counts of {kwargs['x']}")
+        
+    @staticmethod
+    def joint(data, fig: Figure, **kwargs):
+        sns.jointplot(data, )
+        
 
 
 class MarkdownModel:

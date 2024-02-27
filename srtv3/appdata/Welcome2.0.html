@@ -9,6 +9,7 @@
         background-color: #444;
         color: #ddd;
         font-family: Cambria, sans-serif;
+        font-size: x-large;
     }
     h1 {
         text-shadow: 2px 2px 4px #000;
@@ -22,64 +23,59 @@
   </style>
 </head>
 <body>
-
   <h1>Welcome to Student Retention Analysis</h1>
-
-  <p>The SRT application is the <em>first-line</em> tool for ensuring the health of retention rates among students.</p>
-
-  <hr>
-
+    <p>The SRT application is the <em>first-line</em> tool for ensuring the health of retention rates among students.</p>
+    <hr>
   <h2>Getting Started 🚀</h2>
-
-  <p>Datasets are the primary object in any data analysis endeavor.</p>
-
-  <p>Within the SRT framework, datasets are at the core. Start by importing your own datasets:</p>
-
-  <ol>
-    <li>Click the <code>import</code> menu button under <code>File</code> or by clicking [[file icon]].</li>
-    <li>A <code>New Tab</code> should populate with the <code>File Name</code> as the Tab Title.</li>
-    <li>Click the <code>New Tab</code> to navigate to your imported dataset. If you close the <code>Welcome Tab</code>, you can view this page again by pressing the [[Home Icon]].</li>
-  </ol>
-
-  <p>This new tab will present a <code>DataDashboard</code>, a view pane with several filter and sort options to view your dataset. Let's take a closer look at the widgets within the <code>DataDashboard</code>.</p>
-
+    <p>Datasets are the <em>primary</em> object in any data analysis endeavor.Therefore, within the SRT framework, datasets are at the core. </p>
+    <p> <b>Start:</b> Import your own datasets</p>
+    <ol>
+      <li>Click the <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00a8e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> icon button or under <b>File</b> select <b>Import Data</b>.</li>
+      <li>Use the file dialog to select a CSV file</li>
+      <li>After import a new <b>Tab</b> will populate within the main screen.</li>
+      <li>Navigate to this new <b>Tab</b> by clicking on the tab.</li>
+    </ol>
+    <p>This new tab will present a <code>DataDashboard</code>, a view pane with several filter and sort options to view your dataset. Let's take a closer look at the widgets within the <code>DataDashboard</code>.</p>
   <h3>Descriptive Statistics 🔍</h3>
-
-  <p>The left column houses some descriptive widgets so you can quickly view each <em>feature</em> and gather a snapshot of what the data represents.</p>
-
-  <p>Underneath the <code>Columns</code> Header, click on the dataset name to view a drop-down list of all the <em>attributes</em> within the dataset.</p>
-
-  <p>The left column, <code>DataTypes</code>, describes the variable datatype within the analytics model engine. We plan to allow for the complex management of handling all data types. Currently, we can safely handle integers (<code>int</code>), floating-point numbers (<code>float</code>), and text (<code>str</code> or <code>object</code>).</p>
-
-  <p>To see some visualizations of an individual variable, click on the attribute name underneath the drop-down menu. A plot should be shown in the left column of the <code>DataDashboard</code> along with some summary statistics.</p>
-
+    <p>The left column houses some descriptive widgets so you can quickly view each <em>feature</em> and gather a snapshot of what the data represents.</p>
+    <p>Underneath the <code>Columns</code> Header, click on the dataset name to view a drop-down list of all the <em>attributes</em> within the dataset.</p>
+    <p>The left column, <code>DataTypes</code>, describes the variable datatype within the analytics model engine. We plan to allow for the complex management of handling all data types. Currently, we can safely handle integers (<code>int</code>), floating-point numbers (<code>float</code>), and text (<code>str</code> or <code>object</code>).</p>
+    <p>To see some visualizations of an individual variable, click on the attribute name underneath the drop-down menu. A plot should be shown in the left column of the <code>DataDashboard</code> along with some summary statistics.</p>
   <h3>Filtering and Sorting 🎛️</h3>
 
-  <p>On the top will be another toolbar with <code>Describe</code>, <code>Plot</code>, and <code>Report</code> options.</p>
+    <p>On the top will be another toolbar with <code>Describe</code>, <code>Plot</code>, and <code>Report</code> options.</p>
 
-  <p>Let's look closer at each of these buttons.</p>
+    <p>Let's look closer at each of these buttons.</p>
 
-  <hr>
+    <hr>
 
   <h2>Describe 📊</h2>
 
-  <p>Describe the dataset with some standard statistic plots for the various columns.</p>
+    <p>Describe the dataset with some standard statistic plots for the various columns.</p>
 
   <h2>Plot 📈</h2>
 
-  <p>Here are some plots.</p>
+    <p>Here are some plots.</p>
 
   <h3>Bar Chart 📊</h3>
 
-  <p>A bar chart is a graphical representation of categorical data with rectangular bars whose lengths are proportional to the values they represent. Bar charts are used to compare two or more categories.</p>
+    <p>A bar chart is a graphical representation of categorical data with rectangular bars whose lengths are proportional to the values they represent. Bar charts are used to compare two or more categories.</p>
 
   <h3>Pie Chart 🥧</h3>
 
-  <p>A pie chart is a circular statistical graphic that is divided into slices to illustrate numerical proportion. Pie charts are used to show proportions of a whole, and the arc length of each slice is proportional to the quantity it represents.</p>
+    <p>A pie chart is a circular statistical graphic that is divided into slices to illustrate numerical proportion. Pie charts are used to show proportions of a whole, and the arc length of each slice is proportional to the quantity it represents.</p>
 
   <h2>Report 📄</h2>
+    <p>Clicking the <code>Reports</code> icon with an imported dataset will bring up the <em>predicitive</em> analysis screen.
+    This view houses some unqiue features within SRT, democratizing machine learning for retention analysis. Adminstrative users can 
+    select a <code>Target Variable</code>, specify which machine learning model to use based on variable parameter, and define the
+    test-train split size. Once these parameters are specified the user can run the model to get an output of the results.
+    </p>
 
-  <p>All reporting information goes here.</p>
+    <p>Once ran, the view will populate with a <b>Right Dock Widget</b> showing each model and the <code>accuracy</code>, <code>run time</code>, and 
+    <code>confusion matrix</code>. When the user navigates to each model, the confusion matrix will be displayed within the main view.</p>
+
+    <p>The <b>Confusion Matrix</b> allows the admin to view the counts of the true positives and false negatives from the classification model.</p>
 
 </body>
 </html>

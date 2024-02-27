@@ -367,8 +367,8 @@ class MainWindow(QMainWindow):
         df = read_csv(file_path, sep=seperator)
 
         # replace headers with human readable headers
-        new = {old: Transformer.headers(old) for old in df.columns}
-        df.rename(columns=new, inplace=True)
+        # new = {old: Transformer.headers(old) for old in df.columns}
+        # df.rename(columns=new, inplace=True)
 
         # get title
         title = path_to_title(file_path)

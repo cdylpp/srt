@@ -61,16 +61,19 @@ if __name__ == "__main__":
     qdarktheme.setup_theme()
     app_data = load_app_data()
 
-    login = LoginWindow('mysql', db_url=DB_URL, app_data=app_data)
-    login.user_manager = UserManager(app_data)
-    login.login_accepted.connect(on_login_accepted)
-    login.login_window_closed.connect(cleanup_before_quit)
-    login.rejected.connect(lambda: cleanup_before_quit(False))  #to close loginwindow upon clicking exit
-
-    while not AUTH_FLAG:
-        login.exec()
+    # login = LoginWindow('mysql', db_url=DB_URL, app_data=app_data)
+    # login.user_manager = UserManager(app_data)
+    # login.login_accepted.connect(on_login_accepted)
+    # login.login_window_closed.connect(cleanup_before_quit)
+    # login.rejected.connect(lambda: cleanup_before_quit(False))  #to close loginwindow upon clicking exit
     
-    main_window = MainWindow(login.user_manager, app_data_manager=app_data) #added '_manager' to app_data
+    # while not AUTH_FLAG:
+    #     login.exec()
+    
+    user = UserManager(app_data)
+    user.set_user(user_data)
+    
+    main_window = MainWindow(user, app_data_manager=app_data) #added '_manager' to app_data
     main_window.browser_closed.connect(on_close_main)
     main_window.sign_out.connect(lambda: on_sign_out(srtApp))  # Handle the sign-out signal
     main_window.show()  # Show the main window

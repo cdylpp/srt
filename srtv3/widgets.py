@@ -542,7 +542,7 @@ class ModellingController(QWidget):
         test_size = self.split_slider.value() / 100
 
         # special case for the student_data.csv
-        if target == 'output':
+        if target == 'Output':
             remove = 'Enrolled'
         else:
             remove = None
