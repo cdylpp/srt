@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (QApplication, QCheckBox, QFormLayout, QFrame,
     QGridLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QVBoxLayout, QWidget)
 import login_icons_rc
+from paths import Paths
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -84,7 +85,7 @@ class Ui_Form(object):
         self.logo.setSizePolicy(sizePolicy1)
         self.logo.setMinimumSize(QSize(105, 120))
         self.logo.setMaximumSize(QSize(105, 120))
-        self.logo.setPixmap(QPixmap(u":/Logo/Logo/Stay Smart Logo 1.png"))
+        self.logo.setPixmap(QPixmap(Paths.image("StaySmartLogo1.png")))
         self.logo.setScaledContents(True)
         self.logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -101,7 +102,7 @@ class Ui_Form(object):
         self.label = QLabel(self.widget_2)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(20, 20))
-        self.label.setPixmap(QPixmap("Icons/user.svg")) #removed srtv3/ before icons not needed
+        self.label.setPixmap(QPixmap(Paths.icon("user.svg"))) #removed srtv3/ before icons not needed
         self.label.setScaledContents(True)
 
         self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label)
@@ -128,7 +129,7 @@ class Ui_Form(object):
         self.pass_label.setObjectName(u"pass_label")
         self.pass_label.setMaximumSize(QSize(20, 20))
         self.pass_label.setStyleSheet(u"color: rgb(12, 67, 112);")
-        self.pass_label.setPixmap(QPixmap("Icons/key.svg"))
+        self.pass_label.setPixmap(QPixmap(Paths.icon("key.svg")))
         self.pass_label.setScaledContents(True)
 
         self.horizontalLayout_2.addWidget(self.pass_label)
@@ -151,8 +152,8 @@ class Ui_Form(object):
         self.visibility_button.setStyleSheet(u"bottom-padding:5px;\n"
 "border:2px;")
         icon = QIcon()
-        icon.addFile("Icons\eye-off.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        icon.addFile("Icons\eye.svg", QSize(), QIcon.Mode.Normal, QIcon.State.On)
+        icon.addFile(Paths.icon("eye-off.svg"), QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(Paths.icon("eye.svg"), QSize(), QIcon.Mode.Normal, QIcon.State.On)
         self.visibility_button.setIcon(icon)
         self.visibility_button.setCheckable(True)
 
