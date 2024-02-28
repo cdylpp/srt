@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         # Title
         self.setWindowTitle(f"Student Retention Analysis - {self.user.get_name()}")
         self.setWindowIcon(
-            QIcon(Paths.icon("Stay Smart Logo 1.png"))
+            QIcon(Paths.image("StaySmartLogo1.png"))
         )
 
         self.sizeMainWindow() 
