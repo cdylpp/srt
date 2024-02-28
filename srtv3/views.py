@@ -35,7 +35,6 @@ style_sheet = """
 """
 
 class MainWindow(QMainWindow):
-
     browser_closed = pyqtSignal()
     sign_out = pyqtSignal()
 
@@ -277,7 +276,6 @@ class MainWindow(QMainWindow):
         # set the correct widgets for the current tab
         self.tab_bar.addTab(center, title)
         self.tab_bar.setCurrentIndex(idx)
-        
         return
 
     def on_import(self):
